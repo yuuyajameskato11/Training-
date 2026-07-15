@@ -15,7 +15,7 @@ const Store = (() => {
       phaseWeek: 1,        // fallback week
       variant: 'C',        // Phase-5 sport variant: A=Football, B=HYROX, C=Track
       hrMax: 190,          // for zone calibration
-      criticalPower: 280,  // Stryd CP (W) — re-anchor zones after testing
+      criticalPower: 308,  // Stryd CP (W) — re-anchor zones after testing
       goalDateISO: '2027-01-24', // A-race date
     },
     // Personal bests / current standing per goal id -> value
