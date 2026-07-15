@@ -9,10 +9,14 @@ const Store = (() => {
   const DEFAULT = {
     profile: {
       name: '',
-      bodyweightKg: 80,
-      phaseId: 1,          // current annual-plan phase
-      phaseWeek: 1,        // week within the phase
-      goalDateISO: '',     // target competition date (optional)
+      bodyweightKg: 77,
+      startDateISO: '',    // Week 1 anchor for the 32-week program
+      phaseId: 1,          // fallback phase if no start date set
+      phaseWeek: 1,        // fallback week
+      variant: 'C',        // Phase-5 sport variant: A=Football, B=HYROX, C=Track
+      hrMax: 190,          // for zone calibration
+      criticalPower: null, // Stryd CP (W) — re-anchor zones after testing
+      goalDateISO: '',     // A-race date (optional)
     },
     // Personal bests / current standing per goal id -> value
     bests: {},

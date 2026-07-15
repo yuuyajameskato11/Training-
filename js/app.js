@@ -25,9 +25,11 @@ const App = (() => {
   }
 
   function updatePhasePill() {
-    const p = Store.state.profile;
-    const phase = DATA.PHASES.find(ph => ph.id === p.phaseId) || DATA.PHASES[0];
-    $('#phasePill').textContent = `P${phase.id} · ${phase.name} · wk ${p.phaseWeek}`;
+    const date = Engine.todayISO();
+    const phase = Engine.currentPhase(date);
+    const wk = Engine.programWeek(date);
+    const deload = Engine.isDeloadWeek(date);
+    $('#phasePill').textContent = `P${phase.id} · ${phase.name}${wk ? ' · wk ' + wk : ''}${deload ? ' · DELOAD' : ''}`;
   }
 
   function init() {

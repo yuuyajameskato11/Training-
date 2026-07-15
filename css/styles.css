@@ -202,3 +202,37 @@ textarea{min-height:70px;resize:vertical}
 .spark{display:flex;align-items:flex-end;gap:2px;height:34px;margin-top:6px}
 .spark i{flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:2px;opacity:.5}
 .spark i.last{opacity:1;background:var(--accent2)}
+
+/* Weekly High/Low strip */
+.weekstrip{display:flex;gap:5px;margin:6px 0 2px}
+.wcell{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 2px;border-radius:10px;
+  border:1px solid var(--line);background:var(--card2)}
+.wcell b{font-size:.72rem}
+.wcell span{font-size:.54rem;letter-spacing:.03em;color:var(--muted2);font-weight:700}
+.wcell.hi{border-color:rgba(255,77,94,.35)}.wcell.hi span{color:var(--red)}
+.wcell.lo span{color:var(--blue)}
+.wcell.rec span{color:var(--muted2)}
+.wcell.now{background:var(--accent);border-color:var(--accent)}
+.wcell.now b,.wcell.now span{color:#04110d}
+
+/* Prescribed session blocks */
+.rxblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin:10px 0}
+.rxhead{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rxtag{font-size:.6rem;font-weight:800;letter-spacing:.08em;background:var(--accent2);color:#0a0714;padding:2px 7px;border-radius:6px}
+.rxhead b{font-size:.92rem}
+.rxdesc{font-size:.78rem;color:var(--muted);line-height:1.45;margin:4px 0 8px}
+.rxitem{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:.82rem}
+.rxitem .ri-n{font-weight:600}
+.rxitem .ri-s{color:var(--muted);text-align:right;flex-shrink:0;font-size:.78rem}
+.rxtarget{font-size:.72rem;color:var(--accent);background:rgba(0,224,184,.06);border-radius:8px;padding:6px 9px;margin:6px 0}
+
+.gatewarn{margin-top:12px;font-size:.78rem;color:var(--red);background:rgba(255,77,94,.08);border-radius:8px;padding:9px 11px;line-height:1.4}
+.ckrow{font-size:.78rem;color:var(--muted);margin-top:8px}
+.ckrow b{color:var(--txt)}
+
+/* Toggle */
+.toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.toggle span{flex:1;text-align:center;padding:11px 0;font-weight:700;font-size:.9rem;color:var(--muted)}
+.toggle span:first-child{color:var(--txt);background:var(--card2)}
+.toggle.on span:first-child{color:var(--muted);background:transparent}
+.toggle.on span:last-child{color:#1a1200;background:var(--amber)}
