@@ -26,7 +26,7 @@ const Store = (() => {
     tests: [],
     // AI coach chat history: array of { role, content }
     chat: [],
-    settings: { hrvEnabled: true, useMetric: true, aiKey: '', aiModel: 'claude-opus-4-8' },
+    settings: { hrvEnabled: true, useMetric: true, aiKey: '', aiModel: 'claude-opus-4-8', notionUrl: '', notionKey: '' },
   };
 
   let state = load();

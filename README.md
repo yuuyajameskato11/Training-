@@ -85,6 +85,8 @@ js/program.js           every prescribed day-by-day session, all 5 phases + vari
 js/store.js             local persistence + backup/restore
 js/engine.js            the coach's brain (gate, ACWR, program week, projections, auto-reg)
 js/coach.js             optional live Claude AI chat (streaming, on-device key)
+js/notionsync.js        optional Notion sync (CSV export + Worker auto-push)
+notion-worker.js        deployable Cloudflare Worker proxy for Notion auto-push
 js/ui.js                rendering + interaction for all tabs
 js/app.js               bootstrap, routing, service-worker
 sw.js                   offline cache
@@ -118,6 +120,20 @@ should I do after this set?", "am I on track for 40 inches?".
 - Pick the model in Settings — Opus 4.8 (sharpest), Sonnet 5 (faster/cheaper),
   or Haiku 4.5 (cheapest).
 - The built-in briefing works fully **without** a key — the AI layer is a bonus.
+
+## Notion dashboard sync (optional)
+
+The app can mirror your logs into the Notion dashboard (the five-database
+"KNCT Hybrid Apex System" space). Two paths, in **You → Notion dashboard**:
+
+- **CSV export (zero setup):** tap **Readiness CSV** / **Sessions CSV** — the
+  columns match the Notion databases exactly. In Notion open a database →
+  `•••` → **Merge with CSV** to append the rows.
+- **Auto-push (opt-in):** Notion's API has no browser CORS and needs a secret
+  token, so a tiny **Cloudflare Worker** (`notion-worker.js`, deploy steps in
+  its header comment) holds the token and proxies the calls. Paste the Worker
+  URL + your shared key into Settings and every check-in / saved session
+  auto-appends to Notion (idempotent — it won't double-post a day).
 
 ## Roadmap ideas
 

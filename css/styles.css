@@ -230,6 +230,13 @@ textarea{min-height:70px;resize:vertical}
 .ckrow{font-size:.78rem;color:var(--muted);margin-top:8px}
 .ckrow b{color:var(--txt)}
 
+/* Toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--safe-bot) + 78px);
+  background:var(--card2);border:1px solid var(--accent);color:var(--txt);padding:11px 16px;border-radius:12px;
+  transform:translate(-50%,20px);font-size:.85rem;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:88%;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.bad{border-color:var(--red);color:var(--red)}
+
 /* AI chat */
 .chatlog{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 10px}
 .chatempty{color:var(--muted2);font-size:.82rem;text-align:center;padding:18px 8px;line-height:1.5}

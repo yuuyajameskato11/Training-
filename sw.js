@@ -1,9 +1,9 @@
 /* APEX service worker — offline cache. Bump CACHE to invalidate. */
-const CACHE = 'apex-v3';
+const CACHE = 'apex-v4';
 const ASSETS = [
   './', './index.html',
   './css/styles.css',
-  './js/data.js', './js/program.js', './js/store.js', './js/engine.js', './js/coach.js', './js/ui.js', './js/app.js',
+  './js/data.js', './js/program.js', './js/store.js', './js/engine.js', './js/coach.js', './js/notionsync.js', './js/ui.js', './js/app.js',
   './manifest.webmanifest',
   './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
 ];

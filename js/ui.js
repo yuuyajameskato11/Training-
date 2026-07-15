@@ -156,8 +156,21 @@ const UI = (() => {
       // also log CMJ into the test series so trends + diagnostics see it
       if (wellness.cmj != null && !Store.testsFor('cmj').some(t => t.date === date)) Store.addTest('cmj', wellness.cmj, date);
       const d = Store.getDay(date); d.readiness = Engine.readiness(date); Store.save();
-      closeModal(); renderToday();
+      closeModal(); renderToday(); notionSync(date);
     };
+  }
+
+  function notionSync(date) {
+    if (!NotionSync.enabled()) return;
+    NotionSync.syncDay(date)
+      .then(res => { if (res && res.done && res.done.length) toast(`Synced to Notion: ${res.done.join(' + ')}`); })
+      .catch(err => toast(`Notion sync failed: ${err.message}`, true));
+  }
+  let toastT;
+  function toast(msg, bad) {
+    let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg; el.className = bad ? 'bad show' : 'show';
+    clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 3200);
   }
 
   /* ======================================================================
@@ -215,7 +228,7 @@ const UI = (() => {
     $('#s-dur').oninput = e => { s.durationMin = +e.target.value || 0; Store.save(); };
     $('#s-rpe').oninput = e => { s.sRPE = +e.target.value || 0; Store.save(); };
     $('#add-ex').onclick = openExercisePicker;
-    $('#save-session').onclick = () => { s.load = Engine.sessionLoad(s); Store.save(); App.go('today'); };
+    $('#save-session').onclick = () => { s.load = Engine.sessionLoad(s); Store.save(); notionSync(current.date); App.go('today'); };
     $$('[data-addset]').forEach(b => b.onclick = () => { const ei = +b.getAttribute('data-addset'); const ex = s.exercises[ei]; ex.sets.push({}); Store.save(); renderLog(); });
     wireSetInputs();
   }
@@ -484,6 +497,16 @@ const UI = (() => {
       <p class="small muted" style="margin:6px 0 0">Enables the conversational coach in the <b>Coach</b> tab. Your key is stored only on this device and sent only to api.anthropic.com. Chat costs per use, billed to your Anthropic account. Get a key at console.anthropic.com.</p>
     </div>`;
 
+    html += `<div class="section-title">Notion dashboard</div><div class="card">
+      <p class="small muted" style="margin:0 0 10px">Mirror your logs into the Notion databases. <b>Export CSV</b> works with zero setup — in Notion open a database → ••• → Merge with CSV.</p>
+      <div class="btn-row"><button class="btn ghost sm" id="nx-csv-read">Readiness CSV</button><button class="btn ghost sm" id="nx-csv-sess">Sessions CSV</button></div>
+      <hr class="hr">
+      <p class="small muted" style="margin:0 0 8px">Or auto-push every log via your Cloudflare Worker proxy (see <b>notion-worker.js</b> in the repo).</p>
+      <div class="field"><label>Worker URL</label><input id="nx-url" value="${esc(Store.state.settings.notionUrl)}" placeholder="https://apex-notion.you.workers.dev"></div>
+      <div class="field"><label>Shared key (APEX_KEY)</label><input type="password" id="nx-key" value="${esc(Store.state.settings.notionKey)}" placeholder="your shared secret"></div>
+      <button class="btn ghost sm" id="nx-test" style="width:100%">Sync today to Notion now</button>
+    </div>`;
+
     html += `<div class="section-title">Data</div><div class="card">
       <div class="btn-row"><button class="btn ghost sm" id="d-export">Export backup</button><button class="btn ghost sm" id="d-import">Import</button></div>
       <button class="btn ghost sm" id="d-reset" style="margin-top:10px;color:var(--red);width:100%">Reset all data</button></div>`;
@@ -502,6 +525,16 @@ const UI = (() => {
     $('#set-hrv').onchange = e => { Store.state.settings.hrvEnabled = e.target.checked; Store.save(); };
     $('#ai-key').onchange = e => { Store.state.settings.aiKey = e.target.value.trim(); Store.save(); };
     $('#ai-model').onchange = e => { Store.state.settings.aiModel = e.target.value; Store.save(); };
+    $('#nx-url').onchange = e => { Store.state.settings.notionUrl = e.target.value.trim(); Store.save(); };
+    $('#nx-key').onchange = e => { Store.state.settings.notionKey = e.target.value.trim(); Store.save(); };
+    $('#nx-csv-read').onclick = () => NotionSync.download(`apex-readiness-${today()}.csv`, NotionSync.readinessCSV());
+    $('#nx-csv-sess').onclick = () => NotionSync.download(`apex-sessions-${today()}.csv`, NotionSync.sessionCSV());
+    $('#nx-test').onclick = () => {
+      if (!NotionSync.enabled()) { toast('Add the Worker URL and shared key first', true); return; }
+      NotionSync.syncDay(today(), { force: true })
+        .then(res => toast(res.done && res.done.length ? `Synced: ${res.done.join(' + ')}` : 'Nothing to sync today'))
+        .catch(err => toast(`Failed: ${err.message}`, true));
+    };
     $('#d-export').onclick = doExport; $('#d-import').onclick = doImport;
     $('#d-reset').onclick = () => { if (confirm('Erase all logged data? This cannot be undone.')) { Store.reset(); App.go('today'); App.updatePhasePill(); } };
   }
