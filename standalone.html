@@ -1,0 +1,2098 @@
+<title>APEX — KNCT Hybrid Apex System</title>
+<style>
+/* ============================================================================
+   APEX — dark, athletic, WHOOP-inspired. Mobile-first, safe-area aware.
+   ========================================================================== */
+:root{
+  --bg:#0a0e14; --bg2:#111722; --card:#151c28; --card2:#1b2432;
+  --line:#232d3d; --txt:#eef2f8; --muted:#8b96a8; --muted2:#5c6779;
+  --green:#3ddc84; --amber:#ffb020; --red:#ff4d5e; --blue:#4da6ff;
+  --accent:#00e0b8; --accent2:#7b6cff;
+  --radius:18px; --radius-sm:12px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  font-size:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  overscroll-behavior-y:none; -webkit-font-smoothing:antialiased;
+}
+#app{display:flex;flex-direction:column;min-height:100%;max-width:560px;margin:0 auto}
+
+/* Top bar */
+#topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-top) + 12px) 18px 12px;
+  background:linear-gradient(180deg,var(--bg) 70%,transparent);
+  backdrop-filter:blur(8px);
+}
+.brand{font-weight:800;letter-spacing:.14em;font-size:1.05rem}
+.brand .logo{color:var(--accent);margin-right:4px}
+.phase-pill{
+  background:var(--card2);border:1px solid var(--line);color:var(--muted);
+  padding:6px 12px;border-radius:999px;font-size:.75rem;font-weight:600;cursor:pointer;
+}
+
+/* Views */
+#view{flex:1;padding:4px 16px 96px;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Tab bar */
+#tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:30;
+  display:flex;max-width:560px;margin:0 auto;
+  padding:6px 6px calc(var(--safe-bot) + 6px);
+  background:rgba(12,16,23,.92);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+}
+.tab{
+  flex:1;background:none;border:0;color:var(--muted2);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 0;font-size:.66rem;font-weight:600;cursor:pointer;transition:color .15s;
+}
+.tab .ic{font-size:1.15rem;line-height:1}
+.tab.active{color:var(--accent)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin:14px 0}
+.card.tight{padding:14px}
+.card h3{margin:0 0 4px;font-size:.95rem}
+.card .sub{color:var(--muted);font-size:.8rem;margin:0 0 12px}
+.section-title{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted2);font-weight:700;margin:22px 4px 2px}
+
+/* Readiness ring */
+.ring-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px}
+.ring{position:relative;width:210px;height:210px}
+.ring svg{transform:rotate(-90deg)}
+.ring .score{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.ring .score .num{font-size:3.6rem;font-weight:800;line-height:1;letter-spacing:-.03em}
+.ring .score .lbl{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.ring .score .band{font-size:.8rem;font-weight:700;margin-top:8px;padding:3px 12px;border-radius:999px}
+.band-green{color:var(--green);background:rgba(61,220,132,.12)}
+.band-amber{color:var(--amber);background:rgba(255,176,32,.12)}
+.band-red{color:var(--red);background:rgba(255,77,94,.12)}
+
+/* Headline call */
+.call{border-radius:var(--radius);padding:16px 18px;margin:6px 0 2px;border:1px solid var(--line)}
+.call.green{background:linear-gradient(135deg,rgba(61,220,132,.14),rgba(61,220,132,.03));border-color:rgba(61,220,132,.3)}
+.call.amber{background:linear-gradient(135deg,rgba(255,176,32,.14),rgba(255,176,32,.03));border-color:rgba(255,176,32,.3)}
+.call.red{background:linear-gradient(135deg,rgba(255,77,94,.14),rgba(255,77,94,.03));border-color:rgba(255,77,94,.3)}
+.call .h{font-weight:800;font-size:1.05rem;margin-bottom:8px}
+.call ul{margin:0;padding-left:18px}
+.call li{margin:5px 0;color:var(--txt);font-size:.9rem;line-height:1.4}
+
+/* Component bars */
+.comp{display:flex;align-items:center;gap:10px;margin:10px 0}
+.comp .name{width:104px;font-size:.8rem;color:var(--muted);flex-shrink:0}
+.comp .bar{flex:1;height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.comp .bar > i{display:block;height:100%;border-radius:99px}
+.comp .val{width:30px;text-align:right;font-size:.8rem;font-weight:700}
+.comp .note{font-size:.72rem;color:var(--muted2);margin:-4px 0 8px 114px}
+
+/* Recovery chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{background:var(--card2);border:1px solid var(--line);border-radius:99px;
+  padding:8px 12px;font-size:.8rem;color:var(--txt);display:flex;gap:8px;align-items:center;cursor:pointer}
+.chip.done{border-color:var(--green);color:var(--green);background:rgba(61,220,132,.08)}
+.chip .box{width:15px;height:15px;border:1.5px solid var(--muted2);border-radius:5px;display:inline-block}
+.chip.done .box{background:var(--green);border-color:var(--green)}
+
+/* Forms */
+.field{margin:14px 0}
+.field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:8px;font-weight:600}
+input,select,textarea{
+  width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  border-radius:var(--radius-sm);padding:12px 14px;font-size:1rem;font-family:inherit;
+}
+input:focus,select,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{min-height:70px;resize:vertical}
+.row{display:flex;gap:10px}
+.row > *{flex:1}
+
+/* Segmented 1–5 scale */
+.scale{display:flex;gap:6px}
+.scale button{flex:1;background:var(--bg2);border:1px solid var(--line);color:var(--muted);
+  padding:12px 0;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer}
+.scale button.sel{background:var(--accent);color:#04110d;border-color:var(--accent)}
+.scale.inv button.sel{background:var(--amber);color:#1a1200;border-color:var(--amber)}
+
+/* Buttons */
+.btn{display:block;width:100%;text-align:center;background:var(--accent);color:#04110d;
+  border:0;border-radius:var(--radius-sm);padding:15px;font-size:1rem;font-weight:800;cursor:pointer;margin-top:8px}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.sm{padding:10px;font-size:.85rem;width:auto}
+.btn:active{transform:scale(.99)}
+.btn-row{display:flex;gap:10px}.btn-row .btn{margin-top:0}
+
+/* Stat / metric rows */
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.stat-row:last-child{border-bottom:0}
+.stat-row .l{font-size:.9rem}
+.stat-row .l small{display:block;color:var(--muted2);font-size:.72rem}
+.stat-row .r{text-align:right;font-weight:700}
+.stat-row .r small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+.pos{color:var(--green)} .neg{color:var(--red)} .flat{color:var(--muted)}
+
+/* Goal cards */
+.goal{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0}
+.goal .top{display:flex;justify-content:space-between;align-items:baseline}
+.goal .top .name{font-weight:800;font-size:1.05rem}
+.goal .top .tgt{color:var(--muted);font-size:.8rem}
+.goal .now{font-size:2rem;font-weight:800;letter-spacing:-.02em;margin:6px 0 2px}
+.goal .prog{height:8px;background:var(--card2);border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.goal .prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.goal .eta{font-size:.82rem;color:var(--muted)}
+.goal .limiters{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.goal .limiters span{font-size:.68rem;color:var(--muted2);background:var(--bg2);padding:3px 8px;border-radius:99px}
+
+/* Exercise / set log */
+.exline{background:var(--card2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin:10px 0}
+.exline .exhead{display:flex;justify-content:space-between;align-items:center}
+.exline .exhead .nm{font-weight:700;font-size:.92rem}
+.exline .exhead .ct{font-size:.66rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
+.setline{display:flex;gap:6px;align-items:center;margin-top:8px}
+.setline input{padding:9px 8px;font-size:.85rem;text-align:center}
+.setline .idx{width:22px;color:var(--muted2);font-size:.8rem;font-weight:700}
+.setadvice{font-size:.78rem;color:var(--accent);margin-top:8px;line-height:1.4;
+  background:rgba(0,224,184,.06);border-radius:8px;padding:8px 10px}
+.setadvice.warn{color:var(--red);background:rgba(255,77,94,.07)}
+
+/* Coach feed */
+.coach-msg{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:12px;padding:14px 16px;margin:12px 0}
+.coach-msg .who{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.coach-msg p{margin:6px 0;font-size:.9rem;line-height:1.5}
+.coach-msg strong{color:var(--txt)}
+
+/* Weekly compliance */
+.comp-item{display:flex;align-items:center;gap:10px;margin:12px 0}
+.comp-item .cl{width:110px;font-size:.82rem;color:var(--muted)}
+.comp-item .cbar{flex:1;height:10px;background:var(--card2);border-radius:99px;position:relative;overflow:hidden}
+.comp-item .cbar > i{display:block;height:100%;border-radius:99px}
+.comp-item .cv{width:78px;text-align:right;font-size:.78rem;font-weight:700}
+.tag{font-size:.62rem;padding:2px 7px;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.tag.on{color:var(--green);background:rgba(61,220,132,.12)}
+.tag.under{color:var(--amber);background:rgba(255,176,32,.12)}
+.tag.over{color:var(--red);background:rgba(255,77,94,.12)}
+
+/* Modal */
+#modalRoot:empty{display:none}
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);
+  display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.modal{background:var(--bg2);border:1px solid var(--line);border-radius:22px 22px 0 0;
+  width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:20px 18px calc(var(--safe-bot) + 24px);
+  animation:slideup .25s ease}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:none}}
+.modal h3{margin:0 0 14px}
+.modal .grab{width:40px;height:4px;background:var(--muted2);border-radius:99px;margin:0 auto 16px;opacity:.5}
+
+/* Misc */
+.muted{color:var(--muted)}.small{font-size:.8rem}.center{text-align:center}
+.empty{text-align:center;color:var(--muted2);padding:40px 20px;font-size:.9rem}
+.hr{height:1px;background:var(--line);margin:16px 0;border:0}
+.pickgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.pickgrid button{background:var(--card2);border:1px solid var(--line);color:var(--txt);
+  padding:12px 10px;border-radius:10px;text-align:left;font-size:.82rem;cursor:pointer}
+.pickgrid button small{display:block;color:var(--muted2);font-size:.66rem;margin-top:2px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:34px;margin-top:6px}
+.spark i{flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:2px;opacity:.5}
+.spark i.last{opacity:1;background:var(--accent2)}
+
+/* Weekly High/Low strip */
+.weekstrip{display:flex;gap:5px;margin:6px 0 2px}
+.wcell{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 2px;border-radius:10px;
+  border:1px solid var(--line);background:var(--card2)}
+.wcell b{font-size:.72rem}
+.wcell span{font-size:.54rem;letter-spacing:.03em;color:var(--muted2);font-weight:700}
+.wcell.hi{border-color:rgba(255,77,94,.35)}.wcell.hi span{color:var(--red)}
+.wcell.lo span{color:var(--blue)}
+.wcell.rec span{color:var(--muted2)}
+.wcell.now{background:var(--accent);border-color:var(--accent)}
+.wcell.now b,.wcell.now span{color:#04110d}
+
+/* Prescribed session blocks */
+.rxblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin:10px 0}
+.rxhead{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rxtag{font-size:.6rem;font-weight:800;letter-spacing:.08em;background:var(--accent2);color:#0a0714;padding:2px 7px;border-radius:6px}
+.rxhead b{font-size:.92rem}
+.rxdesc{font-size:.78rem;color:var(--muted);line-height:1.45;margin:4px 0 8px}
+.rxitem{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:.82rem}
+.rxitem .ri-n{font-weight:600}
+.rxitem .ri-s{color:var(--muted);text-align:right;flex-shrink:0;font-size:.78rem}
+.rxtarget{font-size:.72rem;color:var(--accent);background:rgba(0,224,184,.06);border-radius:8px;padding:6px 9px;margin:6px 0}
+
+.gatewarn{margin-top:12px;font-size:.78rem;color:var(--red);background:rgba(255,77,94,.08);border-radius:8px;padding:9px 11px;line-height:1.4}
+.ckrow{font-size:.78rem;color:var(--muted);margin-top:8px}
+.ckrow b{color:var(--txt)}
+
+/* Toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--safe-bot) + 78px);
+  background:var(--card2);border:1px solid var(--accent);color:var(--txt);padding:11px 16px;border-radius:12px;
+  transform:translate(-50%,20px);font-size:.85rem;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:88%;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.bad{border-color:var(--red);color:var(--red)}
+
+/* AI chat */
+.chatlog{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 10px}
+.chatempty{color:var(--muted2);font-size:.82rem;text-align:center;padding:18px 8px;line-height:1.5}
+.bubble{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.88rem;line-height:1.45;white-space:normal;word-wrap:break-word}
+.bubble.user{align-self:flex-end;background:var(--accent);color:#04110d;border-bottom-right-radius:4px}
+.bubble.assistant{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.dots{letter-spacing:2px;color:var(--muted2);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.chatbar{display:flex;gap:8px;align-items:center;margin-top:4px}
+.chatbar input{flex:1;padding:11px 13px}
+.chatsend{background:var(--accent);color:#04110d;border:0;border-radius:12px;width:44px;height:44px;font-size:1.1rem;font-weight:800;cursor:pointer;flex-shrink:0}
+.chatsend:disabled{opacity:.5}
+.chatmeta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.linkbtn{background:none;border:0;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:underline}
+
+/* Toggle */
+.toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.toggle span{flex:1;text-align:center;padding:11px 0;font-weight:700;font-size:.9rem;color:var(--muted)}
+.toggle span:first-child{color:var(--txt);background:var(--card2)}
+.toggle.on span:first-child{color:var(--muted);background:transparent}
+.toggle.on span:last-child{color:#1a1200;background:var(--amber)}
+
+</style>
+
+<div id="app">
+  <header id="topbar">
+    <div class="brand"><span class="logo">▲</span> APEX</div>
+    <div id="phasePill" class="phase-pill" role="button" tabindex="0">Phase —</div>
+  </header>
+  <main id="view"></main>
+  <nav id="tabbar">
+    <button class="tab" data-tab="today"><span class="ic">◎</span><span>Today</span></button>
+    <button class="tab" data-tab="log"><span class="ic">✎</span><span>Log</span></button>
+    <button class="tab" data-tab="progress"><span class="ic">▲</span><span>Progress</span></button>
+    <button class="tab" data-tab="coach"><span class="ic">✦</span><span>Coach</span></button>
+    <button class="tab" data-tab="settings"><span class="ic">⚙</span><span>You</span></button>
+  </nav>
+</div>
+<div id="modalRoot"></div>
+<script>
+/* ============================================================================
+   data.js — Knowledge base for the KNCT Hybrid Apex System (32-week program).
+   Encodes: goals (current → 32-wk checkpoint → North Star), the 7 systems,
+   exercise library, the 5-phase macrocycle, the High/Low weekly architecture,
+   the readiness-gate thresholds, training zones, and nutrition anchors.
+   Daily prescribed sessions live in program.js.
+   ========================================================================== */
+
+const DATA = (() => {
+
+  /* --------------------------------------------------------------------------
+     GOALS — current mark, 32-week checkpoint, and North Star.
+     `lowerBetter` = time events. `proxies` = tech metrics that predict it.
+     Times stored in seconds; vertical/broad in their native unit.
+     ------------------------------------------------------------------------ */
+  const GOALS = [
+    { id: '100m',  name: '100 m',   unit: 's',  lowerBetter: true,  current: 11.9,  checkpoint: [11.3, 11.4],  northStar: 10.9,  limiters: ['Max velocity', 'RFD', 'Tendon stiffness'], proxies: ['fly30', 'sprint10', 'cmj', 'keiserWatts'] },
+    { id: '200m',  name: '200 m',   unit: 's',  lowerBetter: true,  current: 23.9,  checkpoint: [22.8, 23.0],  northStar: null,  limiters: ['Speed', 'Speed endurance'],                proxies: ['fly30', 'sprint30'] },
+    { id: '400m',  name: '400 m',   unit: 's',  lowerBetter: true,  current: 56.0,  checkpoint: [52.5, 53.5],  northStar: 49.0,  limiters: ['Glycolytic capacity', 'Speed reserve'],     proxies: ['fly30', 'sprint30'] },
+    { id: 'mile',  name: 'Mile',    unit: 's',  lowerBetter: true,  current: 305,   checkpoint: [292, 296],    northStar: 285,   limiters: ['Threshold', 'VO₂', 'Economy'],             proxies: ['criticalPower', 'runEconomy'] },
+    { id: '5k',    name: '5K',      unit: 's',  lowerBetter: true,  current: 1230,  checkpoint: [1095, 1125],  northStar: 900,   limiters: ['Aerobic floor (your #1 gap)', 'Threshold'], proxies: ['criticalPower', 'runEconomy'] },
+    { id: 'vertical', name: 'Vertical (CMJ)', unit: 'in', lowerBetter: false, current: 31, checkpoint: [35, 37], northStar: 40, limiters: ['Relative force', 'RFD'],           proxies: ['cmj', 'rsi', 'relForce'] },
+    { id: 'broad', name: 'Broad Jump', unit: 'm', lowerBetter: false, current: 2.95, checkpoint: [3.15, 3.25], northStar: null, limiters: ['Horizontal power'],                proxies: ['cmj'] },
+    { id: 'clean', name: 'Power Clean', unit: 'lb', lowerBetter: false, current: null, checkpoint: [285, 300], northStar: null, limiters: ['Force expression'],                 proxies: ['isoPull', 'peakForce'] },
+    { id: 'hyrox', name: 'HYROX Pro',  unit: 'min', lowerBetter: true,  current: 67,  checkpoint: [58, 61],     northStar: 57,   limiters: ['Compromised running', 'Station economy'], proxies: ['criticalPower'] },
+    { id: 'bw',    name: 'Bodyweight', unit: 'kg', lowerBetter: true,  current: 77,  checkpoint: [74, 76],     northStar: null,  limiters: ['Power-to-weight'],                        proxies: [] },
+  ];
+
+  /* --------------------------------------------------------------------------
+     TEST METRICS — objective device numbers, grouped by assessment tool.
+     ------------------------------------------------------------------------ */
+  const METRICS = [
+    { id: 'cmj',          name: 'CMJ (best of 3)',      unit: 'cm',  tool: 'Force Plate', lowerBetter: false, readiness: true, gate: true },
+    { id: 'rsi',          name: 'RSI (Drop/Pogo)',      unit: '',    tool: 'Force Plate', lowerBetter: false, readiness: true },
+    { id: 'isoPull',      name: 'IMTP Peak Force',      unit: 'N',   tool: 'Force Plate', lowerBetter: false },
+    { id: 'relForce',     name: 'Relative Force',       unit: 'N/kg',tool: 'Force Plate', lowerBetter: false },
+    { id: 'peakForce',    name: 'Peak Force',           unit: 'N',   tool: 'Force Plate', lowerBetter: false },
+    { id: 'sprint10',     name: '10 m',                 unit: 's',   tool: 'OVR Gates', lowerBetter: true },
+    { id: 'sprint30',     name: '30 m',                 unit: 's',   tool: 'OVR Gates', lowerBetter: true },
+    { id: 'fly20',        name: 'Flying 20',            unit: 's',   tool: 'Freelap', lowerBetter: true },
+    { id: 'fly30',        name: 'Flying 30',            unit: 's',   tool: 'OVR Gates', lowerBetter: true, readiness: false },
+    { id: 'maxVelocity',  name: 'Top Speed',            unit: 'm/s', tool: 'OVR Gates', lowerBetter: false },
+    { id: 'speedDecay',   name: 'Speed Decay',          unit: '%',   tool: 'OVR Gates', lowerBetter: true },
+    { id: 'keiserWatts',  name: 'Keiser Peak Watts',    unit: 'W',   tool: 'Keiser', lowerBetter: false },
+    { id: 'fvProfile',    name: 'F-V Profile (slope)',  unit: '',    tool: 'Voltra', lowerBetter: false },
+    { id: 'criticalPower',name: 'Stryd Critical Power', unit: 'W',   tool: 'Stryd', lowerBetter: false },
+    { id: 'runEconomy',   name: 'Running Economy',      unit: '',    tool: 'Stryd', lowerBetter: false },
+    { id: 'gct',          name: 'Ground Contact Time',  unit: 'ms',  tool: 'Stryd', lowerBetter: true },
+    { id: 'broadTest',    name: 'Broad Jump',           unit: 'm',   tool: 'Vert Tester', lowerBetter: false },
+  ];
+
+  /* --------------------------------------------------------------------------
+     EXERCISE LIBRARY — `cat` drives per-set auto-regulation.
+     ------------------------------------------------------------------------ */
+  const EX = (name, cat, equip) => ({ name, cat, equip });
+  const EXERCISES = [
+    // Strength
+    EX('Back Squat', 'strength', 'Olympic Bar'), EX('Front Squat', 'strength', 'Olympic Bar'),
+    EX('Box Squat', 'strength', 'Olympic Bar'), EX('Deadlift', 'strength', 'Olympic Bar'),
+    EX('Trap-Bar Deadlift', 'strength', 'Trap Bar'), EX('Bench Press', 'strength', 'Olympic Bar'),
+    EX('Incline Bench', 'strength', 'Olympic Bar'), EX('RDL', 'strength', 'Olympic Bar'),
+    EX('Heavy RDL', 'strength', 'Olympic Bar'), EX('Weighted Chin-up', 'strength', 'Olympic Bar'),
+    EX('Nordic Curl', 'strength', 'Bodyweight'), EX('Belt Squat (heavy)', 'strength', 'Belt Squat'),
+    EX('Belt-Squat March', 'strength', 'Belt Squat'), EX('Voltra Isometric Hold', 'iso', 'Voltra'),
+    EX('Weighted Plank', 'iso', 'Bodyweight'), EX('Pallof / Anti-rotation', 'strength', 'Cable'),
+    EX('Copenhagen Plank', 'iso', 'Bodyweight'),
+    // Strongman
+    EX('Yoke Carry', 'strength', 'Strongman'), EX('Heavy Farmer Carry', 'strength', 'Strongman'),
+    EX('Suitcase Carry', 'strength', 'Strongman'), EX('Sandbag Load-to-Shoulder', 'strength', 'Strongman'),
+    EX('Stone-to-Platform', 'strength', 'Strongman'), EX('Heavy Sled Drag', 'strength', 'Sleds'),
+    EX('Speed Farmer Carry', 'power', 'Strongman'), EX('Explosive Sandbag Load', 'power', 'Strongman'),
+    EX('Med-ball Rotational Throw', 'power', 'Strongman'),
+    // Power
+    EX('Power Clean', 'power', 'Olympic Bar'), EX('Power Clean (blocks)', 'power', 'Olympic Bar'),
+    EX('Hang Clean', 'power', 'Olympic Bar'), EX('Push Press', 'power', 'Olympic Bar'),
+    EX('Trap-Bar Jump', 'power', 'Trap Bar'), EX('Trap-Bar Jump Shrug', 'power', 'Trap Bar'),
+    EX('Jump Squat (barbell)', 'power', 'Olympic Bar'), EX('Box Squat (dynamic)', 'power', 'Olympic Bar'),
+    EX('Keiser Jump Squat', 'power', 'Keiser'), EX('Keiser Split-Squat (power)', 'power', 'Keiser'),
+    EX('Voltra Squat (velocity)', 'power', 'Voltra'), EX('Voltra Explosive Press', 'power', 'Voltra'),
+    EX('Voltra Reactive (catch-release)', 'power', 'Voltra'), EX('Explosive Bench (Jammer)', 'power', 'Jammer Arms'),
+    EX('Jammer Press (explosive)', 'power', 'Jammer Arms'), EX('Jammer Single-arm Press', 'power', 'Jammer Arms'),
+    // Speed / Sprint
+    EX('Acceleration Wickets', 'speed', 'Track'), EX('Block Starts', 'speed', 'Track'),
+    EX('Hill Sprints', 'speed', 'Track'), EX('Acceleration Sprint', 'speed', 'Track'),
+    EX('Flying 20', 'speed', 'Freelap'), EX('Flying 30', 'speed', 'OVR Gates'),
+    EX('Flying 40', 'speed', 'OVR Gates'), EX('Flying 50', 'speed', 'OVR Gates'),
+    EX('Heavy Sled Push', 'speed', 'Sleds'), EX('Light Sled Sprint', 'speed', 'Sleds'),
+    EX('Voltra Resisted Sprint', 'speed', 'Voltra'), EX('Voltra/Band Overspeed', 'speed', 'Voltra'),
+    EX('150 m rep', 'speed', 'Track'), EX('200 m rep', 'speed', 'Track'), EX('300 m rep', 'speed', 'Track'),
+    // Plyo
+    EX('Pogo Hops', 'plyo', 'Bodyweight'), EX('Low Box Jump', 'plyo', 'Bodyweight'),
+    EX('Depth Jump', 'plyo', 'Bodyweight'), EX('Drop Jump', 'plyo', 'Bodyweight'),
+    EX('Broad Jump', 'plyo', 'Bodyweight'), EX('Single-leg Bounds', 'plyo', 'Bodyweight'),
+    EX('Reactive Hurdle Hops', 'plyo', 'Bodyweight'), EX('Ankle Pogos', 'plyo', 'Bodyweight'),
+    EX('Depth Jump → Box Jump complex', 'plyo', 'Bodyweight'),
+    // Conditioning
+    EX('Zone 2 Run', 'zone2', 'Track'), EX('Zone 2 BikeErg', 'zone2', 'BikeErg'),
+    EX('Zone 2 RowErg', 'zone2', 'RowErg'), EX('Zone 2 SkiErg', 'zone2', 'SkiErg'),
+    EX('Zone 1 Shakeout', 'zone2', 'Track'), EX('Extensive Tempo', 'zone2', 'Track'),
+    EX('Threshold Run (LT2)', 'threshold', 'Track'), EX('Threshold Bike (LT2)', 'threshold', 'BikeErg'),
+    EX('VO₂ Intervals', 'vo2', 'Mixed'), EX('Station Sim (HYROX)', 'vo2', 'Mixed'),
+    EX('Compromised-run Intervals', 'vo2', 'Track'), EX('COD Ladder (5-10-5 / T-drill)', 'speed', 'Track'),
+    EX('RSA (repeat sprint)', 'speed', 'Track'),
+  ];
+
+  const CATEGORIES = {
+    strength:  { label: 'Max Strength',      restSec: 240, targetRPE: [7, 9],  velDropStop: null, log: ['load', 'reps', 'rpe'] },
+    power:     { label: 'Power / Ballistic', restSec: 180, targetRPE: [6, 8],  velDropStop: 10,   log: ['load', 'reps', 'velocity', 'rpe'] },
+    iso:       { label: 'Isometric',         restSec: 180, targetRPE: [8, 10], velDropStop: null, log: ['load', 'holdSec', 'rpe'] },
+    speed:     { label: 'Sprint / Speed',    restSec: 300, targetRPE: [9, 10], velDropStop: 3,    log: ['distance', 'time', 'rpe'] },
+    plyo:      { label: 'Plyometric',        restSec: 120, targetRPE: [7, 9],  velDropStop: null, log: ['contacts', 'rsi', 'rpe'] },
+    zone2:     { label: 'Zone 2 Aerobic',    restSec: 0,   targetRPE: [2, 4],  velDropStop: null, log: ['minutes', 'rpe'] },
+    threshold: { label: 'Threshold',         restSec: 90,  targetRPE: [6, 7],  velDropStop: null, log: ['minutes', 'rpe'] },
+    vo2:       { label: 'VO₂ / Intervals',   restSec: 120, targetRPE: [8, 10], velDropStop: null, log: ['minutes', 'rpe'] },
+  };
+
+  /* --------------------------------------------------------------------------
+     MACROCYCLE — 5 phases across 32 weeks. Exact week ranges, drivers,
+     MED secondaries, weekly diagnostic, deload weeks.
+     ------------------------------------------------------------------------ */
+  const PHASES = [
+    { id: 1, name: 'Build the Engine', weeks: [1, 8],  driver: 'Aerobic base + general strength',
+      mission: 'Close the 3-minute aerobic-floor gap and build a bigger chassis to load later.',
+      mix: { zone2: 25, threshold: 25, strength: 30, speed: 10, power: 5, plyo: 5 },
+      weightPct: [75, 85], dose: { sprintM: [250, 400], thresholdMin: [60, 90], zone2Min: [180, 300], plyoContacts: [20, 40] },
+      primary: 'strength', secondary: ['threshold', 'zone2', 'speed'], diagnostic: 'criticalPower', diagName: 'Stryd Critical Power + CMJ', deloads: [4, 8] },
+    { id: 2, name: 'Maximum Strength', weeks: [9, 14], driver: 'Maximal force',
+      mission: 'Raise the force ceiling everything else expresses from. Strongman for structural robustness.',
+      mix: { strength: 45, power: 20, speed: 15, threshold: 10, zone2: 10 },
+      weightPct: [90, 97], dose: { sprintM: [300, 500], thresholdMin: [30, 45], zone2Min: [90, 150], plyoContacts: [40, 60] },
+      primary: 'strength', secondary: ['speed', 'threshold', 'zone2'], diagnostic: 'isoPull', diagName: 'IMTP peak / relative force', deloads: [12] },
+    { id: 3, name: 'Convert to Power', weeks: [15, 20], driver: 'Rate of force development',
+      mission: 'Turn new strength into fast force. This is where vertical jump and acceleration climb.',
+      mix: { power: 40, speed: 25, strength: 15, threshold: 10, zone2: 10 },
+      weightPct: [50, 70], dose: { sprintM: [500, 700], thresholdMin: [20, 40], zone2Min: [90, 120], plyoContacts: [60, 100] },
+      primary: 'power', secondary: ['speed', 'threshold', 'zone2'], diagnostic: 'keiserWatts', diagName: 'Keiser peak watts + CMJ + Voltra F-V', deloads: [18] },
+    { id: 4, name: 'Maximum Speed', weeks: [21, 26], driver: 'Max velocity + speed-endurance',
+      mission: 'The phase that moves your 100/200/400 and your acceleration for football.',
+      mix: { speed: 45, power: 15, strength: 10, threshold: 5, zone2: 25 },
+      weightPct: [80, 85], dose: { sprintM: [700, 1000], thresholdMin: [20, 30], zone2Min: [90, 120], plyoContacts: [100, 140] },
+      primary: 'speed', secondary: ['power', 'threshold', 'zone2'], diagnostic: 'fly30', diagName: 'OVR Flying 30 + speed-decay', deloads: [24] },
+    { id: 5, name: 'Competition / Peak', weeks: [27, 32], driver: 'Sport-specific expression + peaking',
+      mission: 'Everything converts into the demand of your A-race. Sharpen weeks 27–30, taper 31–32.',
+      mix: { speed: 40, power: 20, threshold: 15, strength: 15, zone2: 10 },
+      weightPct: [70, 80], dose: { sprintM: [300, 700], thresholdMin: [10, 20], zone2Min: [60, 90], plyoContacts: [40, 60] },
+      primary: 'speed', secondary: ['power', 'threshold'], diagnostic: 'fly30', diagName: 'Sport-specific test', deloads: [31, 32] },
+  ];
+
+  /* --------------------------------------------------------------------------
+     UNIVERSAL WEEKLY ARCHITECTURE — High/Low (Charlie Francis). NEVER changes;
+     only the content of each slot shifts by phase. High-CNS on Mon/Wed/Fri.
+     ------------------------------------------------------------------------ */
+  const WEEK_ARCH = [
+    { day: 'Mon', load: 'HIGH',    am: 'Speed / Power (CNS)',        pm: 'Max Strength' },
+    { day: 'Tue', load: 'LOW',     am: 'Aerobic Z2',                pm: 'Threshold' },
+    { day: 'Wed', load: 'HIGH',    am: 'Speed-Endurance / Power',   pm: 'Strength' },
+    { day: 'Thu', load: 'LOW',     am: 'Aerobic Z2',                pm: 'Mobility + plyo prep' },
+    { day: 'Fri', load: 'HIGH',    am: 'Max Velocity / Power',      pm: 'Strength' },
+    { day: 'Sat', load: 'MED-LOW', am: 'Long aerobic OR hybrid',    pm: 'Strongman' },
+    { day: 'Sun', load: 'RECOVERY',am: 'Full recovery / opt. Z1',   pm: '—' },
+  ];
+  const HIGH_DAYS = ['Mon', 'Wed', 'Fri'];
+
+  /* --------------------------------------------------------------------------
+     READINESS GATE thresholds (from the doc). CMJ vs rolling 7-day baseline is
+     the primary readout; hard gates can force a downgrade.
+     ------------------------------------------------------------------------ */
+  const GATE = {
+    cmj:  { greenWithinPct: 5, amberDownPct: 10 },   // >10% down = red
+    hard: {
+      rhrOverBaseline: 7,        // +7 bpm over baseline
+      sleepMinH: 6,              // <6h
+      subjMin: 5,                // subjective readiness <5/10
+      bwOvernightDropPct: 2,     // >2% overnight bodyweight drop
+    },
+    action: {
+      green: 'Full session as written.',
+      amber: 'Keep intensity, cut volume 20–30%, drop the last hard set.',
+      red:   'Convert to Z1 + mobility + recovery only. No CNS work.',
+    },
+  };
+
+  /* --------------------------------------------------------------------------
+     TRAINING ZONES (% HRmax) — calibrate to Stryd Critical Power after testing.
+     ------------------------------------------------------------------------ */
+  const ZONES = [
+    { id: 'Z1', name: 'Recovery', pct: [0, 72] },
+    { id: 'Z2', name: 'Aerobic base', pct: [72, 80] },
+    { id: 'LT2', name: 'Threshold', pct: [86, 90] },
+    { id: 'VO2', name: 'VO₂', pct: [93, 97] },
+  ];
+  // Stryd running-power zones as % of Critical Power (seed from CP after testing).
+  const STRYD_ZONES = [
+    { id: 'Z1', name: 'Easy / recovery', pct: [0.65, 0.80] },
+    { id: 'Z2', name: 'Aerobic base',    pct: [0.80, 0.90] },
+    { id: 'LT2', name: 'Threshold (CP ±3%)', pct: [0.97, 1.03] },
+    { id: 'VO2', name: 'VO₂',             pct: [1.00, 1.15] },
+    { id: 'REP', name: 'Rep / speed',     pct: [1.15, 1.28] },
+  ];
+
+  /* --------------------------------------------------------------------------
+     RECOVERY + NUTRITION anchors (System 7).
+     ------------------------------------------------------------------------ */
+  const RECOVERY = {
+    green: ['Full session cleared — fuel the CNS work', 'Normal mobility warm-up', 'Peri: 40–60g carb + 20g protein pre'],
+    amber: ['Cut volume 20–30%, drop last hard set', 'Sauna 3–12 min post', 'Compression 15–20 min', 'Prioritize 8–9h sleep, fixed wake time'],
+    red:   ['Z1 + mobility + recovery only — no CNS work', 'Cold 2–3 min (away from strength sessions)', 'Extra sleep, +hydration, protein 2.0–2.2 g/kg', 'Reassess any sharp/localized pain before loading'],
+  };
+  const NUTRITION = {
+    protein: '2.0–2.2 g/kg/day across 4–5 feeds (~0.4 g/kg/feed)',
+    carbsHigh: 'HIGH days ~6–8 g/kg',
+    carbsLow: 'LOW days ~3–4 g/kg',
+    peri: '40–60g carb + 20g protein pre high-CNS; 30–40g protein + carb within 45 min post',
+    hydration: 'Sodium 800–1200 mg/L in sweat-heavy sessions; weigh in/out on long aerobic',
+    micros: 'Iron (monitor ferritin), vitamin D, magnesium, omega-3, creatine 5 g/day',
+  };
+
+  return { GOALS, METRICS, EXERCISES, CATEGORIES, PHASES, WEEK_ARCH, HIGH_DAYS, GATE, ZONES, STRYD_ZONES, RECOVERY, NUTRITION };
+})();
+
+/* ============================================================================
+   program.js — The prescribed day-by-day sessions for all 5 phases, plus the
+   Phase-5 sport variants. Transcribed from the KNCT Hybrid Apex System doc.
+   Each day: { load, am:{focus,desc,items}, pm:{focus,desc,items} }.
+   An `item` is { name, cat, sets, reps, load, rest, note } — `sets/reps` may be
+   distances/minutes for conditioning. Loaded into the Log with one tap.
+   ========================================================================== */
+
+const PROGRAM = (() => {
+  // exercise item helper
+  const e = (name, cat, sets, reps, load, rest, note) => ({ name, cat, sets, reps, load, rest, note });
+
+  const TEMPLATES = {
+    /* ------------------------------- PHASE 1 ------------------------------- */
+    1: {
+      Mon: { load: 'HIGH',
+        am: { focus: 'Speed Maintenance + Foundation', desc: 'Readiness gate (HRV + 3× CMJ). WU 15 min: 800m Z1 jog → leg swings → A/B-skips, dribbles 2×20m → 3× build-ups. Potentiation: 3× pogo hops ×10 (force plate, RSI>2.0).',
+          items: [ e('Acceleration Wickets', 'speed', 6, '20 m', '95–98%', '3–4 min', '3-pt start, Freelap every rep — log 10m split + top speed. Total 120 m.') ] },
+        pm: { focus: 'Strength (Olympic Bar + Belt Squat + Trap Bar)', desc: 'Top-set bar velocity (if VBT), session RPE.',
+          items: [ e('Back Squat', 'strength', 5, 3, '82–85%', '3 min', '31X1 tempo, bar-speed focus'),
+                   e('Trap-Bar Deadlift', 'strength', 4, 4, '80%', '3 min', 'Explosive concentric'),
+                   e('Bench Press', 'strength', 5, 3, '80%', '2.5 min', 'Controlled'),
+                   e('Belt-Squat March', 'strength', 3, '8 ea/leg', 'moderate', '90 s', 'Trunk stiffness'),
+                   e('Nordic Curl', 'strength', 3, 6, 'BW', '2 min', 'Eccentric hamstring armor'),
+                   e('Pallof / Anti-rotation', 'strength', 3, 12, '—', '60 s', 'Core') ] } },
+      Tue: { load: 'LOW',
+        am: { focus: 'Zone 2 (floor-builder)', desc: 'Resist speeding up — this is the aerobic-floor deposit.',
+          items: [ e('Zone 2 Run', 'zone2', 1, '60–75 min', '~5:00–5:30/km · HR 72–80%', '—', 'Nasal-breathing test passes') ] },
+        pm: { focus: 'Threshold (Stryd-anchored)', desc: 'Hold Stryd power in CP band ±3%. Threshold volume 24 min.',
+          items: [ e('Threshold Run (LT2)', 'threshold', 4, '6 min', 'LT2 ~4:12–4:25/km · HR 86–90%', '90 s float', 'Bike/Row swap OK if legs flag') ] } },
+      Wed: { load: 'HIGH',
+        am: { focus: 'Extensive Tempo (aerobic-power bridge)', desc: 'Smooth, submaximal — capillary density + mechanics, no CNS cost. 1000 m volume.',
+          items: [ e('Extensive Tempo', 'zone2', 2, '5×100 m', '70–75%', 'walk 100m / 3 min sets', 'Grass/track') ] },
+        pm: { focus: 'Strength (Squat variation + posterior chain)', desc: 'Carry load, chin-up progression.',
+          items: [ e('Front Squat', 'strength', 4, 4, '78%', '3 min', ''),
+                   e('RDL', 'strength', 4, 6, '75%', '2.5 min', ''),
+                   e('Weighted Chin-up', 'strength', 4, 5, '+load', '2 min', ''),
+                   e('Jammer Press (explosive)', 'power', 4, '5 ea', 'moderate', '90 s', ''),
+                   e('Heavy Farmer Carry', 'strength', 3, '40 m', 'heavy', '90 s', '') ] } },
+      Thu: { load: 'LOW',
+        am: { focus: 'Recovery Aerobic (off legs)', desc: 'Bank aerobic volume, low impact.',
+          items: [ e('Zone 2 BikeErg', 'zone2', 1, '45–60 min', 'Z2', '—', 'or SkiErg') ] },
+        pm: { focus: 'Mobility + Plyo Prep', desc: 'Grooving stiffness, not chasing height. Force plate every jump.',
+          items: [ e('Ankle Pogos', 'plyo', 2, 10, 'BW', '—', 'RSI trend'),
+                   e('Low Box Jump', 'plyo', 2, 5, 'step down', '—', '20 low-intensity contacts') ] } },
+      Fri: { load: 'HIGH',
+        am: { focus: 'Neural Primer + Power maint', desc: 'WU as Mon. Full recovery. Sprint ~120 m.',
+          items: [ e('Hill Sprints', 'speed', 4, '30 m', '95%', 'full', 'Safer force output, low hamstring risk'),
+                   e('Keiser Jump Squat', 'power', 2, 3, '25%', 'full', 'Power maintenance touch') ] },
+        pm: { focus: 'Strength (whole-body, power-biased)', desc: 'Clean bar velocity, jump peak power (Keiser).',
+          items: [ e('Power Clean (blocks)', 'power', 5, 3, '70–75%', '2.5 min', ''),
+                   e('Box Squat', 'strength', 4, 3, '80%', '3 min', ''),
+                   e('Incline Bench', 'strength', 4, 5, '75%', '2 min', ''),
+                   e('Trap-Bar Jump', 'power', 4, 3, '20–30%', '2 min', ''),
+                   e('Copenhagen Plank', 'iso', 3, '20 s ea', 'BW', '60 s', '') ] } },
+      Sat: { load: 'MED-LOW',
+        am: { focus: 'Long Aerobic', desc: 'Biggest single aerobic-floor deposit of the week. Last 10 min drift to top of Z2.',
+          items: [ e('Zone 2 Run', 'zone2', 1, '75–90 min', 'Z2', '—', '') ] },
+        pm: { focus: 'Strongman (structural robustness)', desc: 'Moderate loads, perfect posture — trunk stiffness + grip, no eccentric damage.',
+          items: [ e('Yoke Carry', 'strength', 4, '20 m', 'moderate', '—', ''),
+                   e('Sandbag Load-to-Shoulder', 'strength', 4, 5, 'moderate', '—', ''),
+                   e('Heavy Sled Drag', 'strength', 4, '30 m', 'moderate', '—', ''),
+                   e('Suitcase Carry', 'strength', 3, '30 m ea', 'moderate', '—', '') ] } },
+      Sun: { load: 'RECOVERY',
+        am: { focus: 'Recovery', desc: 'Optional 20–30 min Z1 shakeout or swim. Sauna 3×12 min. Mobility. Full nutrition + sleep priority. Weekly review: run diagnostic (Stryd CP + CMJ).', items: [] },
+        pm: { focus: '—', desc: '', items: [] } },
+    },
+
+    /* ------------------------------- PHASE 2 ------------------------------- */
+    2: {
+      Mon: { load: 'HIGH',
+        am: { focus: 'Acceleration', desc: 'WU 15 min. Full recovery 3–4 min. ~160 m.',
+          items: [ e('Heavy Sled Push', 'speed', 6, '20 m', '75–90% BW', '3–4 min', 'Pure accel/force'),
+                   e('Acceleration Sprint', 'speed', 2, '20 m', '95%', 'full', 'Unresisted') ] },
+        pm: { focus: 'Max Strength Lower', desc: 'IMTP/Voltra peak force, top-set velocity — guard >0.30 m/s, stop if grinding.',
+          items: [ e('Back Squat', 'strength', 6, 2, '90–93%', '4 min', ''),
+                   e('Trap-Bar Deadlift', 'strength', 5, 2, '90%', '4 min', ''),
+                   e('Voltra Isometric Hold', 'iso', 4, 'max 5 s', 'max', '3 min', 'Mid-thigh'),
+                   e('Belt Squat (heavy)', 'strength', 4, 5, 'heavy', '2.5 min', ''),
+                   e('Weighted Plank', 'iso', 3, '30 s', 'load', '90 s', '') ] } },
+      Tue: { load: 'LOW',
+        am: { focus: 'MED Aerobic', desc: 'Recovering from Monday near-max load — genuinely easy.',
+          items: [ e('Zone 2 Run', 'zone2', 1, '45–55 min', 'HR 72–80%', '—', '') ] },
+        pm: { focus: 'Optional Z1 + mobility', desc: '', items: [ e('Zone 1 Shakeout', 'zone2', 1, '20 min', 'Z1', '—', 'optional') ] } },
+      Wed: { load: 'HIGH',
+        am: { focus: 'Power Bridge (Keiser/Voltra)', desc: 'Ballistic, fresh, full recovery.',
+          items: [ e('Keiser Jump Squat', 'power', 5, 3, '30%', 'full', 'Peak-watt focus'),
+                   e('Voltra Explosive Press', 'power', 4, 4, 'power mode', 'full', '') ] },
+        pm: { focus: 'Max Strength Upper + posterior', desc: 'Keiser peak watts, bench/chin loads.',
+          items: [ e('Bench Press', 'strength', 5, 3, '88–90%', '3 min', ''),
+                   e('Weighted Chin-up', 'strength', 5, 3, 'heavy', '3 min', ''),
+                   e('Heavy RDL', 'strength', 4, 4, '85%', '3 min', ''),
+                   e('Jammer Single-arm Press', 'power', 3, '5 ea', 'heavy', '90 s', ''),
+                   e('Nordic Curl', 'strength', 3, 5, 'weighted if able', '2 min', '') ] } },
+      Thu: { load: 'LOW',
+        am: { focus: "MED Threshold (week's only one)", desc: 'Bike or run. ~24 min.',
+          items: [ e('Threshold Run (LT2)', 'threshold', 3, '8 min', 'LT2', '2 min float', '') ] },
+        pm: { focus: 'Mobility + 30 contacts low plyo', desc: 'Force-plate monitored.',
+          items: [ e('Low Box Jump', 'plyo', 1, 30, 'BW', '—', 'Box jumps, pogos — low intensity') ] } },
+      Fri: { load: 'HIGH',
+        am: { focus: "Max-speed touch (week's only true speed)", desc: 'Protect top-end while strength dominates. ~200 m incl. run-ins.',
+          items: [ e('Flying 20', 'speed', 4, '20 m', '100%', 'full 4–5 min', 'Freelap/OVR') ] },
+        pm: { focus: 'Max Strength total-body', desc: 'Clean load, OVR flying-20 velocity.',
+          items: [ e('Power Clean', 'power', 5, 2, '80–83%', '3 min', ''),
+                   e('Front Squat', 'strength', 5, 3, '85%', '3 min', ''),
+                   e('Push Press', 'power', 4, 3, '85%', '3 min', ''),
+                   e('Trap-Bar Jump Shrug', 'power', 4, 3, '30%', '2 min', '') ] } },
+      Sat: { load: 'MED',
+        am: { focus: 'Heavy Strongman', desc: 'Force + robustness, low eccentric cost.',
+          items: [ e('Yoke Carry', 'strength', 5, '20 m', 'heavy', '—', ''),
+                   e('Heavy Sled Drag', 'strength', 5, '25 m', 'heavy', '—', ''),
+                   e('Suitcase Carry', 'strength', 4, '30 m', 'heavy', '—', ''),
+                   e('Stone-to-Platform', 'strength', 4, 3, 'heavy', '—', '') ] },
+        pm: { focus: 'Z2 cross-train', desc: 'Hold the aerobic floor.',
+          items: [ e('Zone 2 BikeErg', 'zone2', 1, '40–50 min', 'Z2', '—', 'bike/ski') ] } },
+      Sun: { load: 'RECOVERY', am: { focus: 'Recovery', desc: 'Sauna/cold contrast, compression, mobility, sleep. Diagnostic: IMTP peak force + CMJ.', items: [] }, pm: { focus: '—', desc: '', items: [] } },
+    },
+
+    /* ------------------------------- PHASE 3 ------------------------------- */
+    3: {
+      Mon: { load: 'HIGH',
+        am: { focus: 'Max Velocity + Ballistic Power', desc: 'Chase top-end while fresh. ~250 m.',
+          items: [ e('Flying 30', 'speed', 4, '30 m', '100%', 'full 5–6 min', 'OVR every rep'),
+                   e('Acceleration Sprint', 'speed', 2, '30 m', '95%', 'full', '') ] },
+        pm: { focus: 'Ballistic Power (Keiser + Olympic)', desc: 'OVR flying-30, Keiser peak watts, CMJ.',
+          items: [ e('Power Clean', 'power', 5, 3, '75–80%', '3 min', 'Max intent'),
+                   e('Keiser Jump Squat', 'power', 5, 4, '30%', '2.5 min', 'Peak-watt PRs'),
+                   e('Jump Squat (barbell)', 'power', 4, 3, '20–30%', '2 min', 'Velocity'),
+                   e('Voltra Squat (velocity)', 'power', 4, 4, '~50%', '2 min', 'Bar-speed target') ] } },
+      Tue: { load: 'LOW-MED',
+        am: { focus: 'Reactive Plyometrics (60–80 contacts)', desc: 'Full recovery, quality only. RSI per contact, GCT.',
+          items: [ e('Depth Jump', 'plyo', 4, 4, 'box 40–50 cm', 'full', 'RSI>2.2'),
+                   e('Broad Jump', 'plyo', 4, 3, 'BW', 'full', ''),
+                   e('Single-leg Bounds', 'plyo', 3, '20 m', 'BW', 'full', ''),
+                   e('Reactive Hurdle Hops', 'plyo', 3, 6, 'BW', 'full', '') ] },
+        pm: { focus: 'Z2', desc: '', items: [ e('Zone 2 Run', 'zone2', 1, '40 min', 'Z2', '—', 'easy') ] } },
+      Wed: { load: 'HIGH',
+        am: { focus: 'Speed-Endurance (400m development)', desc: 'Builds the speed reserve your 400 needs. ~450 m.',
+          items: [ e('Flying 50', 'speed', 3, '50 m', '92–95%', 'full', ''),
+                   e('150 m rep', 'speed', 2, '150 m', '92–95%', '6–8 min', '') ] },
+        pm: { focus: 'Dynamic Effort Strength', desc: 'Bar velocity must stay >0.8 m/s on DE work.',
+          items: [ e('Box Squat (dynamic)', 'power', 8, 2, '55–60%', '90 s', ''),
+                   e('Trap-Bar Jump', 'power', 5, 3, '25%', '2 min', ''),
+                   e('Explosive Bench (Jammer)', 'power', 6, 3, '55%', '90 s', ''),
+                   e('Push Press', 'power', 4, 3, '65%', '2 min', '') ] } },
+      Thu: { load: 'LOW',
+        am: { focus: "Threshold MED (week's only one)", desc: '',
+          items: [ e('Threshold Run (LT2)', 'threshold', 2, '10 min', 'LT2', '2 min float', '') ] },
+        pm: { focus: 'Mobility + soft-tissue', desc: 'Legs fresh for Friday.', items: [] } },
+      Fri: { load: 'HIGH',
+        am: { focus: 'Accel-Power + Overspeed', desc: 'Full recovery throughout. ~180 m + assisted.',
+          items: [ e('Voltra Resisted Sprint', 'speed', 4, '20 m', 'damper', 'full', 'resisted'),
+                   e('Voltra/Band Overspeed', 'speed', 2, '20 m', 'assisted', 'full', 'overspeed'),
+                   e('Light Sled Sprint', 'speed', 3, '20 m', '10–20% BW', 'full', 'max velocity') ] },
+        pm: { focus: 'Reactive Strength + Olympic', desc: 'Overspeed velocity, complex jump height.',
+          items: [ e('Hang Clean', 'power', 5, 2, '78%', '3 min', ''),
+                   e('Depth Jump → Box Jump complex', 'plyo', 4, 3, 'BW', '2.5 min', ''),
+                   e('Keiser Split-Squat (power)', 'power', 4, '4 ea', '35%', '2 min', ''),
+                   e('Voltra Reactive (catch-release)', 'power', 3, 5, 'mod', '2 min', '') ] } },
+      Sat: { load: 'MED',
+        am: { focus: 'Dynamic Strongman', desc: 'Speed of movement > load.',
+          items: [ e('Heavy Sled Push', 'power', 6, '20 m', 'fast', '—', 'fast sled push'),
+                   e('Explosive Sandbag Load', 'power', 5, 3, 'explosive', '—', ''),
+                   e('Med-ball Rotational Throw', 'power', 4, '5 ea', 'explosive', '—', ''),
+                   e('Speed Farmer Carry', 'power', 4, '30 m', 'speed', '—', '') ] },
+        pm: { focus: 'Z2', desc: 'Second aerobic maintenance dose.', items: [ e('Zone 2 Run', 'zone2', 1, '45–60 min', 'Z2', '—', 'easy') ] } },
+      Sun: { load: 'RECOVERY', am: { focus: 'Recovery', desc: 'Full protocol. Diagnostic: Keiser peak watts + CMJ + Voltra F-V profile (shifting left = more force, right = more velocity — adjust load emphasis).', items: [] }, pm: { focus: '—', desc: '', items: [] } },
+    },
+
+    /* ------------------------------- PHASE 4 ------------------------------- */
+    4: {
+      Mon: { load: 'HIGH',
+        am: { focus: 'Pure Max Velocity', desc: 'Highest-CNS day of the week. WU 25 min thorough. Stop the moment velocity drops >3% off best. ~350 m.',
+          items: [ e('Flying 30', 'speed', 4, '30 m', '100%', 'full 6–8 min', 'OVR every rep'),
+                   e('Flying 40', 'speed', 3, '40 m', '100%', 'full 6–8 min', '') ] },
+        pm: { focus: 'Power maintenance (short)', desc: 'In-and-out.',
+          items: [ e('Keiser Jump Squat', 'power', 3, 3, '30%', 'full', ''),
+                   e('Ankle Pogos', 'plyo', 1, 20, 'BW', '—', 'quality contacts') ] } },
+      Tue: { load: 'LOW',
+        am: { focus: 'Recovery + Aerobic MED', desc: 'Genuinely easy. Speed phases live or die on recovery quality.',
+          items: [ e('Zone 2 Run', 'zone2', 1, '40 min', 'Z2', '—', 'easy') ] },
+        pm: { focus: 'Mobility + contrast therapy', desc: '', items: [] } },
+      Wed: { load: 'HIGH',
+        am: { focus: 'Speed-Endurance (400m engine)', desc: 'Specific 400m/football repeat-sprint quality. ~810 m.',
+          items: [ e('150 m rep', 'speed', 3, '150 m', '93%', 'full 8 min', ''),
+                   e('300 m rep', 'speed', 1, '300 m', '90%', 'full', ''),
+                   e('Flying 30', 'speed', 2, '60 m', '100%', 'full', 'finish sharp') ] },
+        pm: { focus: 'Strength maintenance', desc: '150/300 times, fade between reps.',
+          items: [ e('Back Squat', 'strength', 3, 3, '82%', '3 min', ''),
+                   e('Power Clean', 'power', 3, 2, '80%', '3 min', ''),
+                   e('Bench Press', 'strength', 3, 3, '82%', '2.5 min', '') ] } },
+      Thu: { load: 'MED',
+        am: { focus: 'Max-quality Plyometrics (100–120 contacts)', desc: 'Force plate every contact — chase RSI PRs.',
+          items: [ e('Depth Jump', 'plyo', 5, 4, 'box', 'full', ''),
+                   e('Drop Jump', 'plyo', 4, 4, 'box', 'full', ''),
+                   e('Single-leg Bounds', 'plyo', 4, '20 m', 'BW', 'full', ''),
+                   e('Reactive Hurdle Hops', 'plyo', 4, 6, 'BW', 'full', '') ] },
+        pm: { focus: "Threshold (only one)", desc: '',
+          items: [ e('Threshold Run (LT2)', 'threshold', 2, '8 min', 'LT2', '2 min', '') ] } },
+      Fri: { load: 'HIGH',
+        am: { focus: 'Acceleration + Overspeed', desc: 'Full recovery throughout. ~200 m + assisted.',
+          items: [ e('Block Starts', 'speed', 4, '20 m', '100%', 'full', ''),
+                   e('Acceleration Sprint', 'speed', 3, '30 m', '100%', 'full', ''),
+                   e('Voltra/Band Overspeed', 'speed', 3, '20 m', 'assisted', 'full', '') ] },
+        pm: { focus: 'Reactive power maintenance', desc: 'Short.',
+          items: [ e('Keiser Split-Squat (power)', 'power', 3, '3 ea', '35%', '2 min', ''),
+                   e('Voltra Reactive (catch-release)', 'power', 3, 4, 'mod', '2 min', '') ] } },
+      Sat: { load: 'MED',
+        am: { focus: 'Extended Speed-Endurance', desc: '~500 m.',
+          items: [ e('200 m rep', 'speed', 2, '200 m', '90%', 'full', ''),
+                   e('Flying 50', 'speed', 2, '50 m', '100%', 'full', '') ] },
+        pm: { focus: 'Z2', desc: 'Second aerobic dose.', items: [ e('Zone 2 Run', 'zone2', 1, '40–50 min', 'Z2', '—', 'easy') ] } },
+      Sun: { load: 'RECOVERY', am: { focus: 'Recovery', desc: 'Full protocol. Diagnostic: OVR flying-30 + CMJ. Compare speed-decay to Phase 3 baseline.', items: [] }, pm: { focus: '—', desc: '', items: [] } },
+    },
+
+    /* --------------------- PHASE 5 (default = Track variant) --------------- */
+    5: {
+      Mon: { load: 'HIGH', am: { focus: 'Race-model reps', desc: 'e.g. 4×150m @ 400m goal pace. + CNS-priming lifts 3×2 @80%.',
+          items: [ e('150 m rep', 'speed', 4, '150 m', 'goal pace', 'full', ''), e('Back Squat', 'strength', 3, 2, '80%', '3 min', 'CNS primer') ] },
+        pm: { focus: '—', desc: '', items: [] } },
+      Tue: { load: 'LOW', am: { focus: 'Z2', desc: '', items: [ e('Zone 2 Run', 'zone2', 1, '40 min', 'Z2', '—', '') ] }, pm: { focus: '—', desc: '', items: [] } },
+      Wed: { load: 'HIGH', am: { focus: 'Speed-endurance modeling', desc: '300m + 200m + 100m descending, full recovery.',
+          items: [ e('300 m rep', 'speed', 1, '300 m', 'race', 'full', ''), e('200 m rep', 'speed', 1, '200 m', 'race', 'full', ''), e('150 m rep', 'speed', 1, '100 m', 'race', 'full', '') ] }, pm: { focus: '—', desc: '', items: [] } },
+      Thu: { load: 'LOW', am: { focus: 'Z2 + strides', desc: '', items: [ e('Zone 2 Run', 'zone2', 1, '30 min', 'Z2', '—', ''), e('Acceleration Sprint', 'speed', 6, '80 m', 'strides', 'walk-back', '') ] }, pm: { focus: '—', desc: '', items: [] } },
+      Fri: { load: 'HIGH', am: { focus: 'Pure speed', desc: '30m ×3 + starts + power touch.',
+          items: [ e('Acceleration Sprint', 'speed', 3, '30 m', '100%', 'full', ''), e('Block Starts', 'speed', 3, '20 m', '100%', 'full', '') ] }, pm: { focus: '—', desc: '', items: [] } },
+      Sat: { load: 'MED', am: { focus: 'Time-trial or Z2', desc: 'TT/trial-rehearsal every 2nd week; Z2 otherwise.', items: [ e('Zone 2 Run', 'zone2', 1, '45 min', 'Z2', '—', '') ] }, pm: { focus: '—', desc: '', items: [] } },
+      Sun: { load: 'RECOVERY', am: { focus: 'Recovery', desc: 'Full protocol. Diagnostic: full-effort trial component.', items: [] }, pm: { focus: '—', desc: '', items: [] } },
+    },
+  };
+
+  /* Phase-5 sport variants — swap the whole week's content, skeleton holds. */
+  const VARIANTS = {
+    A: { name: 'Football (return May 2027)', emphasis: 'Acceleration, change-of-direction, repeat-sprint ability, robustness.',
+      week: [ 'Mon HIGH: Accel 6×20m + COD ladder (5-10-5, T-drill) 6 reps full rest + strength maint (squat/clean 3×3 @78%)',
+              'Tue LOW: Z2 40 min + mobility',
+              'Wed HIGH: RSA — 6×40m every 30s ×2 sets (game-specific) + reactive plyos 40 contacts',
+              'Thu LOW: Z2 35 min + threshold 2×6 min',
+              'Fri HIGH: Max velocity 30m×4 + explosive strength (jump squat, push press)',
+              'Sat MED: Small-sided game sim / conditioning games + strongman carry ×1',
+              'Sun: Recovery' ],
+      diagnostic: 'OVR 10m + flying-20 + RSA fade %' },
+    B: { name: 'HYROX Pro (toward sub-57)', emphasis: 'Compromised running, station economy, threshold, hybrid transitions.',
+      week: [ 'Mon HIGH: Threshold-run intervals 5×1km @ goal HYROX pace + strength maint (compound 3×4)',
+              'Tue LOW: Z2 60 min + SkiErg/Row Z2 technique',
+              'Wed HIGH: Station sim — RowErg 1km → 100m sled push → wall balls → run 1km, ×3 rounds @ race effort (transitions timed)',
+              'Thu LOW: Z2 45 min + mobility',
+              'Fri HIGH: Compromised-running intervals: run 400m → 50m lunge → run 400m, ×4 + power maint',
+              'Sat MED: Half-HYROX simulation (4 stations + runs) OR long Z2 75 min',
+              'Sun: Recovery' ],
+      diagnostic: '1km compromised-run split + station benchmarks (sled, ski, row, burpee-broad-jump)' },
+    C: { name: 'Track (100/200/400 or mile)', emphasis: 'Race modeling, speed reserve, pacing.',
+      week: [ 'Mon HIGH: Race-model reps at goal pace (e.g. 4×150m @ 400m goal) + CNS-priming lifts 3×2 @80%',
+              'Tue LOW: Z2 40 min',
+              'Wed HIGH: Speed-endurance modeling (300+200+100 descending) full recovery',
+              'Thu LOW: Z2 + strides 6×80m',
+              'Fri HIGH: Pure speed 30m×3 + starts + power touch',
+              'Sat: Time-trial or trial-rehearsal every 2nd week; Z2 otherwise',
+              'Sun: Recovery' ],
+      diagnostic: 'Full-effort trial component' },
+  };
+
+  // Look up today's prescribed session for a phase id + weekday abbrev.
+  function forDay(phaseId, dayAbbr) {
+    const ph = TEMPLATES[phaseId] || TEMPLATES[1];
+    return ph[dayAbbr] || null;
+  }
+
+  return { TEMPLATES, VARIANTS, forDay };
+})();
+
+/* ============================================================================
+   store.js — Local persistence. Everything lives in the browser (localStorage),
+   private to the device. Export/import lets the athlete back up or move data.
+   ========================================================================== */
+
+const Store = (() => {
+  const KEY = 'apex_journal_v1';
+
+  const DEFAULT = {
+    profile: {
+      name: '',
+      bodyweightKg: 77,
+      startDateISO: '2026-06-15', // Week 1 anchor (Mon) — race 2027-01-24 lands end of wk 32
+      phaseId: 1,          // fallback phase if no start date set
+      phaseWeek: 1,        // fallback week
+      variant: 'C',        // Phase-5 sport variant: A=Football, B=HYROX, C=Track
+      hrMax: 190,          // for zone calibration
+      criticalPower: 308,  // Stryd CP (W) — re-anchor zones after testing
+      goalDateISO: '2027-01-24', // A-race date
+    },
+    // Personal bests / current standing per goal id -> value
+    bests: {},
+    // Daily logs keyed by ISO date "YYYY-MM-DD"
+    days: {},
+    // Test results: array of { date, metric, value }
+    tests: [],
+    // AI coach chat history: array of { role, content }
+    chat: [],
+    settings: { hrvEnabled: true, useMetric: true, aiKey: '', aiModel: 'claude-opus-4-8', notionUrl: '', notionKey: '' },
+  };
+
+  let state = load();
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return structuredClone(DEFAULT);
+      const parsed = JSON.parse(raw);
+      return { ...structuredClone(DEFAULT), ...parsed,
+        profile: { ...DEFAULT.profile, ...(parsed.profile || {}) },
+        settings: { ...DEFAULT.settings, ...(parsed.settings || {}) } };
+    } catch (e) {
+      console.warn('Store load failed, resetting', e);
+      return structuredClone(DEFAULT);
+    }
+  }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { console.error('Save failed', e); }
+  }
+
+  /* ---- Day accessors --------------------------------------------------- */
+  function blankDay(date) {
+    return {
+      date,
+      wellness: null,          // { sleepH, sleepQ, hrv, rhr, soreness, energy, mood, stress, motivation }
+      readiness: null,         // computed { score, band, components }
+      session: null,           // { type, exercises:[{name,cat,sets:[{...}]}], sRPE, durationMin, load }
+      recoveryDone: [],        // recovery actions checked off
+      notes: '',
+    };
+  }
+
+  function getDay(date) {
+    if (!state.days[date]) state.days[date] = blankDay(date);
+    return state.days[date];
+  }
+
+  function setDay(date, patch) {
+    state.days[date] = { ...getDay(date), ...patch };
+    save();
+    return state.days[date];
+  }
+
+  function lastNDays(n, uptoDate) {
+    const dates = Object.keys(state.days).sort();
+    const upto = uptoDate || dates[dates.length - 1];
+    return dates.filter(d => d <= upto).slice(-n).map(d => state.days[d]);
+  }
+
+  function allDaysSorted() {
+    return Object.keys(state.days).sort().map(d => state.days[d]);
+  }
+
+  /* ---- Tests ----------------------------------------------------------- */
+  function addTest(metric, value, date) {
+    state.tests.push({ metric, value: Number(value), date });
+    state.tests.sort((a, b) => a.date.localeCompare(b.date));
+    save();
+  }
+  function testsFor(metric) {
+    return state.tests.filter(t => t.metric === metric).sort((a, b) => a.date.localeCompare(b.date));
+  }
+  function latestTest(metric) {
+    const t = testsFor(metric);
+    return t.length ? t[t.length - 1] : null;
+  }
+
+  /* ---- Profile / bests ------------------------------------------------- */
+  function setProfile(patch) { state.profile = { ...state.profile, ...patch }; save(); }
+  function setBest(goalId, value) { state.bests[goalId] = Number(value); save(); }
+
+  /* ---- Backup ---------------------------------------------------------- */
+  function exportJSON() { return JSON.stringify(state, null, 2); }
+  function importJSON(str) {
+    const parsed = JSON.parse(str);
+    state = { ...structuredClone(DEFAULT), ...parsed };
+    save();
+  }
+  function reset() { state = structuredClone(DEFAULT); save(); }
+
+  return {
+    get state() { return state; },
+    save, getDay, setDay, blankDay, lastNDays, allDaysSorted,
+    addTest, testsFor, latestTest, setProfile, setBest,
+    exportJSON, importJSON, reset,
+  };
+})();
+
+/* ============================================================================
+   engine.js — The coach's brain (KNCT Hybrid Apex System).
+   Readiness = CMJ-vs-baseline gate + hard-gate overrides (per the doc).
+   Plus training load/ACWR, program-week + phase awareness, the High/Low weekly
+   architecture, goal projections (checkpoint + North Star), per-set auto-reg,
+   weekly diagnostic drift, and daily emphasis. Deterministic, offline, private.
+   ========================================================================== */
+
+const Engine = (() => {
+
+  const clamp = (x, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, x));
+  const mean  = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
+  const std   = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(mean(a.map(x => (x - m) ** 2))); };
+  const BANDS = { green: 0, amber: 1, red: 2 };
+  const worst = (...bs) => Object.keys(BANDS)[Math.max(...bs.filter(Boolean).map(b => BANDS[b]))] || 'green';
+
+  const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  function todayISO(d = new Date()) { const tz = d.getTimezoneOffset() * 60000; return new Date(d - tz).toISOString().slice(0, 10); }
+  function weekdayOf(dateISO) { return DAY_ABBR[new Date(dateISO + 'T12:00:00').getDay()]; }
+  function daysBetween(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000); }
+
+  /* ---- Program week (1..32) from the anchored start date ---------------- */
+  function programWeek(dateISO) {
+    const start = Store.state.profile.startDateISO;
+    if (!start) return null;
+    const d = daysBetween(start, dateISO);
+    if (d < 0) return null;
+    return Math.floor(d / 7) + 1;
+  }
+  function phaseForWeek(wk) {
+    if (wk == null) return null;
+    return DATA.PHASES.find(p => wk >= p.weeks[0] && wk <= p.weeks[1]) || null;
+  }
+  function currentPhase(dateISO) {
+    return phaseForWeek(programWeek(dateISO)) || DATA.PHASES.find(p => p.id === Store.state.profile.phaseId) || DATA.PHASES[0];
+  }
+  function isDeloadWeek(dateISO) {
+    const wk = programWeek(dateISO), ph = phaseForWeek(wk);
+    return !!(ph && wk != null && ph.deloads.includes(wk));
+  }
+
+  /* ==========================================================================
+     TRAINING LOAD — session RPE (RPE × min) + ACWR (7d avg / 28d avg).
+     ======================================================================== */
+  function sessionLoad(session) {
+    if (!session) return 0;
+    if (session.load) return session.load;
+    return Math.round((session.sRPE || 5) * (session.durationMin || 45));
+  }
+  function acwr(date) {
+    const load = d => sessionLoad(d.session);
+    const acute = mean(Store.lastNDays(7, date).map(load));
+    const chronic = mean(Store.lastNDays(28, date).map(load));
+    if (chronic === 0) return { ratio: null, acute: Math.round(acute), chronic: 0 };
+    return { ratio: +(acute / chronic).toFixed(2), acute: Math.round(acute), chronic: Math.round(chronic) };
+  }
+
+  /* ==========================================================================
+     READINESS GATE — CMJ vs rolling baseline is the primary readout; hard
+     gates (RHR / sleep / subjective / bodyweight / pain) can force downgrade.
+     ======================================================================== */
+  function priorWellness(field, date, n = 7) {
+    return Store.lastNDays(n + 1, date)
+      .filter(d => d.date < date && d.wellness && typeof d.wellness[field] === 'number')
+      .map(d => d.wellness[field]);
+  }
+  function subjective10(w) {
+    // derive a 1–10 subjective readiness from the 1–5 scales
+    const up = [w.energy, w.mood, w.motivation].filter(v => v);
+    const down = [w.soreness, w.stress].filter(v => v);
+    if (!up.length && !down.length) return null;
+    const pos = up.length ? mean(up) : 3;                 // 1–5
+    const neg = down.length ? mean(down.map(v => 6 - v)) : 3; // invert, 1–5
+    return +(((pos + neg) / 2) * 2).toFixed(1);           // → 1–10
+  }
+
+  function readiness(date) {
+    const w = Store.getDay(date).wellness;
+    if (!w) return null;
+    const G = DATA.GATE;
+    const parts = [];
+    let cmjBand = null, score = null, cmjNote = '';
+
+    // --- CMJ gate (primary) ---
+    const cmjHist = priorWellness('cmj', date, 7);
+    if (typeof w.cmj === 'number' && cmjHist.length >= 3) {
+      const base = mean(cmjHist);
+      const dPct = ((w.cmj - base) / base) * 100;
+      cmjBand = dPct >= -G.cmj.greenWithinPct ? 'green' : dPct >= -G.cmj.amberDownPct ? 'amber' : 'red';
+      // numeric score
+      score = dPct >= 0 ? clamp(85 + dPct * 2, 85, 100)
+            : dPct >= -5 ? clamp(70 + (dPct + 5) * 3, 70, 85)
+            : dPct >= -10 ? clamp(45 + (dPct + 10) * 5, 45, 70)
+            : clamp(45 + (dPct + 10) * 3, 12, 45);
+      cmjNote = `CMJ ${w.cmj}cm vs ${base.toFixed(1)}cm base (${dPct >= 0 ? '+' : ''}${dPct.toFixed(1)}%)`;
+      parts.push({ key: 'CMJ (neuromuscular)', score: Math.round(score), note: cmjNote });
+    }
+
+    // --- HRV (modifier / signal) ---
+    if (typeof w.hrv === 'number') {
+      const h = priorWellness('hrv', date, 14);
+      if (h.length >= 5) {
+        const z = std(h) ? (w.hrv - mean(h)) / std(h) : 0;
+        const s = clamp(72 + z * 20);
+        parts.push({ key: 'HRV', score: Math.round(s), note: `${w.hrv}ms vs ${Math.round(mean(h))}ms base (${z >= 0 ? '+' : ''}${z.toFixed(1)}σ)` });
+        if (score == null) score = s;                          // fallback base if no CMJ
+        else score = clamp(score * 0.85 + s * 0.15);           // small HRV nudge
+      }
+    }
+
+    // --- Sleep (context) ---
+    if (typeof w.sleepH === 'number') {
+      const s = clamp((w.sleepH / 8) * 100);
+      parts.push({ key: 'Sleep', score: Math.round(s), note: `${w.sleepH}h${w.sleepQ ? ', q' + w.sleepQ + '/5' : ''}` });
+      if (score == null) score = s;
+    }
+
+    // --- Subjective (context) ---
+    const subj = subjective10(w);
+    if (subj != null) {
+      parts.push({ key: 'Subjective', score: Math.round(subj * 10), note: `${subj}/10 (energy ${w.energy || '–'}, sore ${w.soreness || '–'}, stress ${w.stress || '–'})` });
+      if (score == null) score = subj * 10;
+    }
+
+    if (score == null) score = 60;
+
+    // --- Hard gates (any one → ≥amber, two → red) ---
+    const gates = [];
+    const rhrHist = priorWellness('rhr', date, 14);
+    if (typeof w.rhr === 'number' && rhrHist.length >= 3 && (w.rhr - mean(rhrHist)) >= G.hard.rhrOverBaseline)
+      gates.push(`Resting HR +${Math.round(w.rhr - mean(rhrHist))} over baseline`);
+    if (typeof w.sleepH === 'number' && w.sleepH < G.hard.sleepMinH) gates.push(`Sleep ${w.sleepH}h (<6h)`);
+    if (subj != null && subj < G.hard.subjMin) gates.push(`Subjective ${subj}/10 (<5)`);
+    const bwHist = priorWellness('bodyweightKg', date, 4);
+    if (typeof w.bodyweightKg === 'number' && bwHist.length) {
+      const dropPct = ((bwHist[bwHist.length - 1] - w.bodyweightKg) / bwHist[bwHist.length - 1]) * 100;
+      if (dropPct >= G.hard.bwOvernightDropPct) gates.push(`Bodyweight ${dropPct.toFixed(1)}% down overnight (hydration/glycogen)`);
+    }
+    if (w.pain) gates.push('Sharp/localized pain flagged — assess before loading');
+
+    let gateBand = gates.length >= 2 ? 'red' : gates.length === 1 ? 'amber' : null;
+
+    // --- Final band = worst of CMJ gate, HRV/subjective fallback, hard gates ---
+    let scoreBand = score >= 67 ? 'green' : score >= 40 ? 'amber' : 'red';
+    let band = worst(cmjBand || scoreBand, gateBand);
+
+    // clamp numeric score to the band so the ring and the call agree
+    if (band === 'red') score = Math.min(score, 39);
+    else if (band === 'amber') score = Math.min(Math.max(score, 40), 66);
+    else score = Math.max(score, 67);
+    score = Math.round(score);
+
+    return {
+      score, band, components: parts, gates,
+      action: DATA.GATE.action[band],
+      cmjBand, load: acwr(date),
+      hasCMJ: cmjBand != null,
+    };
+  }
+
+  /* ==========================================================================
+     DAILY DECISION — weekday architecture + prescribed session + readiness.
+     ======================================================================== */
+  function decideDay(date) {
+    const phase = currentPhase(date);
+    const wk = programWeek(date);
+    const day = weekdayOf(date);
+    const arch = DATA.WEEK_ARCH.find(a => a.day === day);
+    const prescribed = PROGRAM.forDay(phase.id, day);
+    const deload = isDeloadWeek(date);
+    const r = readiness(date);
+    const highDay = DATA.HIGH_DAYS.includes(day);
+
+    let headline, advice = [];
+    if (!r) {
+      headline = 'Run the morning readiness gate to get today\'s call.';
+      advice.push('HRV + 3× CMJ on the force plate → log it and I\'ll set green/amber/red.');
+    } else if (r.band === 'green') {
+      headline = `GREEN — ${arch ? arch.load : ''} day, full session as written.`;
+      advice.push(`Readiness ${r.score}. ${DATA.GATE.action.green}`);
+      if (highDay) advice.push('CNS is fresh — full-intent reps, full recoveries. This is a day to spend quality.');
+    } else if (r.band === 'amber') {
+      headline = `AMBER — auto-regulate today.`;
+      advice.push(`Readiness ${r.score}. ${DATA.GATE.action.amber}`);
+      if (r.gates.length) advice.push(`Flag: ${r.gates.join('; ')}.`);
+    } else {
+      headline = highDay ? `RED — pull the plug on CNS work.` : `RED — keep it genuinely easy.`;
+      advice.push(`Readiness ${r.score}. ${DATA.GATE.action.red}`);
+      if (r.gates.length) advice.push(`Flag: ${r.gates.join('; ')}.`);
+      advice.push('A red day taken is cheaper than a torn hamstring taken. The force plate exists so you stop guessing on this.');
+    }
+
+    if (deload) advice.push(`Deload week (wk ${wk}) — ~40% volume, intensity held. Bank the adaptation.`);
+
+    if (r && r.load && r.load.ratio != null) {
+      if (r.load.ratio > 1.5) advice.push(`Workload spike (ACWR ${r.load.ratio}) — high injury-risk zone; trim volume this week.`);
+      else if (r.load.ratio < 0.8 && !deload) advice.push(`Workload low (ACWR ${r.load.ratio}) — fine for a taper, don't detrain mid-block.`);
+    }
+
+    return { phase, wk, day, arch, prescribed, deload, readiness: r, headline, advice };
+  }
+
+  /* ==========================================================================
+     GOAL PROJECTIONS — trend → ETA to 32-week checkpoint & North Star.
+     ======================================================================== */
+  function projectGoal(goal) {
+    const tests = Store.testsFor(goal.id);
+    const bestOverride = Store.state.bests[goal.id];
+    let hist = tests.length ? tests.map(t => ({ date: t.date, value: t.value })) : [];
+    let current = tests.length ? tests[tests.length - 1].value
+                : bestOverride != null ? bestOverride
+                : goal.current;
+    if (current == null) return { status: 'no-data', goal };
+
+    const ckMid = goal.checkpoint ? (goal.checkpoint[0] + goal.checkpoint[1]) / 2 : null;
+    const nsTarget = goal.northStar;
+    const gapTo = t => t == null ? null : (goal.lowerBetter ? current - t : t - current);
+
+    let perWeek = null, improving = null, etaCkWeeks = null;
+    if (hist.length >= 2) {
+      const x0 = hist[0].date;
+      const xs = hist.map(h => daysBetween(x0, h.date));
+      const ys = hist.map(h => h.value);
+      const mx = mean(xs), my = mean(ys);
+      const denom = xs.reduce((s, x) => s + (x - mx) ** 2, 0) || 1;
+      const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / denom;
+      perWeek = +(slope * 7).toFixed(3);
+      improving = goal.lowerBetter ? slope < 0 : slope > 0;
+      const rem = gapTo(ckMid);
+      if (rem != null && rem > 0 && improving && Math.abs(perWeek) > 0)
+        etaCkWeeks = Math.ceil(rem / Math.abs(perWeek));
+    }
+
+    // progress bar: current position from goal.current → North Star (or checkpoint hi)
+    const anchorStart = goal.current;
+    const anchorEnd = nsTarget != null ? nsTarget : (goal.checkpoint ? goal.checkpoint[goal.lowerBetter ? 0 : 1] : current);
+    let pct = 50;
+    if (anchorStart != null && anchorEnd != null && anchorStart !== anchorEnd) {
+      pct = clamp(((anchorStart - current) / (anchorStart - anchorEnd)) * 100);
+    }
+
+    return {
+      status: 'ok', goal, current, ckMid, nsTarget,
+      gapToCk: gapTo(ckMid), gapToNs: gapTo(nsTarget),
+      perWeek, improving, etaCkWeeks, trendPoints: hist.length, pct: Math.round(pct),
+    };
+  }
+
+  /* ==========================================================================
+     WEEKLY DIAGNOSTIC DRIFT — flag a maintained quality declining 2 weeks.
+     ======================================================================== */
+  function diagnosticDrift(metricId) {
+    const t = Store.testsFor(metricId);
+    if (t.length < 3) return null;
+    const meta = DATA.METRICS.find(m => m.id === metricId) || { lowerBetter: false };
+    const [a, b, c] = t.slice(-3);
+    const worse = (x, y) => meta.lowerBetter ? x.value > y.value : x.value < y.value;
+    const declining = worse(c, b) && worse(b, a);   // two consecutive down
+    return { metricId, declining, latest: c.value, prev: b.value };
+  }
+
+  /* ==========================================================================
+     PER-SET AUTO-REGULATION — feedback after each logged set.
+     ======================================================================== */
+  function nextSetAdvice(exercise, setIndex, sets) {
+    const cat = DATA.CATEGORIES[exercise.cat];
+    if (!cat) return { rest: '', cue: '' };
+    const set = sets[setIndex];
+    const advice = [];
+    const restLabel = cat.restSec >= 60 ? `${Math.round(cat.restSec / 60 * 10) / 10} min` : `${cat.restSec}s`;
+
+    if (cat.velDropStop && set.velocity != null) {
+      const best = Math.max(...sets.slice(0, setIndex + 1).map(s => s.velocity || 0));
+      if (best > 0) {
+        const drop = ((best - set.velocity) / best) * 100;
+        advice.push(drop >= cat.velDropStop
+          ? `⛔ Velocity down ${drop.toFixed(0)}% from best — power quality is gone. End this exercise.`
+          : `✅ Speed holding (${drop.toFixed(0)}% off best). Keep full intent.`);
+      }
+    }
+    if (exercise.cat === 'speed' && set.time != null && set.best != null) { /* reserved */ }
+
+    if (set.rpe != null && cat.targetRPE) {
+      const [lo, hi] = cat.targetRPE;
+      if (set.rpe > hi) advice.push(exercise.cat === 'speed'
+        ? `Effort ${set.rpe}/10 above target — fatiguing. Extend rest or cut reps.`
+        : `RPE ${set.rpe} above target ${hi} — drop load ~5–10% next set to keep bar speed.`);
+      else if (set.rpe < lo && ['strength', 'power', 'iso'].includes(exercise.cat))
+        advice.push(`RPE ${set.rpe} below target ${lo} — add load next set.`);
+      else advice.push(`RPE ${set.rpe} on target — hold this load.`);
+    }
+    if (exercise.cat === 'plyo' && set.rsi != null) advice.push(set.rsi >= 2.0 ? `RSI ${set.rsi} — stiff and reactive.` : `RSI ${set.rsi} below 2.0 — contacts are damping; reduce volume.`);
+
+    advice.push(cat.restSec > 0 ? `Rest ~${restLabel} before the next set.` : 'Continuous — no rest prescribed.');
+    return { rest: restLabel, cue: advice.join(' ') };
+  }
+
+  /* ==========================================================================
+     WEEKLY COMPLIANCE — logged volume vs phase prescription.
+     ======================================================================== */
+  function weeklyReport(date) {
+    const phase = currentPhase(date);
+    const days = Store.lastNDays(7, date);
+    const t = { sprintM: 0, thresholdMin: 0, zone2Min: 0, plyoContacts: 0 };
+    days.forEach(d => (d.session && d.session.exercises || []).forEach(ex => (ex.sets || []).forEach(s => {
+      const n = parseFloat(s.distance) || 0, reps = parseFloat(s.reps) || 1;
+      if (ex.cat === 'speed') t.sprintM += n * reps;
+      if (ex.cat === 'threshold') t.thresholdMin += parseFloat(s.minutes) || 0;
+      if (ex.cat === 'zone2') t.zone2Min += parseFloat(s.minutes) || 0;
+      if (ex.cat === 'plyo') t.plyoContacts += parseFloat(s.contacts) || 0;
+    })));
+    const band = (v, [lo, hi]) => v < lo * 0.85 ? 'under' : v > hi * 1.15 ? 'over' : 'on';
+    return { phase, items: [
+      { label: 'Sprint volume', unit: 'm',   val: Math.round(t.sprintM),      target: phase.dose.sprintM,      band: band(t.sprintM, phase.dose.sprintM) },
+      { label: 'Threshold',     unit: 'min', val: Math.round(t.thresholdMin), target: phase.dose.thresholdMin, band: band(t.thresholdMin, phase.dose.thresholdMin) },
+      { label: 'Zone 2',        unit: 'min', val: Math.round(t.zone2Min),     target: phase.dose.zone2Min,     band: band(t.zone2Min, phase.dose.zone2Min) },
+      { label: 'Plyo contacts', unit: '',    val: Math.round(t.plyoContacts), target: phase.dose.plyoContacts, band: band(t.plyoContacts, phase.dose.plyoContacts) },
+    ] };
+  }
+
+  return {
+    readiness, acwr, sessionLoad, projectGoal, decideDay, nextSetAdvice, weeklyReport,
+    todayISO, weekdayOf, programWeek, currentPhase, isDeloadWeek, diagnosticDrift, phaseForWeek,
+  };
+})();
+
+/* ============================================================================
+   coach.js — Live Claude AI chat coach (optional layer over the built-in engine).
+   Calls the Anthropic Messages API directly from the browser. The API key is
+   stored only in this device's localStorage and sent only to api.anthropic.com.
+   Streams responses via SSE. The system prompt is prompt-cached to cut cost.
+   ========================================================================== */
+
+const AICoach = (() => {
+  const API = 'https://api.anthropic.com/v1/messages';
+  const VERSION = '2023-06-01';
+
+  function enabled() { return !!(Store.state.settings.aiKey); }
+  function model() { return Store.state.settings.aiModel || 'claude-opus-4-8'; }
+
+  /* ---- Build the coaching system prompt from the athlete's live data ----- */
+  function buildSystem(date) {
+    const p = Store.state.profile;
+    const dec = Engine.decideDay(date);
+    const r = dec.readiness;
+    const phase = dec.phase;
+    const acw = Engine.acwr(date);
+    const wk = Engine.weeklyReport(date);
+
+    const line = [];
+    line.push(`You are an elite strength & conditioning coach — the kind a professional athlete pays a fortune for. You coach ${p.name || 'this athlete'} through the KNCT Hybrid Apex System: a 32-week conjugate-block hybrid targeting elite sprint, middle-distance, endurance and jump qualities at once.`);
+    line.push(`Your voice: direct, precise, evidence-based, encouraging but never fluffy. Reference the athlete's ACTUAL numbers below. Give specific, actionable guidance — loads, paces, rest, recovery, per-set cues. Keep replies tight (a few sentences to a short list) unless asked for depth. Never invent data you don't have; if you need a number, tell them what to log.`);
+    line.push('');
+    line.push('## Coaching system (fixed logic)');
+    line.push('- Readiness gate: CMJ vs rolling baseline is primary (within 5% green / 5–10% amber / >10% red), with hard gates (RHR +7, sleep <6h, subjective <5/10, overnight bodyweight >2% drop, sharp pain). One gate → amber, two → red. Red on a high-CNS day = convert to Z1 + mobility, no CNS work.');
+    line.push('- High/Low weekly architecture: CNS-intensive work clustered Mon/Wed/Fri; keep easy days genuinely easy (80/20).');
+    line.push('- One primary quality drives each block; three secondaries held at minimum effective dose; one weekly diagnostic guards against drift.');
+    line.push('- Per-set auto-regulation: power/speed stops when velocity drops past threshold; strength holds a target RPE band; plyos watch RSI.');
+    line.push('');
+    line.push('## Today');
+    line.push(`- Date ${date}, ${dec.day}, ${dec.arch ? dec.arch.load + ' day' : ''}. Program week ${dec.wk ?? '—'} of 32, Phase ${phase.id}: ${phase.name} (${phase.driver}).${dec.deload ? ' DELOAD WEEK (~40% volume, intensity held).' : ''}`);
+    if (r) {
+      line.push(`- Readiness ${r.score}/100 (${r.band}). ${dec.headline}`);
+      if (r.gates && r.gates.length) line.push(`- Hard gates triggered: ${r.gates.join('; ')}.`);
+      r.components.forEach(c => line.push(`- ${c.key}: ${c.note}`));
+    } else {
+      line.push('- No morning readiness gate logged yet today.');
+    }
+    if (acw.ratio != null) line.push(`- Acute:chronic workload ${acw.ratio} (acute ${acw.acute}, chronic ${acw.chronic} AU).`);
+    if (dec.prescribed) {
+      const items = [...dec.prescribed.am.items, ...dec.prescribed.pm.items]
+        .map(i => `${i.name} ${[i.sets, i.reps].filter(Boolean).join('×')}${i.load && i.load !== '—' ? ' @' + i.load : ''}`).join('; ');
+      line.push(`- Prescribed today — AM: ${dec.prescribed.am.focus}. PM: ${dec.prescribed.pm.focus}. Movements: ${items || 'recovery'}.`);
+    }
+    // today's logged session so far
+    const day = Store.getDay(date);
+    if (day.session && day.session.exercises && day.session.exercises.length) {
+      const logged = day.session.exercises.map(ex => {
+        const sets = (ex.sets || []).filter(s => Object.keys(s).length).map(s =>
+          [s.load && s.load + 'kg', s.reps && s.reps + 'r', s.rpe && 'RPE' + s.rpe, s.velocity && s.velocity + 'm/s', s.distance && s.distance + 'm', s.minutes && s.minutes + 'min'].filter(Boolean).join('/')).join(', ');
+        return `${ex.name}${sets ? ' [' + sets + ']' : ''}`;
+      }).join('; ');
+      line.push(`- Logged so far today: ${logged}.`);
+    }
+    line.push('');
+    line.push('## Goals (current → 32-wk checkpoint → North Star)');
+    DATA.GOALS.forEach(g => {
+      const pr = Engine.projectGoal(g);
+      const cur = pr.status === 'ok' ? pr.current : g.current;
+      const ck = g.checkpoint ? `${g.checkpoint[0]}–${g.checkpoint[1]}` : '—';
+      const trend = pr.status === 'ok' && pr.trendPoints >= 2 ? ` (${pr.perWeek > 0 ? '+' : ''}${pr.perWeek}${g.unit}/wk${pr.etaCkWeeks != null ? ', ~' + pr.etaCkWeeks + 'wk to checkpoint' : ''})` : '';
+      line.push(`- ${g.name}: ${cur ?? '—'}${g.unit} → ${ck} → ${g.northStar ?? '—'}${g.unit}${trend}. Limiters: ${g.limiters.join(', ')}.`);
+    });
+    line.push('');
+    line.push('## This week vs plan');
+    wk.items.forEach(it => line.push(`- ${it.label}: ${it.val}${it.unit} (target ${it.target[0]}–${it.target[1]}${it.unit}) — ${it.band}.`));
+    if (p.criticalPower) {
+      line.push('');
+      line.push(`## Stryd power zones (CP ${p.criticalPower} W)`);
+      DATA.STRYD_ZONES.forEach(z => line.push(`- ${z.id} ${z.name}: ${Math.round(z.pct[0] * p.criticalPower)}–${Math.round(z.pct[1] * p.criticalPower)} W`));
+    }
+    return line.join('\n');
+  }
+
+  /* ---- Stream a chat completion ---------------------------------------- */
+  async function send(history, userText, { onDelta, onDone, onError }) {
+    if (!enabled()) { onError && onError(new Error('No API key set')); return; }
+    const messages = [...history.slice(-10), { role: 'user', content: userText }];
+    const body = {
+      model: model(),
+      max_tokens: 1200,
+      system: [{ type: 'text', text: buildSystem(UI.date), cache_control: { type: 'ephemeral' } }],
+      messages,
+      stream: true,
+    };
+    let acc = '';
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': Store.state.settings.aiKey,
+          'anthropic-version': VERSION,
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        let msg = `HTTP ${res.status}`;
+        try { const e = await res.json(); msg = (e.error && e.error.message) || msg; } catch (_) {}
+        throw new Error(msg);
+      }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const ln of lines) {
+          const s = ln.trim();
+          if (!s.startsWith('data:')) continue;
+          const payload = s.slice(5).trim();
+          if (payload === '[DONE]') continue;
+          try {
+            const ev = JSON.parse(payload);
+            if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') {
+              acc += ev.delta.text; onDelta && onDelta(ev.delta.text, acc);
+            } else if (ev.type === 'error') {
+              throw new Error((ev.error && ev.error.message) || 'stream error');
+            }
+          } catch (_) { /* ignore partial */ }
+        }
+      }
+      onDone && onDone(acc);
+    } catch (err) {
+      onError && onError(err);
+    }
+  }
+
+  return { enabled, model, buildSystem, send };
+})();
+
+/* ============================================================================
+   notionsync.js — Push logs to the Notion dashboard.
+   Notion's API blocks direct browser calls (CORS) and needs a secret token,
+   so this offers two paths:
+     1) CSV export per database (zero setup — import/merge into Notion).
+     2) Auto-push via a user-deployed Cloudflare Worker proxy that holds the
+        Notion token and adds CORS (see worker.js + README).
+   Column names + database IDs match the databases created in the workspace.
+   ========================================================================== */
+
+const NotionSync = (() => {
+  // Database IDs of the dashboard created in "KNCT Hybrid Apex System".
+  const DB = {
+    readiness:  'ee69e5cfd78e413088a5555984c3c90e',
+    session:    '4cae33d7550d451fbafe523ead9c82d0',
+    diagnostic: '99d0a7652c11469c9d702624d61418bf',
+    baseline:   '495c0eeed8e64ef292eb0f51f4de4cd6',
+  };
+
+  const enabled = () => !!(Store.state.settings.notionUrl && Store.state.settings.notionKey);
+
+  /* ---- Notion native property builders --------------------------------- */
+  const P = {
+    title: v => ({ title: [{ text: { content: String(v ?? '') } }] }),
+    text:  v => ({ rich_text: [{ text: { content: String(v ?? '') } }] }),
+    num:   v => ({ number: (v == null || v === '' || isNaN(v)) ? null : Number(v) }),
+    date:  v => ({ date: v ? { start: v } : null }),
+    sel:   v => ({ select: v ? { name: String(v) } : null }),
+    check: v => ({ checkbox: !!v }),
+  };
+
+  /* ---- Summarize a logged session into the DB2 text columns ------------ */
+  function summarizeSession(session) {
+    const out = { lifts: [], sprints: [], cond: [], plyo: 0, rsi: 0 };
+    (session.exercises || []).forEach(ex => {
+      const sets = (ex.sets || []).filter(s => Object.keys(s).length);
+      if (['strength', 'power', 'iso'].includes(ex.cat)) {
+        const parts = sets.map(s => [s.load && s.load + 'kg', s.reps && '×' + s.reps, s.velocity && '@' + s.velocity + 'm/s', s.rpe && ' RPE' + s.rpe].filter(Boolean).join('')).join(', ');
+        out.lifts.push(`${ex.name}${parts ? ' ' + parts : ''}`);
+      } else if (ex.cat === 'speed') {
+        const parts = sets.map(s => [s.distance && s.distance + 'm', s.reps && '×' + s.reps, s.time && ' ' + s.time + 's'].filter(Boolean).join('')).join(', ');
+        out.sprints.push(`${ex.name}${parts ? ' ' + parts : ''}`);
+      } else if (['zone2', 'threshold', 'vo2'].includes(ex.cat)) {
+        const mins = sets.reduce((a, s) => a + (parseFloat(s.minutes) || 0), 0);
+        out.cond.push(`${ex.name}${mins ? ' ' + mins + 'min' : ''}`);
+      } else if (ex.cat === 'plyo') {
+        sets.forEach(s => { out.plyo += parseFloat(s.contacts) || 0; out.rsi = Math.max(out.rsi, parseFloat(s.rsi) || 0); });
+      }
+    });
+    return out;
+  }
+
+  /* ---- Build Notion page bodies from a day ----------------------------- */
+  function readinessProps(date) {
+    const day = Store.getDay(date); const w = day.wellness; if (!w) return null;
+    const r = Engine.readiness(date);
+    const subj = w.energy || w.mood || w.motivation ? Math.round(((((w.energy || 3) + (w.mood || 3) + (w.motivation || 3)) / 3 + ((6 - (w.soreness || 3)) + (6 - (w.stress || 3))) / 2) / 2) * 2 * 10) / 10 : null;
+    // cmj vs baseline %
+    let cmjPct = null;
+    const hist = Store.testsFor('cmj').filter(t => t.date < date).map(t => t.value);
+    if (typeof w.cmj === 'number' && hist.length >= 3) { const base = hist.slice(-7).reduce((a, b) => a + b, 0) / Math.min(7, hist.length); cmjPct = +(((w.cmj - base) / base) * 100).toFixed(1); }
+    return {
+      'Day': P.title(date), 'Date': P.date(date), 'HRV (ms)': P.num(w.hrv), 'Morning CMJ (cm)': P.num(w.cmj),
+      'CMJ vs baseline %': P.num(cmjPct), 'Resting HR': P.num(w.rhr), 'Sleep (h)': P.num(w.sleepH),
+      'Subjective (1-10)': P.num(subj), 'Bodyweight (kg)': P.num(w.bodyweightKg), 'Status': P.sel(r ? r.band : null),
+    };
+  }
+  function sessionProps(date) {
+    const day = Store.getDay(date); const s = day.session; if (!s || !(s.exercises || []).length) return null;
+    const sum = summarizeSession(s); const phase = Engine.currentPhase(date); const arch = DATA.WEEK_ARCH.find(a => a.day === Engine.weekdayOf(date));
+    return {
+      'Session': P.title(`${date} · ${s.type || Engine.weekdayOf(date)}`), 'Date': P.date(date), 'Phase': P.num(phase.id),
+      'Session type': P.text(arch ? arch.load : ''), 'Main lifts (load/velocity)': P.text(sum.lifts.join('; ')),
+      'Sprint reps (dist/time/OVR)': P.text(sum.sprints.join('; ')), 'Plyo contacts': P.num(sum.plyo || null),
+      'RSI': P.num(sum.rsi || null), 'Conditioning (min/HR/power)': P.text(sum.cond.join('; ')),
+      'Session RPE': P.num(s.sRPE), 'Notes': P.text(s.notes || ''),
+    };
+  }
+
+  /* ---- POST one page through the proxy --------------------------------- */
+  async function push(dbId, properties) {
+    const res = await fetch(Store.state.settings.notionUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-apex-key': Store.state.settings.notionKey },
+      body: JSON.stringify({ parent: { database_id: dbId }, properties }),
+    });
+    if (!res.ok) { let m = `HTTP ${res.status}`; try { const e = await res.json(); m = (e.message || (e.error && e.error.message)) || m; } catch (_) {} throw new Error(m); }
+    return res.json();
+  }
+
+  /* ---- Sync a day's readiness + session (idempotent via flags) --------- */
+  async function syncDay(date, { force = false } = {}) {
+    if (!enabled()) return { skipped: true };
+    const day = Store.getDay(date); day.synced = day.synced || {};
+    const done = [];
+    const rp = readinessProps(date);
+    if (rp && (force || !day.synced.readiness)) { await push(DB.readiness, rp); day.synced.readiness = true; done.push('readiness'); }
+    const sp = sessionProps(date);
+    if (sp && (force || !day.synced.session)) { await push(DB.session, sp); day.synced.session = true; done.push('session'); }
+    Store.save();
+    return { done };
+  }
+
+  /* ---- CSV export (zero setup) ----------------------------------------- */
+  const esc = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  function toCSV(headers, rows) { return [headers.join(','), ...rows.map(r => r.map(esc).join(','))].join('\n'); }
+
+  function readinessCSV() {
+    const H = ['Day', 'Date', 'HRV (ms)', 'Morning CMJ (cm)', 'CMJ vs baseline %', 'Resting HR', 'Sleep (h)', 'Subjective (1-10)', 'Bodyweight (kg)', 'Status'];
+    const rows = Store.allDaysSorted().filter(d => d.wellness).map(d => {
+      const p = readinessProps(d.date);
+      const val = (key, type) => { const o = p[key][type]; return type === 'number' ? (o ?? '') : type === 'title' || type === 'rich_text' ? (o[0] ? o[0].text.content : '') : type === 'date' ? (o ? o.start : '') : type === 'select' ? (o ? o.name : '') : ''; };
+      return [val('Day', 'title'), val('Date', 'date'), val('HRV (ms)', 'number'), val('Morning CMJ (cm)', 'number'), val('CMJ vs baseline %', 'number'), val('Resting HR', 'number'), val('Sleep (h)', 'number'), val('Subjective (1-10)', 'number'), val('Bodyweight (kg)', 'number'), val('Status', 'select')];
+    });
+    return toCSV(H, rows);
+  }
+  function sessionCSV() {
+    const H = ['Session', 'Date', 'Phase', 'Session type', 'Main lifts (load/velocity)', 'Sprint reps (dist/time/OVR)', 'Plyo contacts', 'RSI', 'Conditioning (min/HR/power)', 'Session RPE', 'Notes'];
+    const rows = Store.allDaysSorted().filter(d => d.session && (d.session.exercises || []).length).map(d => {
+      const p = sessionProps(d.date); const t = (k, ty) => { const o = p[k][ty]; return ty === 'number' ? (o ?? '') : ty === 'title' || ty === 'rich_text' ? (o[0] ? o[0].text.content : '') : ty === 'date' ? (o ? o.start : '') : ''; };
+      return [t('Session', 'title'), t('Date', 'date'), t('Phase', 'number'), t('Session type', 'rich_text'), t('Main lifts (load/velocity)', 'rich_text'), t('Sprint reps (dist/time/OVR)', 'rich_text'), t('Plyo contacts', 'number'), t('RSI', 'number'), t('Conditioning (min/HR/power)', 'rich_text'), t('Session RPE', 'number'), t('Notes', 'rich_text')];
+    });
+    return toCSV(H, rows);
+  }
+  function download(name, text) {
+    const blob = new Blob([text], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url);
+  }
+
+  return { DB, enabled, syncDay, readinessCSV, sessionCSV, download };
+})();
+
+/* ============================================================================
+   ui.js — Rendering + interaction for all five tabs (KNCT Hybrid Apex System).
+   ========================================================================== */
+
+const UI = (() => {
+  const $  = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const view = () => $('#view');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const today = () => Engine.todayISO();
+  let current = { date: today() };
+
+  function fmtGoal(goal, v) {
+    if (v == null || isNaN(v)) return '–';
+    if (goal.unit === 's' && v >= 100) { const m = Math.floor(v / 60), s = (v % 60).toFixed(1).padStart(4, '0'); return `${m}:${s}`; }
+    if (goal.unit === 's') return `${v.toFixed(2)}s`;
+    if (goal.unit === 'min') return `${v} min`;
+    return `${(+v).toFixed(v % 1 ? 2 : 0)}${goal.unit === 'in' ? '"' : goal.unit === 'm' ? ' m' : goal.unit === 'kg' ? ' kg' : goal.unit === 'lb' ? ' lb' : ''}`;
+  }
+  const bandColor = b => b === 'green' ? 'var(--green)' : b === 'amber' ? 'var(--amber)' : 'var(--red)';
+
+  /* ======================================================================
+     TAB: TODAY
+     ==================================================================== */
+  function renderToday() {
+    const date = current.date;
+    const day = Store.getDay(date);
+    const dec = Engine.decideDay(date);
+    const r = dec.readiness;
+    let html = '';
+
+    // Readiness ring
+    if (r) {
+      const circ = 2 * Math.PI * 92, off = circ * (1 - r.score / 100), col = bandColor(r.band);
+      html += `<div class="ring-wrap"><div class="ring">
+        <svg width="210" height="210" viewBox="0 0 210 210">
+          <circle cx="105" cy="105" r="92" stroke="var(--card2)" stroke-width="16" fill="none"/>
+          <circle cx="105" cy="105" r="92" stroke="${col}" stroke-width="16" fill="none" stroke-linecap="round"
+            stroke-dasharray="${circ}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1)"/>
+        </svg>
+        <div class="score"><div class="num" style="color:${col}">${r.score}</div>
+          <div class="lbl">Readiness</div><div class="band band-${r.band}">${r.band.toUpperCase()}</div></div></div></div>`;
+    } else {
+      html += `<div class="card center"><h3>Morning readiness gate</h3>
+        <p class="sub" style="margin-bottom:14px">HRV + 3× CMJ + sleep. Two minutes → today's green/amber/red call.</p>
+        <button class="btn" data-act="checkin">Run the gate →</button></div>`;
+    }
+
+    // The call
+    html += `<div class="call ${r ? r.band : ''}"><div class="h">${esc(dec.headline)}</div>
+      <ul>${dec.advice.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>`;
+
+    // Weekly High/Low strip
+    html += `<div class="section-title">The week · ${dec.phase.name}${dec.wk ? ' · wk ' + dec.wk : ''}${dec.deload ? ' · DELOAD' : ''}</div>`;
+    html += `<div class="weekstrip">`;
+    DATA.WEEK_ARCH.forEach(a => {
+      const isToday = a.day === dec.day;
+      const lc = a.load === 'HIGH' ? 'hi' : a.load === 'RECOVERY' ? 'rec' : 'lo';
+      html += `<div class="wcell ${lc} ${isToday ? 'now' : ''}"><b>${a.day}</b><span>${a.load === 'MED-LOW' ? 'MED' : a.load}</span></div>`;
+    });
+    html += `</div>`;
+
+    // Today's prescribed session
+    if (dec.prescribed) {
+      html += `<div class="section-title">Today's prescription</div>`;
+      html += sessionBlock('AM', dec.prescribed.am) + sessionBlock('PM', dec.prescribed.pm);
+      const hasItems = (dec.prescribed.am.items.length + dec.prescribed.pm.items.length) > 0;
+      if (hasItems) html += `<button class="btn" data-act="loadrx">Start today's session →</button>`;
+    }
+
+    // Readiness breakdown + gates
+    if (r && r.components.length) {
+      html += `<div class="section-title">Readiness gate</div><div class="card">`;
+      r.components.forEach(c => {
+        const col = c.score >= 67 ? 'var(--green)' : c.score >= 40 ? 'var(--amber)' : 'var(--red)';
+        html += `<div class="comp"><div class="name">${esc(c.key)}</div><div class="bar"><i style="width:${Math.round(c.score)}%;background:${col}"></i></div><div class="val">${Math.round(c.score)}</div></div><div class="note">${esc(c.note)}</div>`;
+      });
+      if (r.gates.length) html += `<div class="gatewarn">⚠ Hard gates: ${r.gates.map(esc).join(' · ')}</div>`;
+      html += `</div>`;
+    }
+
+    // Recovery
+    const rec = r ? DATA.RECOVERY[r.band] : null;
+    if (rec) {
+      html += `<div class="section-title">Recovery protocol</div><div class="card"><div class="chips">`;
+      rec.forEach(x => { const done = day.recoveryDone.includes(x);
+        html += `<div class="chip ${done ? 'done' : ''}" data-rec="${esc(x)}"><span class="box"></span>${esc(x)}</div>`; });
+      html += `</div></div>`;
+    }
+
+    html += `<div class="btn-row" style="margin-top:16px">
+      <button class="btn ghost" data-act="checkin">${r ? 'Edit gate' : 'Run gate'}</button>
+      <button class="btn ghost" data-tab="log">Open log</button></div>`;
+
+    view().innerHTML = html;
+    $$('[data-act="checkin"]').forEach(b => b.onclick = openCheckin);
+    $$('[data-tab="log"]', view()).forEach(b => b.onclick = () => App.go('log'));
+    const rx = $('[data-act="loadrx"]'); if (rx) rx.onclick = () => { loadPrescribed(date); App.go('log'); };
+    $$('.chip[data-rec]').forEach(ch => ch.onclick = () => {
+      const x = ch.getAttribute('data-rec'), d = Store.getDay(date);
+      d.recoveryDone = d.recoveryDone.includes(x) ? d.recoveryDone.filter(v => v !== x) : [...d.recoveryDone, x];
+      Store.save(); renderToday();
+    });
+  }
+
+  function sessionBlock(tag, blk) {
+    if (!blk || (!blk.items.length && !blk.desc)) return '';
+    let h = `<div class="rxblock"><div class="rxhead"><span class="rxtag">${tag}</span><b>${esc(blk.focus)}</b></div>`;
+    if (blk.desc) h += `<p class="rxdesc">${esc(blk.desc)}</p>`;
+    blk.items.forEach(it => {
+      const scheme = [it.sets, it.reps].filter(v => v != null && v !== '').join(' × ');
+      h += `<div class="rxitem"><span class="ri-n">${esc(it.name)}</span><span class="ri-s">${esc(scheme)}${it.load && it.load !== '—' ? ' · ' + esc(it.load) : ''}</span></div>`;
+    });
+    return h + `</div>`;
+  }
+
+  /* ---- Morning gate modal ---------------------------------------------- */
+  function openCheckin() {
+    const date = current.date;
+    const w = Store.getDay(date).wellness || {};
+    const scale = (f, label, inv = false) => `<div class="field"><label>${label}</label>
+      <div class="scale ${inv ? 'inv' : ''}" data-scale="${f}">${[1, 2, 3, 4, 5].map(n => `<button data-v="${n}" class="${w[f] === n ? 'sel' : ''}">${n}</button>`).join('')}</div></div>`;
+
+    modal(`<h3>Morning readiness gate</h3>
+      <div class="row">
+        <div class="field"><label>CMJ — best of 3 (cm)</label><input type="number" step="0.1" id="ci-cmj" value="${w.cmj ?? ''}" placeholder="force plate"></div>
+        <div class="field"><label>Bodyweight (kg)</label><input type="number" step="0.1" id="ci-bw" value="${w.bodyweightKg ?? ''}" placeholder="${Store.state.profile.bodyweightKg}"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Sleep (h)</label><input type="number" step="0.5" id="ci-sleepH" value="${w.sleepH ?? ''}" placeholder="8"></div>
+        <div class="field"><label>Sleep quality</label><input type="number" min="1" max="5" id="ci-sleepQ" value="${w.sleepQ ?? ''}" placeholder="1-5"></div>
+      </div>
+      ${Store.state.settings.hrvEnabled ? `<div class="row">
+        <div class="field"><label>HRV (ms)</label><input type="number" id="ci-hrv" value="${w.hrv ?? ''}" placeholder="optional"></div>
+        <div class="field"><label>Resting HR</label><input type="number" id="ci-rhr" value="${w.rhr ?? ''}" placeholder="optional"></div></div>` : ''}
+      ${scale('soreness', 'Muscle soreness (5 = wrecked)', true)}
+      ${scale('energy', 'Energy')}
+      ${scale('mood', 'Mood')}
+      ${scale('stress', 'Life stress (5 = high)', true)}
+      ${scale('motivation', 'Motivation to train')}
+      <div class="field"><label>Sharp / localized pain?</label>
+        <div class="toggle" id="ci-pain" data-on="${w.pain ? 1 : 0}"><span>No</span><span>Yes</span></div></div>
+      <button class="btn" id="ci-save">Save gate</button>`);
+
+    const picked = { ...w };
+    $$('[data-scale]').forEach(sc => { const f = sc.getAttribute('data-scale');
+      $$('button', sc).forEach(b => b.onclick = () => { $$('button', sc).forEach(x => x.classList.remove('sel')); b.classList.add('sel'); picked[f] = +b.getAttribute('data-v'); }); });
+    const pain = $('#ci-pain'); pain.onclick = () => { pain.dataset.on = pain.dataset.on === '1' ? '0' : '1'; pain.classList.toggle('on', pain.dataset.on === '1'); };
+    pain.classList.toggle('on', pain.dataset.on === '1');
+    $('#ci-save').onclick = () => {
+      const num = id => { const v = $('#' + id); return v && v.value !== '' ? +v.value : undefined; };
+      const wellness = { cmj: num('ci-cmj'), bodyweightKg: num('ci-bw'), sleepH: num('ci-sleepH'), sleepQ: num('ci-sleepQ'),
+        hrv: num('ci-hrv'), rhr: num('ci-rhr'), soreness: picked.soreness, energy: picked.energy, mood: picked.mood,
+        stress: picked.stress, motivation: picked.motivation, pain: pain.dataset.on === '1' };
+      Store.setDay(date, { wellness });
+      // also log CMJ into the test series so trends + diagnostics see it
+      if (wellness.cmj != null && !Store.testsFor('cmj').some(t => t.date === date)) Store.addTest('cmj', wellness.cmj, date);
+      const d = Store.getDay(date); d.readiness = Engine.readiness(date); Store.save();
+      closeModal(); renderToday(); notionSync(date);
+    };
+  }
+
+  function notionSync(date) {
+    if (!NotionSync.enabled()) return;
+    NotionSync.syncDay(date)
+      .then(res => { if (res && res.done && res.done.length) toast(`Synced to Notion: ${res.done.join(' + ')}`); })
+      .catch(err => toast(`Notion sync failed: ${err.message}`, true));
+  }
+  let toastT;
+  function toast(msg, bad) {
+    let el = $('#toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg; el.className = bad ? 'bad show' : 'show';
+    clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  /* ======================================================================
+     TAB: LOG
+     ==================================================================== */
+  function loadPrescribed(date) {
+    const dec = Engine.decideDay(date);
+    if (!dec.prescribed) return;
+    const items = [...dec.prescribed.am.items, ...dec.prescribed.pm.items];
+    const exercises = items.map(it => {
+      const n = (typeof it.sets === 'number' && it.sets > 0) ? it.sets : 1;
+      return { name: it.name, cat: it.cat, target: it, sets: Array.from({ length: n }, () => ({})) };
+    });
+    const day = Store.getDay(date);
+    day.session = { type: dec.day, durationMin: 60, sRPE: dec.arch && dec.arch.load === 'HIGH' ? 7 : 5, exercises, fromTemplate: true };
+    Store.save();
+  }
+
+  function renderLog() {
+    const date = current.date;
+    const day = Store.getDay(date);
+    if (!day.session) day.session = { type: '', exercises: [], durationMin: 45, sRPE: 6 };
+    const s = day.session;
+
+    let html = `<div class="section-title">Session · ${date}</div>`;
+    if (!s.exercises.length) {
+      const dec = Engine.decideDay(date);
+      if (dec.prescribed && (dec.prescribed.am.items.length + dec.prescribed.pm.items.length))
+        html += `<button class="btn" id="load-rx" style="margin-bottom:8px">⚡ Load today's prescribed session</button>`;
+    }
+    html += `<div class="card tight"><div class="row">
+      <div class="field" style="margin:0"><label>Duration (min)</label><input type="number" id="s-dur" value="${s.durationMin || ''}"></div>
+      <div class="field" style="margin:0"><label>Session RPE (1-10)</label><input type="number" min="1" max="10" id="s-rpe" value="${s.sRPE || ''}"></div></div></div>`;
+
+    if (!s.exercises.length) html += `<div class="empty">No exercises yet. Load the prescription above, or add movements manually —<br>the coach gives feedback after each set.</div>`;
+
+    s.exercises.forEach((ex, ei) => {
+      const cat = DATA.CATEGORIES[ex.cat] || {};
+      html += `<div class="exline" data-ei="${ei}"><div class="exhead"><span class="nm">${esc(ex.name)}</span><span class="ct">${esc(cat.label || ex.cat)}</span></div>`;
+      if (ex.target) { const t = ex.target; const scheme = [t.sets, t.reps].filter(v => v != null && v !== '').join(' × ');
+        html += `<div class="rxtarget">Target: ${esc(scheme)}${t.load && t.load !== '—' ? ' · ' + esc(t.load) : ''}${t.rest && t.rest !== '—' ? ' · rest ' + esc(t.rest) : ''}${t.note ? ' · ' + esc(t.note) : ''}</div>`; }
+      (ex.sets || []).forEach((set, si) => {
+        html += renderSetLine(ex, ei, si, set);
+        const adv = Engine.nextSetAdvice(ex, si, ex.sets);
+        if (adv.cue && Object.keys(set).length) html += `<div class="setadvice ${/⛔|above target|fatigu|below 2/.test(adv.cue) ? 'warn' : ''}">${esc(adv.cue)}</div>`;
+      });
+      html += `<button class="btn ghost sm" data-addset="${ei}" style="margin-top:10px">+ Add set</button></div>`;
+    });
+
+    html += `<button class="btn ghost" id="add-ex">+ Add exercise</button>`;
+    html += `<button class="btn" id="save-session" style="margin-top:10px">Save session</button>`;
+    view().innerHTML = html;
+
+    const lrx = $('#load-rx'); if (lrx) lrx.onclick = () => { loadPrescribed(date); renderLog(); };
+    $('#s-dur').oninput = e => { s.durationMin = +e.target.value || 0; Store.save(); };
+    $('#s-rpe').oninput = e => { s.sRPE = +e.target.value || 0; Store.save(); };
+    $('#add-ex').onclick = openExercisePicker;
+    $('#save-session').onclick = () => { s.load = Engine.sessionLoad(s); Store.save(); notionSync(current.date); App.go('today'); };
+    $$('[data-addset]').forEach(b => b.onclick = () => { const ei = +b.getAttribute('data-addset'); const ex = s.exercises[ei]; ex.sets.push({}); Store.save(); renderLog(); });
+    wireSetInputs();
+  }
+
+  function renderSetLine(ex, ei, si, set) {
+    const fields = (DATA.CATEGORIES[ex.cat] || {}).log || ['load', 'reps', 'rpe'];
+    const map = { load: ['load', 'kg'], reps: ['reps', 'reps'], rpe: ['rpe', 'RPE'], velocity: ['velocity', 'm/s'],
+      holdSec: ['holdSec', 'sec'], distance: ['distance', 'm'], time: ['time', 'sec'], contacts: ['contacts', '#'], rsi: ['rsi', 'RSI'], minutes: ['minutes', 'min'] };
+    const inp = f => `<input data-ei="${ei}" data-si="${si}" data-f="${f}" value="${set[f] ?? ''}" placeholder="${map[f][1]}" inputmode="decimal">`;
+    return `<div class="setline"><span class="idx">${si + 1}</span>${fields.map(f => inp(map[f][0])).join('')}</div>`;
+  }
+
+  function wireSetInputs() {
+    $$('.setline input').forEach(inp => inp.onchange = () => {
+      const ei = +inp.getAttribute('data-ei'), si = +inp.getAttribute('data-si'), f = inp.getAttribute('data-f');
+      const s = Store.getDay(current.date).session;
+      s.exercises[ei].sets[si][f] = inp.value === '' ? undefined : +inp.value;
+      Store.save(); renderLog();
+    });
+  }
+
+  function openExercisePicker() {
+    const byCat = {}; DATA.EXERCISES.forEach(e => (byCat[e.cat] = byCat[e.cat] || []).push(e));
+    let html = `<h3>Add exercise</h3>`;
+    Object.keys(byCat).forEach(cat => {
+      html += `<div class="section-title">${esc((DATA.CATEGORIES[cat] || {}).label || cat)}</div><div class="pickgrid">`;
+      byCat[cat].forEach(e => html += `<button data-name="${esc(e.name)}" data-cat="${e.cat}">${esc(e.name)}<small>${esc(e.equip)}</small></button>`);
+      html += `</div>`;
+    });
+    modal(html);
+    $$('.pickgrid button').forEach(b => b.onclick = () => {
+      const s = Store.getDay(current.date).session;
+      s.exercises.push({ name: b.getAttribute('data-name'), cat: b.getAttribute('data-cat'), sets: [{}] });
+      Store.save(); closeModal(); renderLog();
+    });
+  }
+
+  /* ======================================================================
+     TAB: PROGRESS
+     ==================================================================== */
+  function renderProgress() {
+    let html = `<div class="section-title">Goals · current → 32-wk → North Star</div>`;
+    DATA.GOALS.forEach(goal => {
+      const p = Engine.projectGoal(goal);
+      if (p.status === 'no-data') { html += goalCard(goal, null); return; }
+      html += goalCard(goal, p);
+    });
+
+    html += `<div class="section-title">Test metrics</div>`;
+    html += `<button class="btn ghost" id="log-test" style="margin-bottom:6px">+ Log a test result</button>`;
+    const tested = [...new Set(Store.state.tests.map(t => t.metric))];
+    if (!tested.length) html += `<div class="empty">No test data yet. Log force-plate, sprint, Keiser, or Stryd numbers to power projections and drift-detection.</div>`;
+    else {
+      html += `<div class="card">`;
+      tested.forEach(mid => {
+        const meta = DATA.METRICS.find(m => m.id === mid) || { name: mid, unit: '', lowerBetter: false };
+        const hist = Store.testsFor(mid), latest = hist[hist.length - 1], first = hist[0];
+        const delta = latest.value - first.value, improved = meta.lowerBetter ? delta < 0 : delta > 0;
+        const cls = hist.length < 2 ? 'flat' : improved ? 'pos' : 'neg', arrow = hist.length < 2 ? '' : improved ? '▲' : '▼';
+        html += `<div class="stat-row"><div class="l">${esc(meta.name)}<small>${esc(meta.tool || '')}</small>${renderSpark(hist.map(h => h.value))}</div>
+          <div class="r">${latest.value}${esc(meta.unit)}<small class="${cls}">${arrow} ${hist.length > 1 ? (delta > 0 ? '+' : '') + delta.toFixed(2) : 'baseline'}</small></div></div>`;
+      });
+      html += `</div>`;
+    }
+    view().innerHTML = html;
+    $('#log-test').onclick = openTestLogger;
+  }
+
+  function goalCard(goal, p) {
+    const cur = p ? p.current : goal.current;
+    const ck = goal.checkpoint ? `${fmtGoal(goal, goal.checkpoint[0])}–${fmtGoal(goal, goal.checkpoint[1])}` : '—';
+    const ns = goal.northStar != null ? fmtGoal(goal, goal.northStar) : '—';
+    let eta;
+    if (!p) eta = `Set current in <b>You</b> tab or log a test →`;
+    else if (p.trendPoints < 2) eta = `Log another test to project a trend.`;
+    else if (p.improving && p.etaCkWeeks != null) eta = `On trend: ~<b>${p.etaCkWeeks} wk</b> to checkpoint · ${p.perWeek > 0 ? '+' : ''}${p.perWeek}${goal.unit === 's' ? 's' : goal.unit}/wk`;
+    else if (p.improving) eta = `Improving — rate too small to project reliably.`;
+    else eta = `⚠️ Plateau/regressing — this quality needs its block to move.`;
+    const pct = p ? p.pct : 0;
+    return `<div class="goal"><div class="top"><span class="name">${esc(goal.name)}</span><span class="tgt">NS ${ns}</span></div>
+      <div class="now">${fmtGoal(goal, cur)}</div>
+      <div class="prog"><i style="width:${pct}%"></i></div>
+      <div class="eta">${eta}</div>
+      <div class="ckrow"><span>32-wk checkpoint: <b>${ck}</b></span></div>
+      <div class="limiters">${goal.limiters.map(l => `<span>${esc(l)}</span>`).join('')}</div></div>`;
+  }
+
+  function renderSpark(vals) {
+    if (vals.length < 2) return '';
+    const lo = Math.min(...vals), hi = Math.max(...vals), rng = hi - lo || 1;
+    return `<div class="spark">${vals.map((v, i) => `<i class="${i === vals.length - 1 ? 'last' : ''}" style="height:${10 + ((v - lo) / rng) * 90}%"></i>`).join('')}</div>`;
+  }
+
+  function openTestLogger() {
+    const byTool = {}; DATA.METRICS.forEach(m => (byTool[m.tool] = byTool[m.tool] || []).push(m));
+    let opts = '';
+    Object.keys(byTool).forEach(tool => opts += `<optgroup label="${esc(tool)}">${byTool[tool].map(m => `<option value="${m.id}">${esc(m.name)} (${esc(m.unit || 'ratio')})</option>`).join('')}</optgroup>`);
+    modal(`<h3>Log test result</h3>
+      <div class="field"><label>Metric</label><select id="t-metric">${opts}</select></div>
+      <div class="row"><div class="field"><label>Value</label><input type="number" step="0.01" id="t-val" placeholder="e.g. 34.5"></div>
+      <div class="field"><label>Date</label><input type="date" id="t-date" value="${today()}"></div></div>
+      <button class="btn" id="t-save">Save result</button>`);
+    $('#t-save').onclick = () => { const metric = $('#t-metric').value, val = $('#t-val').value, d = $('#t-date').value || today();
+      if (val === '') return; Store.addTest(metric, val, d); closeModal(); renderProgress(); };
+  }
+
+  /* ======================================================================
+     TAB: COACH
+     ==================================================================== */
+  function renderCoach() {
+    const date = current.date;
+    const dec = Engine.decideDay(date);
+    const phase = dec.phase, r = dec.readiness, acw = Engine.acwr(date), wk = Engine.weeklyReport(date);
+    let html = '';
+
+    // Live AI chat (optional) or a prompt to enable it
+    html += `<div class="section-title">Talk to your coach</div>`;
+    if (AICoach.enabled()) {
+      html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
+        <div class="chatbar"><input id="chatin" placeholder="Ask your coach anything…" autocomplete="off">
+        <button id="chatsend" class="chatsend">➤</button></div>
+        <div class="chatmeta"><span class="muted small">${esc(AICoach.model())} · streams live · on-device key</span>
+        <button id="chatclear" class="linkbtn">clear</button></div></div>`;
+    } else {
+      html += `<div class="card center"><h3>Live AI coach</h3>
+        <p class="sub" style="margin:6px 0 12px">Add an Anthropic API key in <b>You</b> to chat with a conversational Claude coach that knows your full program, today's readiness, and your logs. The built-in briefing below always works without it.</p>
+        <button class="btn ghost" data-tab="settings">Add API key →</button></div>`;
+    }
+
+    html += `<div class="section-title">Your coach</div>`;
+
+    const brief = [];
+    if (r) brief.push(`Readiness <strong>${r.score}</strong> (${r.band}). ${esc(dec.headline)}`);
+    else brief.push(`Run the morning gate (HRV + 3× CMJ) — two taps in <strong>Today</strong> — before I can read recovery.`);
+    if (acw.ratio != null) { const z = acw.ratio > 1.5 ? 'a danger spike' : acw.ratio > 1.3 ? 'slightly elevated' : acw.ratio < 0.8 ? 'low (taper or gap)' : 'right in the sweet spot';
+      brief.push(`Acute:chronic workload <strong>${acw.ratio}</strong> — ${z}. Acute ${acw.acute}, chronic ${acw.chronic} AU.`); }
+    if (dec.deload) brief.push(`This is a <strong>deload week</strong> (wk ${dec.wk}) — ~40% volume, intensity held. Re-test baselines before the next phase.`);
+    html += coachMsg('Daily briefing', brief);
+
+    // Block strategy
+    const primary = (DATA.CATEGORIES[phase.primary] || {}).label || phase.primary;
+    const secs = phase.secondary.map(s => (DATA.CATEGORIES[s] || {}).label || s).join(', ');
+    html += coachMsg('This block', [
+      `<strong>Phase ${phase.id}: ${esc(phase.name)}</strong>${dec.wk ? `, week ${dec.wk} of 32` : ''}. ${esc(phase.mission)}`,
+      `Driver: <strong>${esc(phase.driver)}</strong> (${esc(primary)}). Hold <strong>${esc(secs)}</strong> at minimum effective dose — enough to maintain, not enough to fatigue.`,
+      `Weekly diagnostic: <strong>${esc(phase.diagName)}</strong>. If it drops two weeks running, the MED dose for that quality was too low — add a session immediately, don't wait for the phase transition.`,
+      `Lifting band this phase: <strong>${phase.weightPct[0]}–${phase.weightPct[1]}%</strong>. High-CNS work stays clustered Mon/Wed/Fri so those days are truly hard and the rest genuinely easy.`,
+    ]);
+
+    // Diagnostic drift
+    const drift = Engine.diagnosticDrift(phase.diagnostic);
+    if (drift && drift.declining) {
+      const meta = DATA.METRICS.find(m => m.id === phase.diagnostic) || { name: phase.diagnostic };
+      html += coachMsg('⚠ Drift alert', [`<strong>${esc(meta.name)}</strong> has declined two tests running (${drift.prev} → ${drift.latest}). That's your early warning — add one maintenance session of this quality now.`]);
+    }
+
+    // 80/20 check
+    const hardDays = Store.lastNDays(7, date).filter(d => d.session && (d.session.sRPE || 0) >= 7).length;
+    if (hardDays >= 4) html += coachMsg('Intensity distribution', [`<strong>${hardDays} hard days</strong> in the last 7. The whole system runs ~80/20 — grey-zone days (medium-hard every day) guarantee mediocrity in every quality at once. Make one of those a genuine Z2.`]);
+
+    // Goal watch
+    const stalled = DATA.GOALS.map(g => Engine.projectGoal(g)).filter(p => p.status === 'ok' && p.trendPoints >= 2 && p.improving === false);
+    if (stalled.length) html += coachMsg('Goal watch', [`Flat or slipping: <strong>${stalled.map(p => p.goal.name).join(', ')}</strong>. These won't move as maintenance — each needs to be the rotating primary in an upcoming block.`]);
+
+    // Weekly compliance
+    html += `<div class="section-title">This week vs plan</div><div class="card">`;
+    wk.items.forEach(it => { const [lo, hi] = it.target, pct = Math.min(100, (it.val / hi) * 100);
+      const col = it.band === 'on' ? 'var(--green)' : it.band === 'under' ? 'var(--amber)' : 'var(--red)';
+      html += `<div class="comp-item"><div class="cl">${esc(it.label)}</div><div class="cbar"><i style="width:${pct}%;background:${col}"></i></div>
+        <div class="cv">${it.val}${esc(it.unit)} <span class="tag ${it.band}">${it.band}</span></div></div>
+        <div class="note" style="margin-left:120px;margin-top:-6px">target ${lo}–${hi}${esc(it.unit)}</div>`; });
+    html += `</div>`;
+
+    // Zones + nutrition
+    const hm = Store.state.profile.hrMax;
+    html += `<div class="section-title">HR zones (%HRmax ${hm})</div><div class="card">`;
+    DATA.ZONES.forEach(z => html += `<div class="stat-row"><div class="l">${esc(z.id)} · ${esc(z.name)}<small>${z.pct[0]}–${z.pct[1]}% HRmax</small></div><div class="r">${Math.round(z.pct[0] / 100 * hm)}–${Math.round(z.pct[1] / 100 * hm)} bpm</div></div>`);
+    html += `</div>`;
+    const cp = Store.state.profile.criticalPower;
+    if (cp) {
+      html += `<div class="section-title">Stryd power zones (CP ${cp} W)</div><div class="card">`;
+      DATA.STRYD_ZONES.forEach(z => html += `<div class="stat-row"><div class="l">${esc(z.id)} · ${esc(z.name)}<small>${Math.round(z.pct[0] * 100)}–${Math.round(z.pct[1] * 100)}% CP</small></div><div class="r">${Math.round(z.pct[0] * cp)}–${Math.round(z.pct[1] * cp)} W</div></div>`);
+      html += `</div>`;
+    }
+    html += coachMsg('Fuel & recovery', [
+      `Protein ${esc(DATA.NUTRITION.protein)}.`,
+      `Carbs periodized to load — ${esc(DATA.NUTRITION.carbsHigh)}, ${esc(DATA.NUTRITION.carbsLow)}.`,
+      `Peri: ${esc(DATA.NUTRITION.peri)}.`,
+      `Micros: ${esc(DATA.NUTRITION.micros)}.`,
+    ]);
+
+    html += `<div class="card tight center small muted">Built-in coaching engine — runs offline, follows your 32-week program, readiness gate, and workload rules. No data leaves this device.</div>`;
+    view().innerHTML = html;
+    wireChat();
+  }
+
+  function coachMsg(who, lines) { return `<div class="coach-msg"><div class="who">${esc(who)}</div>${lines.map(l => `<p>${l}</p>`).join('')}</div>`; }
+
+  /* ---- AI chat ---------------------------------------------------------- */
+  function renderChatLog() {
+    const chat = Store.state.chat || [];
+    if (!chat.length) return `<div class="chatempty">Ask about today's session, a set you just did, recovery, pacing, or your projections. I have your full context.</div>`;
+    return chat.map(m => `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
+  }
+  function wireChat() {
+    const inp = $('#chatin'); if (!inp) return;
+    const log = $('#chatlog'), sendBtn = $('#chatsend'), clearBtn = $('#chatclear');
+    const scroll = () => { log.scrollTop = log.scrollHeight; };
+    scroll();
+    if (clearBtn) clearBtn.onclick = () => { Store.state.chat = []; Store.save(); renderCoach(); };
+    const submit = async () => {
+      const text = inp.value.trim(); if (!text) return;
+      inp.value = ''; inp.disabled = true; sendBtn.disabled = true;
+      Store.state.chat.push({ role: 'user', content: text });
+      log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
+      scroll();
+      const bubble = $('#streaming');
+      const history = Store.state.chat.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
+      await AICoach.send(history, text, {
+        onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
+        onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+        onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; Store.state.chat.pop(); inp.disabled = false; sendBtn.disabled = false; },
+      });
+    };
+    sendBtn.onclick = submit;
+    inp.onkeydown = e => { if (e.key === 'Enter') submit(); };
+  }
+
+  /* ======================================================================
+     TAB: YOU / SETTINGS
+     ==================================================================== */
+  function renderSettings() {
+    const p = Store.state.profile;
+    const variantOpts = Object.entries(PROGRAM.VARIANTS).map(([k, v]) => `<option value="${k}" ${p.variant === k ? 'selected' : ''}>${esc(v.name)}</option>`).join('');
+    const phaseOpts = DATA.PHASES.map(ph => `<option value="${ph.id}" ${ph.id === p.phaseId ? 'selected' : ''}>Phase ${ph.id}: ${ph.name}</option>`).join('');
+    const wkNow = Engine.programWeek(today());
+
+    let html = `<div class="section-title">Athlete</div><div class="card">
+      <div class="field"><label>Name</label><input id="p-name" value="${esc(p.name)}" placeholder="Your name"></div>
+      <div class="row">
+        <div class="field"><label>Bodyweight (kg)</label><input type="number" step="0.1" id="p-bw" value="${p.bodyweightKg || ''}"></div>
+        <div class="field"><label>HR max</label><input type="number" id="p-hrmax" value="${p.hrMax || ''}"></div></div>
+      <div class="field"><label>Stryd Critical Power (W) — re-anchor zones after testing</label><input type="number" id="p-cp" value="${p.criticalPower ?? ''}" placeholder="optional"></div>
+    </div>`;
+
+    html += `<div class="section-title">32-week program</div><div class="card">
+      <div class="field"><label>Week 1 start date${wkNow ? ` — you're on week ${wkNow}` : ''}</label><input type="date" id="p-start" value="${p.startDateISO || ''}"></div>
+      ${!p.startDateISO ? `<div class="field"><label>…or set phase manually</label><select id="p-phase">${phaseOpts}</select></div>` : ''}
+      <div class="field"><label>Phase-5 sport variant (A-race)</label><select id="p-variant">${variantOpts}</select></div>
+      <div class="field"><label>A-race date</label><input type="date" id="p-gdate" value="${p.goalDateISO || ''}"></div>
+    </div>`;
+
+    html += `<div class="section-title">Current marks</div><div class="card">`;
+    DATA.GOALS.forEach(g => { const v = Store.state.bests[g.id] ?? g.current ?? '';
+      html += `<div class="field" style="margin:8px 0"><label>${esc(g.name)} <span class="muted">(NS ${g.northStar != null ? fmtGoal(g, g.northStar) : '—'})</span></label>
+        <input type="number" step="0.01" data-best="${g.id}" value="${v}" placeholder="${g.unit === 's' ? 'seconds' : g.unit}"></div>`; });
+    html += `</div>`;
+
+    html += `<div class="section-title">Settings</div><div class="card">
+      <div class="stat-row"><div class="l">Track HRV / resting HR</div><div class="r"><input type="checkbox" id="set-hrv" ${Store.state.settings.hrvEnabled ? 'checked' : ''} style="width:auto"></div></div></div>`;
+
+    const models = [['claude-opus-4-8', 'Opus 4.8 — sharpest coaching'], ['claude-sonnet-5', 'Sonnet 5 — faster / cheaper'], ['claude-haiku-4-5', 'Haiku 4.5 — cheapest']];
+    html += `<div class="section-title">Live AI coach (optional)</div><div class="card">
+      <div class="field"><label>Anthropic API key</label><input type="password" id="ai-key" value="${esc(Store.state.settings.aiKey)}" placeholder="sk-ant-..." autocomplete="off"></div>
+      <div class="field"><label>Model</label><select id="ai-model">${models.map(([v, l]) => `<option value="${v}" ${Store.state.settings.aiModel === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+      <p class="small muted" style="margin:6px 0 0">Enables the conversational coach in the <b>Coach</b> tab. Your key is stored only on this device and sent only to api.anthropic.com. Chat costs per use, billed to your Anthropic account. Get a key at console.anthropic.com.</p>
+    </div>`;
+
+    html += `<div class="section-title">Notion dashboard</div><div class="card">
+      <p class="small muted" style="margin:0 0 10px">Mirror your logs into the Notion databases. <b>Export CSV</b> works with zero setup — in Notion open a database → ••• → Merge with CSV.</p>
+      <div class="btn-row"><button class="btn ghost sm" id="nx-csv-read">Readiness CSV</button><button class="btn ghost sm" id="nx-csv-sess">Sessions CSV</button></div>
+      <hr class="hr">
+      <p class="small muted" style="margin:0 0 8px">Or auto-push every log via your Cloudflare Worker proxy (see <b>notion-worker.js</b> in the repo).</p>
+      <div class="field"><label>Worker URL</label><input id="nx-url" value="${esc(Store.state.settings.notionUrl)}" placeholder="https://apex-notion.you.workers.dev"></div>
+      <div class="field"><label>Shared key (APEX_KEY)</label><input type="password" id="nx-key" value="${esc(Store.state.settings.notionKey)}" placeholder="your shared secret"></div>
+      <button class="btn ghost sm" id="nx-test" style="width:100%">Sync today to Notion now</button>
+    </div>`;
+
+    html += `<div class="section-title">Data</div><div class="card">
+      <div class="btn-row"><button class="btn ghost sm" id="d-export">Export backup</button><button class="btn ghost sm" id="d-import">Import</button></div>
+      <button class="btn ghost sm" id="d-reset" style="margin-top:10px;color:var(--red);width:100%">Reset all data</button></div>`;
+    html += `<div class="center small muted" style="margin:20px 0">APEX · KNCT Hybrid Apex System · private on-device</div>`;
+
+    view().innerHTML = html;
+    $('#p-name').onchange = e => Store.setProfile({ name: e.target.value });
+    $('#p-bw').onchange = e => Store.setProfile({ bodyweightKg: +e.target.value });
+    $('#p-hrmax').onchange = e => Store.setProfile({ hrMax: +e.target.value });
+    $('#p-cp').onchange = e => Store.setProfile({ criticalPower: e.target.value === '' ? null : +e.target.value });
+    $('#p-start').onchange = e => { Store.setProfile({ startDateISO: e.target.value }); App.updatePhasePill(); renderSettings(); };
+    const ph = $('#p-phase'); if (ph) ph.onchange = e => { Store.setProfile({ phaseId: +e.target.value }); App.updatePhasePill(); };
+    $('#p-variant').onchange = e => Store.setProfile({ variant: e.target.value });
+    $('#p-gdate').onchange = e => Store.setProfile({ goalDateISO: e.target.value });
+    $$('[data-best]').forEach(inp => inp.onchange = () => { if (inp.value !== '') Store.setBest(inp.getAttribute('data-best'), inp.value); });
+    $('#set-hrv').onchange = e => { Store.state.settings.hrvEnabled = e.target.checked; Store.save(); };
+    $('#ai-key').onchange = e => { Store.state.settings.aiKey = e.target.value.trim(); Store.save(); };
+    $('#ai-model').onchange = e => { Store.state.settings.aiModel = e.target.value; Store.save(); };
+    $('#nx-url').onchange = e => { Store.state.settings.notionUrl = e.target.value.trim(); Store.save(); };
+    $('#nx-key').onchange = e => { Store.state.settings.notionKey = e.target.value.trim(); Store.save(); };
+    $('#nx-csv-read').onclick = () => NotionSync.download(`apex-readiness-${today()}.csv`, NotionSync.readinessCSV());
+    $('#nx-csv-sess').onclick = () => NotionSync.download(`apex-sessions-${today()}.csv`, NotionSync.sessionCSV());
+    $('#nx-test').onclick = () => {
+      if (!NotionSync.enabled()) { toast('Add the Worker URL and shared key first', true); return; }
+      NotionSync.syncDay(today(), { force: true })
+        .then(res => toast(res.done && res.done.length ? `Synced: ${res.done.join(' + ')}` : 'Nothing to sync today'))
+        .catch(err => toast(`Failed: ${err.message}`, true));
+    };
+    $('#d-export').onclick = doExport; $('#d-import').onclick = doImport;
+    $('#d-reset').onclick = () => { if (confirm('Erase all logged data? This cannot be undone.')) { Store.reset(); App.go('today'); App.updatePhasePill(); } };
+  }
+
+  function doExport() { const blob = new Blob([Store.exportJSON()], { type: 'application/json' }); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `apex-backup-${today()}.json`; a.click(); URL.revokeObjectURL(url); }
+  function doImport() { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json';
+    inp.onchange = () => { const f = inp.files[0]; if (!f) return; const rd = new FileReader();
+      rd.onload = () => { try { Store.importJSON(rd.result); App.go('today'); App.updatePhasePill(); alert('Backup restored.'); } catch (e) { alert('Invalid backup file.'); } }; rd.readAsText(f); }; inp.click(); }
+
+  function modal(inner) { $('#modalRoot').innerHTML = `<div class="modal-bg"><div class="modal"><div class="grab"></div>${inner}</div></div>`;
+    $('.modal-bg').onclick = e => { if (e.target.classList.contains('modal-bg')) closeModal(); }; }
+  function closeModal() { $('#modalRoot').innerHTML = ''; }
+
+  return { setDate: d => { current.date = d; }, get date() { return current.date; },
+    renderToday, renderLog, renderProgress, renderCoach, renderSettings, fmtGoal };
+})();
+
+/* ============================================================================
+   app.js — Bootstrap, tab routing, service-worker registration.
+   ========================================================================== */
+
+const App = (() => {
+  const $  = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+
+  const RENDER = {
+    today:    UI.renderToday,
+    log:      UI.renderLog,
+    progress: UI.renderProgress,
+    coach:    UI.renderCoach,
+    settings: UI.renderSettings,
+  };
+
+  let currentTab = 'today';
+
+  function go(tab) {
+    if (!RENDER[tab]) tab = 'today';
+    currentTab = tab;
+    $$('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tab));
+    window.scrollTo(0, 0);
+    RENDER[tab]();
+  }
+
+  function updatePhasePill() {
+    const date = Engine.todayISO();
+    const phase = Engine.currentPhase(date);
+    const wk = Engine.programWeek(date);
+    const deload = Engine.isDeloadWeek(date);
+    $('#phasePill').textContent = `P${phase.id} · ${phase.name}${wk ? ' · wk ' + wk : ''}${deload ? ' · DELOAD' : ''}`;
+  }
+
+  function init() {
+    // ensure today's date is the working date
+    UI.setDate(Engine.todayISO());
+    updatePhasePill();
+
+    $$('.tab').forEach(t => t.onclick = () => go(t.getAttribute('data-tab')));
+    $('#phasePill').onclick = () => go('settings');
+
+    // first-run: seed a friendly default phase week
+    go('today');
+
+    // (service worker omitted in single-file build)
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  return { go, updatePhasePill };
+})();
+
+</script>
