@@ -189,6 +189,14 @@ const DATA = (() => {
     { id: 'LT2', name: 'Threshold', pct: [86, 90] },
     { id: 'VO2', name: 'VO₂', pct: [93, 97] },
   ];
+  // Stryd running-power zones as % of Critical Power (seed from CP after testing).
+  const STRYD_ZONES = [
+    { id: 'Z1', name: 'Easy / recovery', pct: [0.65, 0.80] },
+    { id: 'Z2', name: 'Aerobic base',    pct: [0.80, 0.90] },
+    { id: 'LT2', name: 'Threshold (CP ±3%)', pct: [0.97, 1.03] },
+    { id: 'VO2', name: 'VO₂',             pct: [1.00, 1.15] },
+    { id: 'REP', name: 'Rep / speed',     pct: [1.15, 1.28] },
+  ];
 
   /* --------------------------------------------------------------------------
      RECOVERY + NUTRITION anchors (System 7).
@@ -207,5 +215,5 @@ const DATA = (() => {
     micros: 'Iron (monitor ferritin), vitamin D, magnesium, omega-3, creatine 5 g/day',
   };
 
-  return { GOALS, METRICS, EXERCISES, CATEGORIES, PHASES, WEEK_ARCH, HIGH_DAYS, GATE, ZONES, RECOVERY, NUTRITION };
+  return { GOALS, METRICS, EXERCISES, CATEGORIES, PHASES, WEEK_ARCH, HIGH_DAYS, GATE, ZONES, STRYD_ZONES, RECOVERY, NUTRITION };
 })();

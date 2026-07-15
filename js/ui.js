@@ -375,9 +375,15 @@ const UI = (() => {
 
     // Zones + nutrition
     const hm = Store.state.profile.hrMax;
-    html += `<div class="section-title">Training zones (%HRmax ${hm})</div><div class="card">`;
+    html += `<div class="section-title">HR zones (%HRmax ${hm})</div><div class="card">`;
     DATA.ZONES.forEach(z => html += `<div class="stat-row"><div class="l">${esc(z.id)} · ${esc(z.name)}<small>${z.pct[0]}–${z.pct[1]}% HRmax</small></div><div class="r">${Math.round(z.pct[0] / 100 * hm)}–${Math.round(z.pct[1] / 100 * hm)} bpm</div></div>`);
     html += `</div>`;
+    const cp = Store.state.profile.criticalPower;
+    if (cp) {
+      html += `<div class="section-title">Stryd power zones (CP ${cp} W)</div><div class="card">`;
+      DATA.STRYD_ZONES.forEach(z => html += `<div class="stat-row"><div class="l">${esc(z.id)} · ${esc(z.name)}<small>${Math.round(z.pct[0] * 100)}–${Math.round(z.pct[1] * 100)}% CP</small></div><div class="r">${Math.round(z.pct[0] * cp)}–${Math.round(z.pct[1] * cp)} W</div></div>`);
+      html += `</div>`;
+    }
     html += coachMsg('Fuel & recovery', [
       `Protein ${esc(DATA.NUTRITION.protein)}.`,
       `Carbs periodized to load — ${esc(DATA.NUTRITION.carbsHigh)}, ${esc(DATA.NUTRITION.carbsLow)}.`,

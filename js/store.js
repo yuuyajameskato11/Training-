@@ -10,13 +10,13 @@ const Store = (() => {
     profile: {
       name: '',
       bodyweightKg: 77,
-      startDateISO: '',    // Week 1 anchor for the 32-week program
+      startDateISO: '2026-06-15', // Week 1 anchor (Mon) — race 2027-01-24 lands end of wk 32
       phaseId: 1,          // fallback phase if no start date set
       phaseWeek: 1,        // fallback week
       variant: 'C',        // Phase-5 sport variant: A=Football, B=HYROX, C=Track
       hrMax: 190,          // for zone calibration
-      criticalPower: null, // Stryd CP (W) — re-anchor zones after testing
-      goalDateISO: '',     // A-race date (optional)
+      criticalPower: 280,  // Stryd CP (W) — re-anchor zones after testing
+      goalDateISO: '2027-01-24', // A-race date
     },
     // Personal bests / current standing per goal id -> value
     bests: {},
