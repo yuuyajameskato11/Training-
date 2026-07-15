@@ -24,7 +24,9 @@ const Store = (() => {
     days: {},
     // Test results: array of { date, metric, value }
     tests: [],
-    settings: { hrvEnabled: true, useMetric: true },
+    // AI coach chat history: array of { role, content }
+    chat: [],
+    settings: { hrvEnabled: true, useMetric: true, aiKey: '', aiModel: 'claude-opus-4-8' },
   };
 
   let state = load();

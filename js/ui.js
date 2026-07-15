@@ -329,7 +329,23 @@ const UI = (() => {
     const date = current.date;
     const dec = Engine.decideDay(date);
     const phase = dec.phase, r = dec.readiness, acw = Engine.acwr(date), wk = Engine.weeklyReport(date);
-    let html = `<div class="section-title">Your coach</div>`;
+    let html = '';
+
+    // Live AI chat (optional) or a prompt to enable it
+    html += `<div class="section-title">Talk to your coach</div>`;
+    if (AICoach.enabled()) {
+      html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
+        <div class="chatbar"><input id="chatin" placeholder="Ask your coach anything…" autocomplete="off">
+        <button id="chatsend" class="chatsend">➤</button></div>
+        <div class="chatmeta"><span class="muted small">${esc(AICoach.model())} · streams live · on-device key</span>
+        <button id="chatclear" class="linkbtn">clear</button></div></div>`;
+    } else {
+      html += `<div class="card center"><h3>Live AI coach</h3>
+        <p class="sub" style="margin:6px 0 12px">Add an Anthropic API key in <b>You</b> to chat with a conversational Claude coach that knows your full program, today's readiness, and your logs. The built-in briefing below always works without it.</p>
+        <button class="btn ghost" data-tab="settings">Add API key →</button></div>`;
+    }
+
+    html += `<div class="section-title">Your coach</div>`;
 
     const brief = [];
     if (r) brief.push(`Readiness <strong>${r.score}</strong> (${r.band}). ${esc(dec.headline)}`);
@@ -393,9 +409,40 @@ const UI = (() => {
 
     html += `<div class="card tight center small muted">Built-in coaching engine — runs offline, follows your 32-week program, readiness gate, and workload rules. No data leaves this device.</div>`;
     view().innerHTML = html;
+    wireChat();
   }
 
   function coachMsg(who, lines) { return `<div class="coach-msg"><div class="who">${esc(who)}</div>${lines.map(l => `<p>${l}</p>`).join('')}</div>`; }
+
+  /* ---- AI chat ---------------------------------------------------------- */
+  function renderChatLog() {
+    const chat = Store.state.chat || [];
+    if (!chat.length) return `<div class="chatempty">Ask about today's session, a set you just did, recovery, pacing, or your projections. I have your full context.</div>`;
+    return chat.map(m => `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
+  }
+  function wireChat() {
+    const inp = $('#chatin'); if (!inp) return;
+    const log = $('#chatlog'), sendBtn = $('#chatsend'), clearBtn = $('#chatclear');
+    const scroll = () => { log.scrollTop = log.scrollHeight; };
+    scroll();
+    if (clearBtn) clearBtn.onclick = () => { Store.state.chat = []; Store.save(); renderCoach(); };
+    const submit = async () => {
+      const text = inp.value.trim(); if (!text) return;
+      inp.value = ''; inp.disabled = true; sendBtn.disabled = true;
+      Store.state.chat.push({ role: 'user', content: text });
+      log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
+      scroll();
+      const bubble = $('#streaming');
+      const history = Store.state.chat.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
+      await AICoach.send(history, text, {
+        onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
+        onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+        onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; Store.state.chat.pop(); inp.disabled = false; sendBtn.disabled = false; },
+      });
+    };
+    sendBtn.onclick = submit;
+    inp.onkeydown = e => { if (e.key === 'Enter') submit(); };
+  }
 
   /* ======================================================================
      TAB: YOU / SETTINGS
@@ -430,6 +477,13 @@ const UI = (() => {
     html += `<div class="section-title">Settings</div><div class="card">
       <div class="stat-row"><div class="l">Track HRV / resting HR</div><div class="r"><input type="checkbox" id="set-hrv" ${Store.state.settings.hrvEnabled ? 'checked' : ''} style="width:auto"></div></div></div>`;
 
+    const models = [['claude-opus-4-8', 'Opus 4.8 — sharpest coaching'], ['claude-sonnet-5', 'Sonnet 5 — faster / cheaper'], ['claude-haiku-4-5', 'Haiku 4.5 — cheapest']];
+    html += `<div class="section-title">Live AI coach (optional)</div><div class="card">
+      <div class="field"><label>Anthropic API key</label><input type="password" id="ai-key" value="${esc(Store.state.settings.aiKey)}" placeholder="sk-ant-..." autocomplete="off"></div>
+      <div class="field"><label>Model</label><select id="ai-model">${models.map(([v, l]) => `<option value="${v}" ${Store.state.settings.aiModel === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+      <p class="small muted" style="margin:6px 0 0">Enables the conversational coach in the <b>Coach</b> tab. Your key is stored only on this device and sent only to api.anthropic.com. Chat costs per use, billed to your Anthropic account. Get a key at console.anthropic.com.</p>
+    </div>`;
+
     html += `<div class="section-title">Data</div><div class="card">
       <div class="btn-row"><button class="btn ghost sm" id="d-export">Export backup</button><button class="btn ghost sm" id="d-import">Import</button></div>
       <button class="btn ghost sm" id="d-reset" style="margin-top:10px;color:var(--red);width:100%">Reset all data</button></div>`;
@@ -446,6 +500,8 @@ const UI = (() => {
     $('#p-gdate').onchange = e => Store.setProfile({ goalDateISO: e.target.value });
     $$('[data-best]').forEach(inp => inp.onchange = () => { if (inp.value !== '') Store.setBest(inp.getAttribute('data-best'), inp.value); });
     $('#set-hrv').onchange = e => { Store.state.settings.hrvEnabled = e.target.checked; Store.save(); };
+    $('#ai-key').onchange = e => { Store.state.settings.aiKey = e.target.value.trim(); Store.save(); };
+    $('#ai-model').onchange = e => { Store.state.settings.aiModel = e.target.value; Store.save(); };
     $('#d-export').onclick = doExport; $('#d-import').onclick = doImport;
     $('#d-reset').onclick = () => { if (confirm('Erase all logged data? This cannot be undone.')) { Store.reset(); App.go('today'); App.updatePhasePill(); } };
   }

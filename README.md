@@ -23,7 +23,7 @@ rule, and every **day-by-day prescribed session** — plus your current marks,
 | **Today** | A big readiness ring (0–100, green/amber/red), the day's *call*, the **Mon–Sun High/Low strip** with today highlighted, **today's prescribed AM/PM session** pulled straight from your program, one-tap **"Start today's session"**, the readiness-gate breakdown, and a recovery checklist. |
 | **Log** | **Load today's prescribed session** in one tap (pre-fills every exercise with its target sets/reps/load), or add movements manually. Each logged set returns **live coaching** — velocity/RPE/RSI auto-regulation and a rest prescription. |
 | **Progress** | All 10 goals shown **current → 32-week checkpoint → North Star** with an **ETA-to-checkpoint** from your trend, plus test-metric history (force plate, OVR, Keiser, Stryd…) with sparklines. |
-| **Coach** | A synthesized briefing: readiness + workload, this block's driver/MED/diagnostic strategy, **2-week diagnostic-drift alerts**, 80/20 checks, goal-watch flags, weekly volume-vs-plan compliance, your **HR training zones**, and fuel/recovery anchors. |
+| **Coach** | A **live Claude AI chat** (optional — add an API key) that knows your full program, today's readiness, and your logs, plus an always-on synthesized briefing: readiness + workload, this block's driver/MED/diagnostic strategy, **2-week diagnostic-drift alerts**, 80/20 checks, goal-watch flags, weekly volume-vs-plan compliance, your **HR + Stryd power zones**, and fuel/recovery anchors. |
 | **You** | Profile, **Week-1 start date** (auto-computes your current program week & phase), sport variant (Football / HYROX / Track), HR max & Stryd CP for zones, current marks, and JSON backup/restore. |
 
 ## How the coach thinks (the engine)
@@ -84,6 +84,7 @@ js/data.js              knowledge base: 7 systems, exercises, goals, macrocycle,
 js/program.js           every prescribed day-by-day session, all 5 phases + variants
 js/store.js             local persistence + backup/restore
 js/engine.js            the coach's brain (gate, ACWR, program week, projections, auto-reg)
+js/coach.js             optional live Claude AI chat (streaming, on-device key)
 js/ui.js                rendering + interaction for all tabs
 js/app.js               bootstrap, routing, service-worker
 sw.js                   offline cache
@@ -102,10 +103,24 @@ icons/                  app icons (+ dependency-free generator script)
 4. On diagnostic/test days → **Progress → Log a test result**. Weekly retesting
    powers the projections and the drift alerts.
 
+## Live AI coach (optional)
+
+The **Coach** tab has a conversational Claude coach layered on top of the
+built-in engine. Add an Anthropic API key in **You → Live AI coach**, and the
+chat gets your full context every message — program week/phase, today's
+readiness gate, your prescribed session, what you've logged, your goals and
+trends, and your zones — then answers in the voice of an elite S&C coach
+(streaming, prompt-cached to keep cost down). Ask "how hard today?", "what
+should I do after this set?", "am I on track for 40 inches?".
+
+- Your API key is stored **only** on this device (localStorage) and sent only
+  to `api.anthropic.com`. Chat is billed to your own Anthropic account.
+- Pick the model in Settings — Opus 4.8 (sharpest), Sonnet 5 (faster/cheaper),
+  or Haiku 4.5 (cheapest).
+- The built-in briefing works fully **without** a key — the AI layer is a bonus.
+
 ## Roadmap ideas
 
-- **Live Claude AI chat** layer on top of the built-in engine (paste an API key
-  in Settings) for free-form conversational coaching.
 - Apple Health / Garmin / WHOOP import for HRV, sleep, and runs.
 - Charts for readiness trend and force-velocity profile over a block.
 
