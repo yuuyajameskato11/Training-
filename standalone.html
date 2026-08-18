@@ -1,5 +1,14 @@
-<title>APEX — KNCT Hybrid Apex System</title>
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0e14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="APEX" />
+  <title>APEX — Performance Journal</title>
+  <style>
 /* ============================================================================
    APEX — dark, athletic, WHOOP-inspired. Mobile-first, safe-area aware.
    ========================================================================== */
@@ -254,6 +263,22 @@ textarea{min-height:70px;resize:vertical}
 .chatmeta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .linkbtn{background:none;border:0;color:var(--muted);font-size:.75rem;cursor:pointer;text-decoration:underline}
 
+/* Chat log-cards + example chips */
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip-row .chip{cursor:pointer;font-size:.8rem;padding:8px 13px}
+.logcard{align-self:flex-start;max-width:100%;width:100%;background:var(--card2);border:1px solid var(--line);
+  border-left:3px solid var(--green);border-radius:12px;padding:11px 13px;font-size:.85rem}
+.logcard .lhead{font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lband{font-size:.68rem;font-weight:800;color:#04110d;padding:2px 8px;border-radius:99px;letter-spacing:.03em}
+.lchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.lchip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px 9px;font-size:.76rem;color:var(--muted)}
+.lchip b{color:var(--txt);font-weight:800}
+.ltable{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:2px}
+.ltable th{text-align:left;color:var(--muted2);font-weight:700;padding:3px 6px;border-bottom:1px solid var(--line);font-size:.72rem;text-transform:uppercase;letter-spacing:.03em}
+.ltable td{padding:5px 6px;border-bottom:1px solid var(--line)}
+.ltable td:first-child{font-weight:700;color:var(--txt)}
+.ltable tr:last-child td{border-bottom:0}
+
 /* Toggle */
 .toggle{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .toggle span{flex:1;text-align:center;padding:11px 0;font-weight:700;font-size:.9rem;color:var(--muted)}
@@ -262,23 +287,28 @@ textarea{min-height:70px;resize:vertical}
 .toggle.on span:last-child{color:#1a1200;background:var(--amber)}
 
 </style>
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand"><span class="logo">▲</span> APEX</div>
+      <div id="phasePill" class="phase-pill" role="button" tabindex="0">Phase —</div>
+    </header>
 
-<div id="app">
-  <header id="topbar">
-    <div class="brand"><span class="logo">▲</span> APEX</div>
-    <div id="phasePill" class="phase-pill" role="button" tabindex="0">Phase —</div>
-  </header>
-  <main id="view"></main>
-  <nav id="tabbar">
-    <button class="tab" data-tab="today"><span class="ic">◎</span><span>Today</span></button>
-    <button class="tab" data-tab="log"><span class="ic">✎</span><span>Log</span></button>
-    <button class="tab" data-tab="progress"><span class="ic">▲</span><span>Progress</span></button>
-    <button class="tab" data-tab="coach"><span class="ic">✦</span><span>Coach</span></button>
-    <button class="tab" data-tab="settings"><span class="ic">⚙</span><span>You</span></button>
-  </nav>
-</div>
-<div id="modalRoot"></div>
-<script>
+    <main id="view"><!-- rendered by ui.js --></main>
+
+    <nav id="tabbar">
+      <button class="tab" data-tab="today">   <span class="ic">◎</span><span>Today</span></button>
+      <button class="tab" data-tab="log">      <span class="ic">✎</span><span>Log</span></button>
+      <button class="tab" data-tab="progress"> <span class="ic">▲</span><span>Progress</span></button>
+      <button class="tab" data-tab="coach">    <span class="ic">✦</span><span>Coach</span></button>
+      <button class="tab" data-tab="settings"> <span class="ic">⚙</span><span>You</span></button>
+    </nav>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script>
 /* ============================================================================
    data.js — Knowledge base for the KNCT Hybrid Apex System (32-week program).
    Encodes: goals (current → 32-wk checkpoint → North Star), the 7 systems,
@@ -499,6 +529,8 @@ const DATA = (() => {
   return { GOALS, METRICS, EXERCISES, CATEGORIES, PHASES, WEEK_ARCH, HIGH_DAYS, GATE, ZONES, STRYD_ZONES, RECOVERY, NUTRITION };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    program.js — The prescribed day-by-day sessions for all 5 phases, plus the
    Phase-5 sport variants. Transcribed from the KNCT Hybrid Apex System doc.
@@ -770,6 +802,8 @@ const PROGRAM = (() => {
   return { TEMPLATES, VARIANTS, forDay };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    store.js — Local persistence. Everything lives in the browser (localStorage),
    private to the device. Export/import lets the athlete back up or move data.
@@ -890,6 +924,8 @@ const Store = (() => {
   };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    engine.js — The coach's brain (KNCT Hybrid Apex System).
    Readiness = CMJ-vs-baseline gate + hard-gate overrides (per the doc).
@@ -1216,6 +1252,219 @@ const Engine = (() => {
   };
 })();
 
+</script>
+  <script>
+/* ============================================================================
+   logger.js — Natural-language logging. Turns a plain sentence like
+   "slept 7h, HRV 58, CMJ 33, front squat 4x4 @100kg RPE8, 1000m tempo RPE7,
+   12 depth jumps RSI 2.3, felt good, session 7" into structured wellness +
+   session data written straight into the journal. Runs 100% on-device — no
+   API key needed. The live AI coach (if enabled) layers on top.
+   ========================================================================== */
+
+const NaturalLog = (() => {
+
+  /* ---- movement lexicon: keyword -> category -------------------------- */
+  const LEX = [
+    // strength
+    ['front squat','strength'],['back squat','strength'],['box squat','strength'],
+    ['split squat','strength'],['squat','strength'],['deadlift','strength'],
+    ['romanian','strength'],['rdl','strength'],['hip thrust','strength'],
+    ['bench','strength'],['overhead press','strength'],['ohp','strength'],
+    ['push press','strength'],['press','strength'],['pull-up','strength'],
+    ['pullup','strength'],['chin','strength'],['row','strength'],['lunge','strength'],
+    ['power clean','strength'],['hang clean','strength'],['clean','strength'],
+    ['snatch','strength'],['jerk','strength'],['curl','strength'],['calf','strength'],
+    ['nordic','strength'],['glute','strength'],['core','accessory'],['plank','accessory'],
+    // plyometric
+    ['depth jump','plyo'],['drop jump','plyo'],['box jump','plyo'],['broad jump','plyo'],
+    ['pogo','plyo'],['hurdle hop','plyo'],['bound','plyo'],['hop','plyo'],
+    ['plyo','plyo'],['cmj','plyo'],['jump','plyo'],
+    // speed
+    ['flying sprint','speed'],['fly','speed'],['sprint','speed'],['accel','speed'],
+    ['acceleration','speed'],['wicket','speed'],['stride','speed'],['block start','speed'],
+    // conditioning / endurance
+    ['tempo run','conditioning'],['tempo','conditioning'],['easy run','conditioning'],
+    ['long run','conditioning'],['interval','conditioning'],['run','conditioning'],
+    ['jog','conditioning'],['bike','conditioning'],['erg','conditioning'],
+    ['ski','conditioning'],['ruck','conditioning'],['swim','conditioning'],
+    ['zone 2','conditioning'],['z2','conditioning'],['row erg','conditioning'],
+  ];
+
+  const FEEL = {
+    great:5, amazing:5, excellent:5, strong:5, fresh:5, awesome:5, incredible:5, primed:5,
+    good:4, solid:4, nice:4, decent:4, sharp:4,
+    ok:3, okay:3, fine:3, alright:3, average:3, 'so-so':3, meh:3, normal:3,
+    tired:2, flat:2, rough:2, sluggish:2, off:2, low:2, sore:2, heavy:2,
+    exhausted:1, terrible:1, awful:1, dead:1, wrecked:1, shattered:1, drained:1,
+  };
+
+  const first = (re, s, i = 1) => { const m = s.match(re); return m ? parseFloat(m[i]) : null; };
+  const titleCase = s => s.replace(/\b\w/g, c => c.toUpperCase());
+
+  /* ---- wellness ------------------------------------------------------- */
+  function parseWellness(t) {
+    const w = {}, cap = [];
+    const put = (k, v, label) => { if (v != null && !Number.isNaN(v)) { w[k] = v; cap.push(label); } };
+
+    put('sleepH',
+      first(/\bslept?\s*(?:for\s*)?(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hours)?\b/, t) ??
+      first(/(\d+(?:\.\d+)?)\s*(?:h|hrs|hours)\s*(?:of\s*)?sleep/, t), 'sleep');
+    put('sleepQ', first(/sleep\s*(?:quality|q)\s*(\d)(?:\s*\/\s*5)?/, t) ??
+      first(/quality\s*(\d)\s*\/\s*5/, t), 'sleep quality');
+    put('hrv', first(/\bhrv\s*(?:of|was|is|=|:|at)?\s*(\d+(?:\.\d+)?)/, t), 'HRV');
+    put('rhr', first(/(?:resting\s*(?:hr|heart\s*rate)|\brhr\b)\s*(?:of|was|is|=|:|at)?\s*(\d+(?:\.\d+)?)/, t), 'resting HR');
+    put('cmj', first(/\bcmj\b\D{0,15}(\d+(?:\.\d+)?)/, t) ??
+      first(/(?:vertical|jump(?:ed)?)\D{0,8}(\d+(?:\.\d+)?)\s*cm/, t), 'CMJ');
+    put('bodyweightKg', first(/(?:bodyweight|body\s*weight|\bbw\b)\s*(?:of|was|is|=|:|at)?\s*(\d+(?:\.\d+)?)/, t), 'bodyweight');
+
+    ['energy','mood','stress','motivation'].forEach(k => {
+      const v = first(new RegExp(k + '\\w*\\s*(?:of|was|is|=|:|at)?\\s*(\\d)(?:\\s*\\/\\s*5)?'), t);
+      put(k, v, k);
+    });
+    const soreN = first(/sore(?:ness)?\s*(?:of|was|is|=|:|at)?\s*(\d)(?:\s*\/\s*5)?/, t);
+    put('soreness', soreN, 'soreness');
+
+    // subjective feel words -> energy + mood if not explicitly given
+    const fm = t.match(/(?:felt|feeling|feel)\s+(?:like\s+|a\s+|really\s+|pretty\s+|very\s+)?([a-z-]+)/);
+    if (fm && FEEL[fm[1]] != null) {
+      if (w.energy == null) { w.energy = FEEL[fm[1]]; cap.push('energy'); }
+      if (w.mood == null) w.mood = FEEL[fm[1]];
+      if (fm[1] === 'sore' && w.soreness == null) w.soreness = 4;
+    }
+    return { w, cap };
+  }
+
+  /* ---- session RPE ---------------------------------------------------- */
+  function parseSessionRPE(t) {
+    return first(/(?:session|whole session|overall)\s*(?:felt like|was|rpe)?\s*(?:a\s*)?(\d+(?:\.\d+)?)/, t) ??
+           first(/\bs\s*rpe\s*(\d+(?:\.\d+)?)/, t) ??
+           first(/felt like\s*(?:a\s*)?(\d+(?:\.\d+)?)\s*(?:\/\s*10)?\s*$/, t);
+  }
+
+  /* ---- exercises ------------------------------------------------------ */
+  function parseExercises(t) {
+    const clauses = t.split(/[,;\n]|\band\b|\bthen\b|\bplus\b/g).map(s => s.trim()).filter(Boolean);
+    const out = [];
+    for (const c of clauses) {
+      // skip pure-wellness clauses
+      if (/\b(slept|sleep|hrv|resting|rhr|bodyweight|body weight)\b/.test(c)) continue;
+      if (/\bcmj\b/.test(c) && !/[x×]/.test(c)) continue;
+
+      const sr = c.match(/(\d+)\s*[x×]\s*(\d+)/) || c.match(/(\d+)\s*by\s*(\d+)/);
+      // load: "@100", "@ 100kg", or whole-word "at 100" (NOT the "at" inside "squat")
+      const load = first(/(?:@\s*|\bat\s+)(\d+(?:\.\d+)?)\s*(?:kg|kgs|lb|lbs|pounds)?/, c) ??
+                   first(/(\d+(?:\.\d+)?)\s*(?:kg|kgs)\b/, c);
+      const isLb = /(?:@\s*|\bat\s+)?\d+(?:\.\d+)?\s*(?:lb|lbs|pounds)\b/.test(c);
+      const rpe = first(/rpe\s*(\d+(?:\.\d+)?)/, c);
+      const vel = first(/(\d+(?:\.\d+)?)\s*m\/s/, c);
+      let dist = first(/(\d+(?:\.\d+)?)\s*(?:km)\b/, c);
+      if (dist != null) dist *= 1000; else dist = first(/(\d+(?:\.\d+)?)\s*(?:m|meters?|metres?)\b(?!\/)/, c);
+      const mins = first(/(\d+(?:\.\d+)?)\s*(?:min|mins|minutes)\b/, c);
+      // contacts: "12 contacts", "12 jumps", or "12 depth jumps" (words between number and noun)
+      const contacts = first(/(\d+)\s*(?:contacts|jumps|bounds|hops|throws|reps)\b/, c) ??
+                       first(/(\d+)\s+(?:[a-z]+\s+){1,2}(?:contacts|jumps|bounds|hops|throws)\b/, c);
+      const rsi = first(/rsi\s*(?:of|~|around|=|:)?\s*(\d+(?:\.\d+)?)/, c);
+
+      // category / name from lexicon
+      let cat = null, hit = null;
+      for (const [kw, k] of LEX) { if (c.includes(kw)) { cat = k; hit = kw; break; } }
+
+      const accept = sr || load != null || dist != null || contacts != null || rsi != null ||
+                     (mins != null && cat) || (cat && cat !== 'plyo');
+      if (!accept) continue;
+      if (!cat) cat = load != null || sr ? 'strength' : 'accessory';
+
+      // build a display name: clause minus the numeric tokens
+      let name = c
+        .replace(/(\d+)\s*[x×]\s*(\d+)/g, ' ').replace(/(\d+)\s*by\s*(\d+)/g, ' ')
+        .replace(/(?:@|at)\s*\d+(?:\.\d+)?\s*(?:kg|kgs|lb|lbs|pounds)?/g, ' ')
+        .replace(/\d+(?:\.\d+)?\s*(?:kg|kgs|lb|lbs|pounds|m\/s|km|m|meters?|metres?|min|mins|minutes|contacts|jumps|bounds|hops|throws|reps|cm)\b/g, ' ')
+        .replace(/rpe\s*\d+(?:\.\d+)?/g, ' ').replace(/rsi\s*(?:of|~|around|=|:)?\s*\d+(?:\.\d+)?/g, ' ')
+        .replace(/\b(did|a|of|for|the|some|my|felt|like|run)\b/g, ' ')
+        .replace(/\b\d+(?:\.\d+)?\b/g, ' ')
+        .replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!name || name.length < 2) name = hit || 'Exercise';
+      name = titleCase(name);
+
+      const ld = isLb && load != null ? Math.round(load * 0.4536 * 2) / 2 : load;
+      const base = {};
+      if (ld != null) base.load = ld;
+      if (rpe != null) base.rpe = rpe;
+      if (vel != null) base.velocity = vel;
+
+      let sets;
+      if (sr) {
+        const n = Math.min(20, Math.max(1, parseInt(sr[1], 10)));
+        const reps = parseInt(sr[2], 10);
+        sets = Array.from({ length: n }, () => ({ ...base, reps }));
+      } else {
+        const one = { ...base };
+        if (dist != null) one.distance = dist;
+        if (mins != null) one.minutes = mins;
+        if (contacts != null) one.reps = contacts;
+        if (rsi != null) one.rsi = rsi;
+        sets = [one];
+      }
+      out.push({ name, cat, sets });
+    }
+    return out;
+  }
+
+  function parse(text) {
+    const t = ' ' + String(text).toLowerCase().replace(/[，]/g, ',') + ' ';
+    const { w, cap } = parseWellness(t);
+    const exercises = parseExercises(t);
+    const sRPE = parseSessionRPE(t);
+    return { wellness: w, wellnessCap: cap, exercises, sRPE,
+      captured: cap.length > 0 || exercises.length > 0 || sRPE != null };
+  }
+
+  /* ---- write it into the journal -------------------------------------- */
+  function apply(date, text) {
+    const p = parse(text);
+    if (!p.captured) return { ...p, readiness: null };
+
+    const day = Store.getDay(date);
+
+    // wellness (merge, don't wipe existing fields)
+    if (p.wellnessCap.length) {
+      const wellness = { ...(day.wellness || {}), ...p.wellness };
+      Store.setDay(date, { wellness });
+      if (p.wellness.cmj != null && !Store.testsFor('cmj').some(tt => tt.date === date))
+        Store.addTest('cmj', p.wellness.cmj, date);
+    }
+
+    // session (append to any existing)
+    if (p.exercises.length || p.sRPE != null) {
+      const s = day.session && day.session.exercises
+        ? day.session
+        : { type: 'Logged', durationMin: 0, sRPE: 0, exercises: [] };
+      s.exercises = s.exercises.concat(p.exercises);
+      const totalMins = s.exercises.reduce((a, ex) =>
+        a + (ex.sets || []).reduce((b, st) => b + (st.minutes || 0), 0), 0);
+      if (totalMins) s.durationMin = Math.max(s.durationMin || 0, totalMins);
+      if (!s.durationMin) s.durationMin = 60;
+      if (p.sRPE != null) s.sRPE = p.sRPE;
+      if (!s.sRPE) s.sRPE = 6;
+      s.load = (typeof Engine !== 'undefined' && Engine.sessionLoad) ? Engine.sessionLoad(s) : 0;
+      Store.setDay(date, { session: s });
+    }
+
+    // recompute readiness
+    let readiness = null;
+    if (typeof Engine !== 'undefined' && Engine.readiness) {
+      readiness = Engine.readiness(date);
+      if (readiness) Store.setDay(date, { readiness });
+    }
+    return { ...p, readiness };
+  }
+
+  return { parse, apply };
+})();
+
+</script>
+  <script>
 /* ============================================================================
    coach.js — Live Claude AI chat coach (optional layer over the built-in engine).
    Calls the Anthropic Messages API directly from the browser. The API key is
@@ -1355,6 +1604,8 @@ const AICoach = (() => {
   return { enabled, model, buildSystem, send };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    notionsync.js — Push logs to the Notion dashboard.
    Notion's API blocks direct browser calls (CORS) and needs a secret token,
@@ -1487,6 +1738,8 @@ const NotionSync = (() => {
   return { DB, enabled, syncDay, readinessCSV, sessionCSV, download };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    ui.js — Rendering + interaction for all five tabs (KNCT Hybrid Apex System).
    ========================================================================== */
@@ -1833,19 +2086,19 @@ const UI = (() => {
     const phase = dec.phase, r = dec.readiness, acw = Engine.acwr(date), wk = Engine.weeklyReport(date);
     let html = '';
 
-    // Live AI chat (optional) or a prompt to enable it
-    html += `<div class="section-title">Talk to your coach</div>`;
-    if (AICoach.enabled()) {
-      html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
-        <div class="chatbar"><input id="chatin" placeholder="Ask your coach anything…" autocomplete="off">
+    // Chat = logger (works offline) + optional live AI coach
+    const ai = AICoach.enabled();
+    html += `<div class="section-title">Chat your day — I'll log it</div>`;
+    html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
+        <div class="chatbar"><input id="chatin" placeholder="e.g. slept 7h, HRV 58, squats 5×3 @90 RPE8, felt good…" autocomplete="off">
         <button id="chatsend" class="chatsend">➤</button></div>
-        <div class="chatmeta"><span class="muted small">${esc(AICoach.model())} · streams live · on-device key</span>
+        <div class="chatmeta"><span class="muted small">${ai ? esc(AICoach.model()) + ' · logs + coaches' : 'on-device parser · no key needed'}</span>
         <button id="chatclear" class="linkbtn">clear</button></div></div>`;
-    } else {
-      html += `<div class="card center"><h3>Live AI coach</h3>
-        <p class="sub" style="margin:6px 0 12px">Add an Anthropic API key in <b>You</b> to chat with a conversational Claude coach that knows your full program, today's readiness, and your logs. The built-in briefing below always works without it.</p>
-        <button class="btn ghost" data-tab="settings">Add API key →</button></div>`;
-    }
+    html += `<div class="chip-row" id="log-examples">
+        <button class="chip" data-fill="Slept 7.5h, HRV 58, resting HR 49, CMJ 33, bodyweight 77, felt good">Morning check-in</button>
+        <button class="chip" data-fill="Front squat 4×4 @100kg RPE8, RDL 4×6 @75kg, 1000m tempo RPE7, 12 depth jumps RSI 2.3, session 7">Log a session</button>
+      </div>`;
+    if (!ai) html += `<div class="card tight small muted" style="margin-top:8px">Want it to talk back with coaching too? Add an Anthropic API key in <b>You</b> — logging works either way.</div>`;
 
     html += `<div class="section-title">Your coach</div>`;
 
@@ -1916,31 +2169,93 @@ const UI = (() => {
 
   function coachMsg(who, lines) { return `<div class="coach-msg"><div class="who">${esc(who)}</div>${lines.map(l => `<p>${l}</p>`).join('')}</div>`; }
 
-  /* ---- AI chat ---------------------------------------------------------- */
+  /* ---- Chat / logger ---------------------------------------------------- */
   function renderChatLog() {
     const chat = Store.state.chat || [];
-    if (!chat.length) return `<div class="chatempty">Ask about today's session, a set you just did, recovery, pacing, or your projections. I have your full context.</div>`;
-    return chat.map(m => `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
+    if (!chat.length) return `<div class="chatempty">Type your day in plain words — <b>"slept 7h, HRV 58, front squat 4×4 @100 RPE8, 1000m tempo, felt good"</b> — and I'll log it to your journal. Ask me anything too.</div>`;
+    return chat.map(m => m.role === 'log'
+      ? m.content // pre-built, already-escaped HTML card
+      : `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
   }
+
+  // Build the "✅ Logged" confirmation card from a NaturalLog.apply() result
+  function logCard(date, res) {
+    const chips = [];
+    const W = res.wellness;
+    const lab = { sleepH: 'Sleep', sleepQ: 'Sleep q', hrv: 'HRV', rhr: 'Rest HR', cmj: 'CMJ',
+      bodyweightKg: 'BW', energy: 'Energy', mood: 'Mood', stress: 'Stress', soreness: 'Sore', motivation: 'Motiv' };
+    const unit = { sleepH: 'h', cmj: ' cm', bodyweightKg: ' kg' };
+    Object.keys(lab).forEach(k => { if (W[k] != null) chips.push(`<span class="lchip">${lab[k]} <b>${W[k]}${unit[k] || ''}</b></span>`); });
+
+    let exRows = '';
+    res.exercises.forEach(ex => {
+      const s0 = ex.sets[0] || {};
+      const scheme = ex.sets.length > 1 && s0.reps != null ? `${ex.sets.length}×${s0.reps}`
+        : (s0.distance ? `${s0.distance} m` : s0.reps != null ? `${s0.reps}` : s0.minutes ? `${s0.minutes} min` : '—');
+      const load = s0.load != null ? `${s0.load} kg` : '—';
+      const extra = [s0.rpe != null ? 'RPE ' + s0.rpe : '', s0.rsi != null ? 'RSI ' + s0.rsi : '', s0.velocity != null ? s0.velocity + ' m/s' : '']
+        .filter(Boolean).join(' · ') || '—';
+      exRows += `<tr><td>${esc(ex.name)}</td><td>${scheme}</td><td>${load}</td><td>${extra}</td></tr>`;
+    });
+
+    const r = res.readiness;
+    const bandCol = r ? (r.band === 'green' ? 'var(--green)' : r.band === 'amber' ? 'var(--amber)' : 'var(--red)') : 'var(--muted)';
+    const badge = r ? `<span class="lband" style="background:${bandCol}">${r.band.toUpperCase()} · ${r.score}</span>` : '';
+
+    return `<div class="logcard">
+      <div class="lhead">✅ Logged <span class="muted">· ${esc(date)}</span> ${badge}</div>
+      ${chips.length ? `<div class="lchips">${chips.join('')}</div>` : ''}
+      ${exRows ? `<table class="ltable"><thead><tr><th>Exercise</th><th>Sets×Reps</th><th>Load</th><th>Detail</th></tr></thead><tbody>${exRows}</tbody></table>` : ''}
+      ${res.sRPE != null ? `<div class="small muted" style="margin-top:6px">Session RPE ${res.sRPE}</div>` : ''}
+      <div class="small muted" style="margin-top:6px">Saved to your journal${NotionSync.enabled() ? ' · syncing to Notion' : ''}. See <b>Today</b> &amp; <b>Progress</b>.</div>
+    </div>`;
+  }
+
   function wireChat() {
     const inp = $('#chatin'); if (!inp) return;
     const log = $('#chatlog'), sendBtn = $('#chatsend'), clearBtn = $('#chatclear');
     const scroll = () => { log.scrollTop = log.scrollHeight; };
     scroll();
     if (clearBtn) clearBtn.onclick = () => { Store.state.chat = []; Store.save(); renderCoach(); };
+    $$('#log-examples .chip').forEach(b => b.onclick = () => { inp.value = b.getAttribute('data-fill'); inp.focus(); });
+
     const submit = async () => {
       const text = inp.value.trim(); if (!text) return;
       inp.value = ''; inp.disabled = true; sendBtn.disabled = true;
       Store.state.chat.push({ role: 'user', content: text });
-      log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
-      scroll();
-      const bubble = $('#streaming');
-      const history = Store.state.chat.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
-      await AICoach.send(history, text, {
-        onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
-        onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
-        onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; Store.state.chat.pop(); inp.disabled = false; sendBtn.disabled = false; },
-      });
+
+      // 1) Try to log it (on-device, no key needed)
+      let logged = null;
+      try { logged = NaturalLog.apply(current.date, text); } catch (e) { console.warn('parse failed', e); }
+      if (logged && logged.captured) {
+        Store.state.chat.push({ role: 'log', content: logCard(current.date, logged) });
+        Store.save();
+        try { notionSync(current.date); } catch (_) {}
+      }
+
+      // 2) Optionally get a coaching reply from the live AI
+      if (AICoach.enabled()) {
+        log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
+        scroll();
+        const bubble = $('#streaming');
+        const history = Store.state.chat.filter(m => m.role === 'user' || m.role === 'assistant').slice(0, -1);
+        const prompt = logged && logged.captured
+          ? `I just logged: "${text}". Give me one or two sharp coaching sentences on it — readiness call, what it means for today, or the next cue. Don't restate what I logged.`
+          : text;
+        await AICoach.send(history, prompt, {
+          onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
+          onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+          onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; if (!(logged && logged.captured)) Store.state.chat.pop(); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+        });
+        return;
+      }
+
+      // 3) No AI key: if nothing was captured, nudge with an example
+      if (!(logged && logged.captured)) {
+        Store.state.chat.push({ role: 'assistant', content: "I didn't catch anything to log there. Try something like:\n“slept 7h, HRV 58, front squat 4×4 @100kg RPE8, 1000m tempo RPE7, felt good”" });
+        Store.save();
+      }
+      inp.disabled = false; sendBtn.disabled = false; renderCoach();
     };
     sendBtn.onclick = submit;
     inp.onkeydown = e => { if (e.key === 'Enter') submit(); };
@@ -2042,6 +2357,8 @@ const UI = (() => {
     renderToday, renderLog, renderProgress, renderCoach, renderSettings, fmtGoal };
 })();
 
+</script>
+  <script>
 /* ============================================================================
    app.js — Bootstrap, tab routing, service-worker registration.
    ========================================================================== */
@@ -2087,7 +2404,10 @@ const App = (() => {
     // first-run: seed a friendly default phase week
     go('today');
 
-    // (service worker omitted in single-file build)
+    // PWA service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
   }
 
   document.addEventListener('DOMContentLoaded', init);
@@ -2096,3 +2416,5 @@ const App = (() => {
 })();
 
 </script>
+</body>
+</html>

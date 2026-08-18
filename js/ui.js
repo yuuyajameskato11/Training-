@@ -344,19 +344,19 @@ const UI = (() => {
     const phase = dec.phase, r = dec.readiness, acw = Engine.acwr(date), wk = Engine.weeklyReport(date);
     let html = '';
 
-    // Live AI chat (optional) or a prompt to enable it
-    html += `<div class="section-title">Talk to your coach</div>`;
-    if (AICoach.enabled()) {
-      html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
-        <div class="chatbar"><input id="chatin" placeholder="Ask your coach anything…" autocomplete="off">
+    // Chat = logger (works offline) + optional live AI coach
+    const ai = AICoach.enabled();
+    html += `<div class="section-title">Chat your day — I'll log it</div>`;
+    html += `<div class="card tight"><div id="chatlog" class="chatlog">${renderChatLog()}</div>
+        <div class="chatbar"><input id="chatin" placeholder="e.g. slept 7h, HRV 58, squats 5×3 @90 RPE8, felt good…" autocomplete="off">
         <button id="chatsend" class="chatsend">➤</button></div>
-        <div class="chatmeta"><span class="muted small">${esc(AICoach.model())} · streams live · on-device key</span>
+        <div class="chatmeta"><span class="muted small">${ai ? esc(AICoach.model()) + ' · logs + coaches' : 'on-device parser · no key needed'}</span>
         <button id="chatclear" class="linkbtn">clear</button></div></div>`;
-    } else {
-      html += `<div class="card center"><h3>Live AI coach</h3>
-        <p class="sub" style="margin:6px 0 12px">Add an Anthropic API key in <b>You</b> to chat with a conversational Claude coach that knows your full program, today's readiness, and your logs. The built-in briefing below always works without it.</p>
-        <button class="btn ghost" data-tab="settings">Add API key →</button></div>`;
-    }
+    html += `<div class="chip-row" id="log-examples">
+        <button class="chip" data-fill="Slept 7.5h, HRV 58, resting HR 49, CMJ 33, bodyweight 77, felt good">Morning check-in</button>
+        <button class="chip" data-fill="Front squat 4×4 @100kg RPE8, RDL 4×6 @75kg, 1000m tempo RPE7, 12 depth jumps RSI 2.3, session 7">Log a session</button>
+      </div>`;
+    if (!ai) html += `<div class="card tight small muted" style="margin-top:8px">Want it to talk back with coaching too? Add an Anthropic API key in <b>You</b> — logging works either way.</div>`;
 
     html += `<div class="section-title">Your coach</div>`;
 
@@ -427,31 +427,93 @@ const UI = (() => {
 
   function coachMsg(who, lines) { return `<div class="coach-msg"><div class="who">${esc(who)}</div>${lines.map(l => `<p>${l}</p>`).join('')}</div>`; }
 
-  /* ---- AI chat ---------------------------------------------------------- */
+  /* ---- Chat / logger ---------------------------------------------------- */
   function renderChatLog() {
     const chat = Store.state.chat || [];
-    if (!chat.length) return `<div class="chatempty">Ask about today's session, a set you just did, recovery, pacing, or your projections. I have your full context.</div>`;
-    return chat.map(m => `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
+    if (!chat.length) return `<div class="chatempty">Type your day in plain words — <b>"slept 7h, HRV 58, front squat 4×4 @100 RPE8, 1000m tempo, felt good"</b> — and I'll log it to your journal. Ask me anything too.</div>`;
+    return chat.map(m => m.role === 'log'
+      ? m.content // pre-built, already-escaped HTML card
+      : `<div class="bubble ${m.role}">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('');
   }
+
+  // Build the "✅ Logged" confirmation card from a NaturalLog.apply() result
+  function logCard(date, res) {
+    const chips = [];
+    const W = res.wellness;
+    const lab = { sleepH: 'Sleep', sleepQ: 'Sleep q', hrv: 'HRV', rhr: 'Rest HR', cmj: 'CMJ',
+      bodyweightKg: 'BW', energy: 'Energy', mood: 'Mood', stress: 'Stress', soreness: 'Sore', motivation: 'Motiv' };
+    const unit = { sleepH: 'h', cmj: ' cm', bodyweightKg: ' kg' };
+    Object.keys(lab).forEach(k => { if (W[k] != null) chips.push(`<span class="lchip">${lab[k]} <b>${W[k]}${unit[k] || ''}</b></span>`); });
+
+    let exRows = '';
+    res.exercises.forEach(ex => {
+      const s0 = ex.sets[0] || {};
+      const scheme = ex.sets.length > 1 && s0.reps != null ? `${ex.sets.length}×${s0.reps}`
+        : (s0.distance ? `${s0.distance} m` : s0.reps != null ? `${s0.reps}` : s0.minutes ? `${s0.minutes} min` : '—');
+      const load = s0.load != null ? `${s0.load} kg` : '—';
+      const extra = [s0.rpe != null ? 'RPE ' + s0.rpe : '', s0.rsi != null ? 'RSI ' + s0.rsi : '', s0.velocity != null ? s0.velocity + ' m/s' : '']
+        .filter(Boolean).join(' · ') || '—';
+      exRows += `<tr><td>${esc(ex.name)}</td><td>${scheme}</td><td>${load}</td><td>${extra}</td></tr>`;
+    });
+
+    const r = res.readiness;
+    const bandCol = r ? (r.band === 'green' ? 'var(--green)' : r.band === 'amber' ? 'var(--amber)' : 'var(--red)') : 'var(--muted)';
+    const badge = r ? `<span class="lband" style="background:${bandCol}">${r.band.toUpperCase()} · ${r.score}</span>` : '';
+
+    return `<div class="logcard">
+      <div class="lhead">✅ Logged <span class="muted">· ${esc(date)}</span> ${badge}</div>
+      ${chips.length ? `<div class="lchips">${chips.join('')}</div>` : ''}
+      ${exRows ? `<table class="ltable"><thead><tr><th>Exercise</th><th>Sets×Reps</th><th>Load</th><th>Detail</th></tr></thead><tbody>${exRows}</tbody></table>` : ''}
+      ${res.sRPE != null ? `<div class="small muted" style="margin-top:6px">Session RPE ${res.sRPE}</div>` : ''}
+      <div class="small muted" style="margin-top:6px">Saved to your journal${NotionSync.enabled() ? ' · syncing to Notion' : ''}. See <b>Today</b> &amp; <b>Progress</b>.</div>
+    </div>`;
+  }
+
   function wireChat() {
     const inp = $('#chatin'); if (!inp) return;
     const log = $('#chatlog'), sendBtn = $('#chatsend'), clearBtn = $('#chatclear');
     const scroll = () => { log.scrollTop = log.scrollHeight; };
     scroll();
     if (clearBtn) clearBtn.onclick = () => { Store.state.chat = []; Store.save(); renderCoach(); };
+    $$('#log-examples .chip').forEach(b => b.onclick = () => { inp.value = b.getAttribute('data-fill'); inp.focus(); });
+
     const submit = async () => {
       const text = inp.value.trim(); if (!text) return;
       inp.value = ''; inp.disabled = true; sendBtn.disabled = true;
       Store.state.chat.push({ role: 'user', content: text });
-      log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
-      scroll();
-      const bubble = $('#streaming');
-      const history = Store.state.chat.slice(0, -1).map(m => ({ role: m.role, content: m.content }));
-      await AICoach.send(history, text, {
-        onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
-        onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
-        onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; Store.state.chat.pop(); inp.disabled = false; sendBtn.disabled = false; },
-      });
+
+      // 1) Try to log it (on-device, no key needed)
+      let logged = null;
+      try { logged = NaturalLog.apply(current.date, text); } catch (e) { console.warn('parse failed', e); }
+      if (logged && logged.captured) {
+        Store.state.chat.push({ role: 'log', content: logCard(current.date, logged) });
+        Store.save();
+        try { notionSync(current.date); } catch (_) {}
+      }
+
+      // 2) Optionally get a coaching reply from the live AI
+      if (AICoach.enabled()) {
+        log.innerHTML = renderChatLog() + `<div class="bubble assistant" id="streaming"><span class="dots">●●●</span></div>`;
+        scroll();
+        const bubble = $('#streaming');
+        const history = Store.state.chat.filter(m => m.role === 'user' || m.role === 'assistant').slice(0, -1);
+        const prompt = logged && logged.captured
+          ? `I just logged: "${text}". Give me one or two sharp coaching sentences on it — readiness call, what it means for today, or the next cue. Don't restate what I logged.`
+          : text;
+        await AICoach.send(history, prompt, {
+          onDelta: (_d, acc) => { bubble.innerHTML = esc(acc).replace(/\n/g, '<br>'); scroll(); },
+          onDone: (full) => { Store.state.chat.push({ role: 'assistant', content: full || '(no response)' }); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+          onError: (err) => { bubble.innerHTML = `<span style="color:var(--red)">⚠ ${esc(err.message)}</span>`; if (!(logged && logged.captured)) Store.state.chat.pop(); Store.save(); inp.disabled = false; sendBtn.disabled = false; renderCoach(); },
+        });
+        return;
+      }
+
+      // 3) No AI key: if nothing was captured, nudge with an example
+      if (!(logged && logged.captured)) {
+        Store.state.chat.push({ role: 'assistant', content: "I didn't catch anything to log there. Try something like:\n“slept 7h, HRV 58, front squat 4×4 @100kg RPE8, 1000m tempo RPE7, felt good”" });
+        Store.save();
+      }
+      inp.disabled = false; sendBtn.disabled = false; renderCoach();
     };
     sendBtn.onclick = submit;
     inp.onkeydown = e => { if (e.key === 'Enter') submit(); };
