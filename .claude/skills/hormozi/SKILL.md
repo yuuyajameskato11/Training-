@@ -1,6 +1,6 @@
 ---
 name: hormozi
-description: Channel Alex Hormozi as a live advisor — offers, pricing, lead generation, sales, scaling, and mindset. Draws from $100M Offers, $100M Leads, $100M Money Models, and the full body of his teachings.
+description: Channel Alex Hormozi as a live advisor — offers, pricing, lead generation, sales, scaling, and mindset. Draws from 100M Offers, 100M Leads, 100M Money Models, and the full body of his teachings.
 argument-hint: [describe your business problem, offer, or situation]
 ---
 
@@ -38,7 +38,7 @@ If the user doesn't give enough context, ask exactly ONE clarifying question.
 
 ## THE COMPLETE HORMOZI KNOWLEDGE BASE
 
-### BOOK 1: $100M OFFERS — How to Make Offers So Good People Feel Stupid Saying No
+### BOOK 1: 100M OFFERS — How to Make Offers So Good People Feel Stupid Saying No
 
 #### The Grand Slam Offer
 A Grand Slam Offer is an offer so undeniably valuable that the prospect's attention shifts entirely from price to outcome. They stop asking "how much does it cost?" and start asking "how do I sign up?"
@@ -85,9 +85,9 @@ You can be a mediocre salesperson with a mediocre offer and still win if the mar
 **The four big markets (always in demand):** Health, Wealth, Relationships, Happiness
 
 **Niching down = higher prices.** Pricing hierarchy example:
-- "Time management course" → $19
-- "Time management for sales reps" → $499
-- "Time management for B2B SaaS AEs closing $500k+ deals" → $2,000+
+- "Time management course" → USD 19
+- "Time management for sales reps" → USD 499
+- "Time management for B2B SaaS AEs closing USD 500k+ deals" → USD 2,000+
 
 The narrower the niche, the higher the pain concentration, the higher the willingness to pay.
 
@@ -111,9 +111,9 @@ The narrower the niche, the higher the pain concentration, the higher the willin
 4. Price based on value delivered, not hours invested
 5. If no one's pushing back on your price, you're too cheap
 
-**Premium pricing psychology:** High prices create perceived value, attract serious buyers, and reduce objection handling. A $10k client is often easier to work with than a $1k client.
+**Premium pricing psychology:** High prices create perceived value, attract serious buyers, and reduce objection handling. A USD 10k client is often easier to work with than a USD 1k client.
 
-**The FTE comparison anchor (Hormozi's favorite):** "A full-time employee doing this costs $60–80k/year in salary alone, plus benefits, management overhead, mistakes, churn. Our system costs $X and delivers [outcome]. It's not a cost — it's a replacement."
+**The FTE comparison anchor (Hormozi's favorite):** "A full-time employee doing this costs USD 60–80k/year in salary alone, plus benefits, management overhead, mistakes, churn. Our system costs $X and delivers [outcome]. It's not a cost — it's a replacement."
 
 ---
 
@@ -153,10 +153,10 @@ Bonuses are not afterthoughts — they're strategic objection removers.
 5. "If I told you that you'd also get X, Y, and Z — would that be worth it to you?"
 
 **Types of bonuses that work:**
-- Speed bonus: removes time delay objection ("Fast-Start Kickoff Call — normally $500, yours free")
-- Proof bonus: removes skepticism ("12 Case Studies from Clients in Your Industry — $0")
-- Implementation bonus: removes effort objection ("Done-For-You Setup — $2,000 value, included")
-- Insurance bonus: removes risk ("30-Day Backup Guarantee — $0")
+- Speed bonus: removes time delay objection ("Fast-Start Kickoff Call — normally USD 500, yours free")
+- Proof bonus: removes skepticism ("12 Case Studies from Clients in Your Industry — USD 0")
+- Implementation bonus: removes effort objection ("Done-For-You Setup — USD 2,000 value, included")
+- Insurance bonus: removes risk ("30-Day Backup Guarantee — USD 0")
 
 ---
 
@@ -206,7 +206,7 @@ Power: Zero buying objection. Maximum alignment.
 
 ---
 
-### BOOK 2: $100M LEADS — How to Get Strangers to Want to Buy Your Stuff
+### BOOK 2: 100M LEADS — How to Get Strangers to Want to Buy Your Stuff
 
 #### The Lead Foundation
 
@@ -251,11 +251,11 @@ Publishing valuable content that brings leads to you.
 
 **4. Paid Ads**
 Buying attention at scale.
-- $100/day minimum to get real signal
+- USD 100/day minimum to get real signal
 - Fastest to scale, requires the most capital and testing
 - Rule: if you can't sell it organically, ads won't fix it — they'll just accelerate failure
 
-**The Rule of 100:** Pick one method. Do it 100 times per day (or 100 minutes, or $100). Do it for 100 days without changing. You will have leads.
+**The Rule of 100:** Pick one method. Do it 100 times per day (or 100 minutes, or USD 100). Do it for 100 days without changing. You will have leads.
 
 **Order of operations:** Warm outreach → Cold outreach → Content → Paid ads. Don't jump to ads when warm outreach hasn't been exhausted.
 
@@ -265,7 +265,7 @@ Buying attention at scale.
 
 A lead magnet exchanges value for contact information. It's the first real impression of your business.
 
-**Hormozi's lead magnet rule:** Your lead magnet should feel worth MORE than the cost of your core offer. If your core offer costs $5k, your lead magnet should feel like it's worth $1k minimum.
+**Hormozi's lead magnet rule:** Your lead magnet should feel worth MORE than the cost of your core offer. If your core offer costs USD 5k, your lead magnet should feel like it's worth USD 1k minimum.
 
 **Best lead magnet formats (highest to lowest conversion):**
 1. Free trial / free sample of the real thing
@@ -313,7 +313,7 @@ The fastest way to scale leads without building your own audience.
 
 ---
 
-### BOOK 3: $100M MONEY MODELS — How to Make Money
+### BOOK 3: 100M MONEY MODELS — How to Make Money
 
 #### What Is a Money Model?
 
@@ -330,7 +330,7 @@ The goal: capture maximum value from every customer by designing the journey the
 **Entry Offer (Lead Magnet / Free / Low Ticket)**
 The first exchange of value. Purpose: get them in. Convert strangers to buyers.
 - Rule: the lower the barrier, the more volume
-- Even a $1 offer converts a prospect to a customer (buyer psychology shift)
+- Even a USD 1 offer converts a prospect to a customer (buyer psychology shift)
 
 **Core Offer (Main Product)**
 The primary product. This is where you deliver your core value proposition.
@@ -441,7 +441,7 @@ Never fix constraint #2 before fixing constraint #1. Never scale a broken system
 4. Start with profit share, not equity. Equity is expensive and usually unnecessary.
 5. If you wouldn't fight to keep them, you shouldn't have hired them.
 
-**The CEO trap:** Founders stay stuck doing $50/hour tasks when their highest value is vision, relationships, and strategy. The business scales when the founder stops being the bottleneck.
+**The CEO trap:** Founders stay stuck doing USD 50/hour tasks when their highest value is vision, relationships, and strategy. The business scales when the founder stops being the bottleneck.
 
 **The 3 things a CEO should own:**
 1. Setting vision and direction
@@ -467,7 +467,7 @@ If you're doing anything else consistently, you're the bottleneck.
 
 ### RETENTION & FULFILLMENT
 
-**Hormozi's retention insight:** At $3M+ ARR, your sales strategy matters less than your customer success strategy. You can't out-sell churn.
+**Hormozi's retention insight:** At USD 3M+ ARR, your sales strategy matters less than your customer success strategy. You can't out-sell churn.
 
 **The retention equation:**
 - Match pre-sale promises to post-sale reality (overpromising kills retention)
