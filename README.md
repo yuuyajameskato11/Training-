@@ -135,6 +135,40 @@ The app can mirror your logs into the Notion dashboard (the five-database
   URL + your shared key into Settings and every check-in / saved session
   auto-appends to Notion (idempotent — it won't double-post a day).
 
+---
+
+# ◍ VALUE LOOP OS — the business operating system
+
+The second app in this repo, in [`/vloop`](vloop). Same idea as APEX — measure,
+score, find the constraint, prescribe, track — pointed at a **company** instead
+of an athlete.
+
+Type the period in and it scores the business across **V·A·L·U·E**
+(Visibility · Acquisition · Lifetime value · User outcome · Efficiency), names
+the single constraint, quotes what closing it is worth **in yen**, prescribes
+what to do about it, and tracks whether the prescription worked.
+
+```
+MEASURE → SCORE → FIND CONSTRAINT → PRESCRIBE → TRACK → REPEAT
+```
+
+Five screens: **Company** (12 CEO numbers, pillar scores, alerts) ·
+**Acquire** (attention → cash, revenue and LTV by source) · **Success**
+(activation → day-14 implementation → verified 90-day result → proof, and LTV
+by result level) · **Retain** (churn, months retained, NRR, LTV by cohort) ·
+**Diagnose** (*"your current bottleneck is X"*, every lever ranked by the yen it
+would add, with prescriptions you can start and later judge).
+
+Deliberately **not** automated: nothing is piped in from Instagram, LINE or
+Stripe. Run it manually for three to six months, learn which metrics actually
+predict money, delete the ones that did not, and automate the collection only
+then.
+
+- App: [`vloop/README.md`](vloop/README.md) — open `vloop/index.html`, or the
+  single-file `vloop/standalone.html`
+- Operating manual: [`docs/VALUE-LOOP-OS.md`](docs/VALUE-LOOP-OS.md)
+- Definitions: [`docs/METRIC-DICTIONARY.md`](docs/METRIC-DICTIONARY.md)
+
 ## Roadmap ideas
 
 - Apple Health / Garmin / WHOOP import for HRV, sleep, and runs.

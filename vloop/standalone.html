@@ -1,0 +1,2576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0a0e14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VALUE LOOP" />
+  <title>VALUE LOOP OS — the operating system that tells a business what to fix next</title>
+  <style>
+/* ============================================================================
+   VALUE LOOP OS — dark, dense, executive. Mobile-first, safe-area aware.
+   Shares the APEX palette so the two apps feel like one house.
+   ========================================================================== */
+:root{
+  --bg:#0a0e14; --bg2:#111722; --card:#151c28; --card2:#1b2432;
+  --line:#232d3d; --txt:#eef2f8; --muted:#8b96a8; --muted2:#5c6779;
+  --green:#3ddc84; --amber:#ffb020; --red:#ff4d5e; --blue:#4da6ff;
+  --accent:#00e0b8; --accent2:#7b6cff;
+  --radius:18px; --radius-sm:12px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+  font-size:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  overscroll-behavior-y:none;-webkit-font-smoothing:antialiased;
+}
+#app{display:flex;flex-direction:column;min-height:100%;max-width:760px;margin:0 auto}
+
+/* Top bar */
+#topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-top) + 12px) 18px 12px;
+  background:linear-gradient(180deg,var(--bg) 72%,transparent);backdrop-filter:blur(8px)}
+.brand{font-weight:800;letter-spacing:.14em;font-size:.95rem}
+.brand .logo{color:var(--accent);margin-right:4px}
+.brand em{font-style:normal;color:var(--muted2);letter-spacing:.06em;font-weight:600;margin-left:6px}
+.phase-pill{background:var(--card2);border:1px solid var(--line);color:var(--muted);
+  padding:6px 12px;border-radius:999px;font-size:.72rem;font-weight:700;cursor:pointer}
+.phase-pill.green{color:var(--green);border-color:rgba(61,220,132,.4)}
+.phase-pill.amber{color:var(--amber);border-color:rgba(255,176,32,.4)}
+.phase-pill.red{color:var(--red);border-color:rgba(255,77,94,.4)}
+
+#view{flex:1;padding:4px 16px 104px;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* Tab bar */
+#tabbar{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;max-width:760px;margin:0 auto;
+  padding:6px 4px calc(var(--safe-bot) + 6px);background:rgba(12,16,23,.94);
+  backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.tab{flex:1;background:none;border:0;color:var(--muted2);display:flex;flex-direction:column;
+  align-items:center;gap:3px;padding:6px 0;font-size:.62rem;font-weight:600;cursor:pointer;transition:color .15s}
+.tab .ic{font-size:1.1rem;line-height:1}
+.tab.active{color:var(--accent)}
+
+/* Cards & type */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:14px 0}
+.card.tight{padding:14px}
+.card h3{margin:0 0 4px;font-size:.95rem}
+.card .sub,.sub{color:var(--muted);font-size:.78rem;margin:4px 0 0;line-height:1.5}
+.muted{color:var(--muted)}
+.small{font-size:.76rem;line-height:1.55}
+.section-title{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);
+  font-weight:700;margin:22px 4px 2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.arrow{color:var(--muted2);margin:0 2px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
+
+/* Buttons & inputs */
+.btn{background:var(--accent);color:#03231e;border:0;border-radius:999px;padding:10px 16px;
+  font-weight:700;font-size:.8rem;cursor:pointer}
+.btn.ghost{background:var(--card2);color:var(--txt);border:1px solid var(--line)}
+.btn.tiny{padding:6px 11px;font-size:.72rem}
+.btn.danger{color:var(--red);border-color:rgba(255,77,94,.4)}
+input,select,textarea{background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  border-radius:var(--radius-sm);padding:10px 12px;font-size:.88rem;font-family:inherit;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical}
+.fld{display:block;margin:10px 0}
+.fld .f-l{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:5px}
+.fld .f-l em{font-style:normal;color:var(--muted2)}
+.fld .f-h{display:block;font-size:.7rem;color:var(--muted2);margin-top:5px;line-height:1.45}
+
+/* Period bar */
+.periodbar{display:flex;gap:8px;align-items:center;margin:12px 0 0}
+.periodbar select{flex:1;text-align:center;font-weight:700}
+.pbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:var(--radius-sm);
+  width:42px;height:42px;font-size:1.1rem;cursor:pointer}
+
+/* Ring */
+.ring-wrap{display:flex;justify-content:center;padding:6px 0 2px}
+.ring{position:relative;width:180px;height:180px}
+.ring svg{transform:rotate(-90deg)}
+.ring .score{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .score .num{font-size:3rem;font-weight:800;line-height:1;letter-spacing:-.03em}
+.ring .score .lbl{font-size:.6rem;letter-spacing:.2em;color:var(--muted);margin-top:6px}
+.loopline{text-align:center;font-size:.6rem;letter-spacing:.1em;color:var(--muted2);
+  font-weight:700;margin:6px 0 16px}
+
+/* Pillars */
+.pillars{display:flex;flex-direction:column;gap:12px}
+.pillar.clickable{cursor:default}
+.pl-head{display:flex;align-items:baseline;gap:8px;font-size:.82rem;margin-bottom:5px}
+.pl-head b{font-size:.95rem;letter-spacing:.06em}
+.pl-head span{color:var(--muted);flex:1}
+.pl-head em{font-style:normal;font-weight:800}
+.pl-q{font-size:.68rem;color:var(--muted2);margin-top:5px}
+.bar{background:var(--card2);border-radius:999px;height:8px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;transition:width .4s ease}
+
+/* Constraint banner */
+.constraint,.verdict{background:linear-gradient(150deg,#1a2434,#151c28);border:1px solid var(--accent2);
+  border-radius:var(--radius);padding:18px;margin:14px 0}
+.c-tag,.v-tag{font-size:.6rem;letter-spacing:.18em;color:var(--accent2);font-weight:800}
+.c-name{font-size:1.35rem;font-weight:800;margin:8px 0 4px;letter-spacing:-.02em}
+.c-line{color:var(--muted);font-size:.85rem}
+.c-money,.v-money{margin-top:10px;font-size:.85rem;color:var(--txt);background:rgba(0,224,184,.09);
+  border-radius:var(--radius-sm);padding:9px 12px}
+.c-money b,.v-money b{color:var(--accent)}
+.constraint .btn{margin-top:14px}
+.v-h{font-size:1.25rem;font-weight:800;margin:10px 0 6px;letter-spacing:-.02em}
+.v-p{color:var(--muted);font-size:.86rem}
+.v-def{margin-top:12px;font-size:.72rem;color:var(--muted2);line-height:1.5}
+
+/* KPI grid */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:8px}
+.kpis.two{grid-template-columns:1fr 1fr}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px}
+.k-lbl{font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);font-weight:700}
+.k-val{font-size:1.35rem;font-weight:800;margin-top:5px;letter-spacing:-.02em}
+.k-sub{font-size:.7rem;color:var(--muted);margin-top:3px}
+.chip{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:999px;background:var(--card2);color:var(--muted)}
+.chip.up{color:var(--green);background:rgba(61,220,132,.12)}
+.chip.down{color:var(--red);background:rgba(255,77,94,.12)}
+.chip.flat{color:var(--muted)}
+
+/* Metric rows */
+.mlist{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  margin:8px 0 0;overflow:hidden}
+.mrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.mrow:last-child{border-bottom:0}
+.mrow:active{background:var(--card2)}
+.m-main{flex:1;min-width:0}
+.m-lbl{font-size:.85rem;font-weight:600}
+.m-sub{font-size:.68rem;color:var(--muted2);margin-top:2px}
+.m-val{text-align:right}
+.m-val .v{font-size:1rem;font-weight:800}
+.m-score{width:38px;text-align:center;font-weight:800;font-size:.85rem;border-radius:8px;padding:5px 0;background:var(--card2)}
+.green,.v.green{color:var(--green)} .amber,.v.amber{color:var(--amber)} .red,.v.red{color:var(--red)}
+.m-score.green{background:rgba(61,220,132,.12)} .m-score.amber{background:rgba(255,176,32,.12)}
+.m-score.red{background:rgba(255,77,94,.12)} .m-score.none{color:var(--muted2)}
+
+/* Alerts */
+.alerts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.alert{border-radius:var(--radius-sm);padding:12px 14px;border-left:3px solid var(--muted2);background:var(--card)}
+.alert.red{border-color:var(--red);background:rgba(255,77,94,.07)}
+.alert.amber{border-color:var(--amber);background:rgba(255,176,32,.06)}
+.alert.info{border-color:var(--blue);background:rgba(77,166,255,.06)}
+.a-t{font-weight:700;font-size:.85rem}
+.a-b{font-size:.76rem;color:var(--muted);margin-top:3px;line-height:1.5}
+
+/* Funnel */
+.funnel{margin:14px 0 6px}
+.f-stage{position:relative;margin:2px 0}
+.f-bar{height:34px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:.32}
+.f-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.f-txt b{font-size:.8rem;font-weight:600}
+.f-txt em{font-style:normal;font-weight:800;font-size:.9rem}
+.f-conv{font-size:.66rem;color:var(--muted2);text-align:right;padding:2px 12px;font-weight:700}
+.f-conv span{color:var(--muted2);opacity:.7;font-weight:500;margin-left:5px}
+
+/* Fail bars */
+.fbar{display:grid;grid-template-columns:1fr 90px 70px;gap:10px;align-items:center;margin:8px 0;font-size:.78rem}
+.fbar .f-n{text-align:right;color:var(--muted);font-size:.72rem}
+
+/* Tables */
+.tblwrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:8px 0}
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem;min-width:420px}
+.tbl th{text-align:left;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted2);
+  padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .num{text-align:right}
+
+/* Segment tabs */
+.segtabs{display:flex;gap:6px;margin:12px 0 0;overflow-x:auto}
+.segtabs.wide{margin:14px 0 4px}
+.segtab{background:var(--card2);border:1px solid var(--line);color:var(--muted);border-radius:999px;
+  padding:7px 14px;font-size:.74rem;font-weight:700;cursor:pointer;text-transform:capitalize;white-space:nowrap}
+.segtab.on{background:var(--accent);color:#03231e;border-color:transparent}
+
+/* Network flow */
+.netflow{display:flex;gap:8px;margin:14px 0}
+.netflow>div{flex:1;background:var(--card2);border-radius:var(--radius-sm);padding:10px;text-align:center}
+.netflow em{display:block;font-style:normal;font-size:1.2rem;font-weight:800}
+.netflow span{font-size:.62rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
+.netflow .plus em{color:var(--green)} .netflow .minus em{color:var(--red)} .netflow .eq em{color:var(--accent)}
+
+/* Levers */
+.lever{border-bottom:1px solid var(--line);padding:12px 0}
+.lever:last-child{border-bottom:0}
+.lv-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:7px}
+.lv-name{font-size:.86rem;font-weight:600;display:flex;align-items:center}
+.lv-money{font-weight:800;color:var(--accent);font-size:.92rem}
+.lv-sub{font-size:.7rem;color:var(--muted2);margin-top:6px}
+.lv-body{margin-top:12px;animation:fadein .2s ease}
+.def{font-size:.75rem;color:var(--muted);line-height:1.55;margin:0 0 10px}
+.rx-title{font-size:.62rem;letter-spacing:.16em;color:var(--accent2);font-weight:800;margin:12px 0 6px}
+.rx{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px}
+.rx-a{font-size:.83rem;font-weight:600;line-height:1.45}
+.rx-w{font-size:.73rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.rx-meta{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.66rem;color:var(--muted2);
+  text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.rx-meta .btn{margin-left:auto}
+
+/* Interventions */
+.ivn{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent2);
+  border-radius:var(--radius-sm);padding:13px;margin:8px 0}
+.ivn.worked{border-left-color:var(--green)} .ivn.worse{border-left-color:var(--red)}
+.ivn\.no-effect,.ivn.no-effect{border-left-color:var(--muted2)}
+.iv-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem}
+.iv-a{font-size:.78rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.iv-m{font-size:.68rem;color:var(--muted2);margin-top:6px}
+.pill{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  padding:3px 9px;border-radius:999px;background:var(--card2);color:var(--muted)}
+.pill.running{color:var(--accent2)} .pill.worked{color:var(--green);background:rgba(61,220,132,.12)}
+.pill.worse{color:var(--red);background:rgba(255,77,94,.12)}
+.pill.live{color:var(--green)} .pill.partial{color:var(--amber)} .pill.planned{color:var(--muted2)}
+.pill.green{color:var(--green)} .pill.amber{color:var(--amber)} .pill.red{color:var(--red)}
+
+/* People */
+.plist .prow{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.plist .prow:last-child{border-bottom:0}
+.p-ltv{font-weight:800;font-size:.85rem;color:var(--accent)}
+.risklist .rrow{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--line)}
+.risklist .rrow:last-child{border-bottom:0}
+.pform{max-height:52vh;overflow-y:auto;padding-right:4px}
+
+/* Benchmarks */
+.bmrow{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
+.bmrow:last-child{border-bottom:0}
+.bm-l{font-size:.82rem;font-weight:600}
+.bm-l .f-h{display:block;font-weight:400;font-size:.7rem;color:var(--muted2);margin-top:4px;line-height:1.5}
+.bm-in{display:flex;gap:8px;align-items:flex-end}
+.bm-in label{flex:1;font-size:.6rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.bm-in input{width:100%;padding:8px 10px;font-size:.82rem;margin-top:4px}
+.bm-in .unit{font-size:.75rem;color:var(--muted2);padding-bottom:10px;width:16px}
+
+/* Domain registry */
+.dom{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin:8px 0}
+.d-top{display:flex;align-items:center;gap:8px;font-size:.85rem}
+.d-top b{flex:1}
+.d-n{color:var(--muted2);font-size:.7rem;font-weight:800;width:22px}
+.d-f{font-size:.7rem;color:var(--muted2);margin-top:6px;line-height:1.6}
+
+/* Empty state */
+.empty p{margin:0 0 4px;color:var(--muted);font-size:.85rem;line-height:1.55}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(4,7,11,.72);backdrop-filter:blur(3px);z-index:40}
+.modal{position:fixed;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(560px,calc(100vw - 28px));max-height:86vh;overflow-y:auto;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  animation:fadein .18s ease}
+.modal h3{margin:0 0 6px}
+.md-head{display:flex;align-items:center;gap:8px;font-size:1rem;margin-bottom:8px}
+.md-head b{flex:1}
+.mdgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.spark{width:100%;height:44px;background:var(--bg2);border-radius:var(--radius-sm);padding:6px;margin-bottom:6px}
+.fgroup{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);
+  font-weight:800;margin:18px 0 -4px}
+
+</style>
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand"><span class="logo">◍</span> VALUE LOOP <em id="coName">—</em></div>
+      <div id="scorePill" class="phase-pill" role="button" tabindex="0">—</div>
+    </header>
+
+    <main id="view"><!-- rendered by ui.js --></main>
+
+    <nav id="tabbar">
+      <button class="tab" data-tab="company">  <span class="ic">◍</span><span>Company</span></button>
+      <button class="tab" data-tab="acquire">  <span class="ic">◉</span><span>Acquire</span></button>
+      <button class="tab" data-tab="success">  <span class="ic">✦</span><span>Success</span></button>
+      <button class="tab" data-tab="retain">   <span class="ic">∞</span><span>Retain</span></button>
+      <button class="tab" data-tab="diagnose"> <span class="ic">⚑</span><span>Diagnose</span></button>
+      <button class="tab" data-tab="data">     <span class="ic">▤</span><span>Data</span></button>
+    </nav>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script>
+/* ============================================================================
+   schema.js — THE DICTIONARY.
+
+   Everything the system knows how to measure lives here:
+     PILLARS   — the VALUE LOOP (V·A·L·U·E) and the question each one answers
+     FIELDS    — what a human types in each period (the manual layer)
+     METRICS   — what the machine derives, with its benchmark and its weight
+     LEVERS    — the subset of metrics that actually move money, wired into
+                 the funnel model in engine.js
+     DOMAINS   — the full 52-domain backend registry (collect everything;
+                 show the CEO only what currently matters)
+
+   Definitions are written down ONCE, here, because inconsistent definitions
+   are what make funnel numbers unreliable in the first place.
+   ========================================================================== */
+
+const Schema = (() => {
+
+  /* ---- The loop --------------------------------------------------------- */
+  const PILLARS = [
+    { id:'V', name:'Visibility',    q:'Where is attention coming from?',        color:'#4da6ff' },
+    { id:'A', name:'Acquisition',   q:'Where is money leaking?',                color:'#00e0b8' },
+    { id:'L', name:'Lifetime Value',q:'Are customers staying and buying more?', color:'#7b6cff' },
+    { id:'U', name:'User Outcome',  q:'Are customers getting results?',         color:'#ffb020' },
+    { id:'E', name:'Efficiency',    q:'Does the machine keep its margin?',      color:'#3ddc84' },
+  ];
+  const pillar = id => PILLARS.find(p => p.id === id);
+
+  /* ---- What a human enters each period ---------------------------------- *
+     Keep this list SHORT. If a number is not typed in under 20 minutes a week
+     it will not get typed in at all. Everything else lives in DOMAINS until
+     it earns a place here.                                                   */
+  const FIELDS = [
+    // ---------------- V — attention -------------------------------------
+    { id:'views',            label:'Content views',        pillar:'V', group:'Attention', unit:'#',
+      help:'Total views across every account for the period. One number.' },
+    { id:'reach',            label:'Unique reach',         pillar:'V', group:'Attention', unit:'#',
+      help:'Unique accounts reached. Blank if the platform will not give it.' },
+    { id:'profileVisits',    label:'Profile visits',       pillar:'V', group:'Attention', unit:'#' },
+    { id:'ctaClicks',        label:'CTA / link clicks',    pillar:'V', group:'Attention', unit:'#',
+      help:'Clicks on the thing that starts the funnel (LINE, application, DM CTA).' },
+    { id:'followersNet',     label:'Net new followers',    pillar:'V', group:'Attention', unit:'#' },
+    { id:'lineMessagesSent', label:'LINE broadcasts sent', pillar:'V', group:'LINE',      unit:'#' },
+    { id:'lineFriendsNew',   label:'New LINE friends',     pillar:'V', group:'LINE',      unit:'#' },
+    { id:'lineTargetReach',  label:'LINE target reach',    pillar:'V', group:'LINE',      unit:'#',
+      help:'Reachable friends at period end — the only LINE number that pays.' },
+    { id:'lineBlocks',       label:'LINE blocks',          pillar:'V', group:'LINE',      unit:'#' },
+
+    // ---------------- A — acquisition ------------------------------------
+    { id:'leads',            label:'New leads',            pillar:'A', group:'Funnel', unit:'#',
+      help:'DEFINITION: a person who gave you a way to contact them this period. Not a follower.' },
+    { id:'leadsReferral',    label:'…of which referred',   pillar:'A', group:'Funnel', unit:'#' },
+    { id:'applications',     label:'Applications completed',pillar:'A',group:'Funnel', unit:'#' },
+    { id:'applicationsQual', label:'…qualified',           pillar:'A', group:'Funnel', unit:'#',
+      help:'Passed your qualification bar — not merely submitted.' },
+    { id:'meetingsBooked',   label:'Meetings booked',      pillar:'A', group:'Funnel', unit:'#' },
+    { id:'meetingsAttended', label:'Meetings attended',    pillar:'A', group:'Funnel', unit:'#',
+      help:'Prospect actually showed up. Booked − attended = no-shows.' },
+    { id:'sales',            label:'New customers closed', pillar:'A', group:'Funnel', unit:'#' },
+    { id:'grossSigned',      label:'Contract value signed',pillar:'A', group:'Money',  unit:'¥',
+      help:'Face value of what was signed. NOT cash.' },
+    { id:'cashCollected',    label:'Cash actually collected',pillar:'A',group:'Money', unit:'¥',
+      help:'Money in the bank this period, including instalments from old deals.' },
+    { id:'refunds',          label:'Refunds / cancellations',pillar:'A',group:'Money', unit:'¥' },
+
+    // ---------------- L — lifetime value ---------------------------------
+    { id:'networkStart',     label:'Network members at start',pillar:'L',group:'Recurring', unit:'#' },
+    { id:'networkInvited',   label:'Invited to Network',   pillar:'L', group:'Recurring', unit:'#' },
+    { id:'networkJoined',    label:'Joined Network',       pillar:'L', group:'Recurring', unit:'#' },
+    { id:'networkChurned',   label:'Cancelled Network',    pillar:'L', group:'Recurring', unit:'#' },
+    { id:'networkFee',       label:'Network fee / member / mo',pillar:'L',group:'Recurring', unit:'¥' },
+    { id:'expansionRevenue', label:'Expansion revenue',    pillar:'L', group:'Recurring', unit:'¥',
+      help:'Upsells, Business Builder, advanced programs, consulting — existing customers only.' },
+    { id:'eventRevenue',     label:'Event revenue',        pillar:'L', group:'Recurring', unit:'¥' },
+
+    // ---------------- U — user outcome -----------------------------------
+    { id:'studentsActive',   label:'Active students',      pillar:'U', group:'Delivery', unit:'#' },
+    { id:'onboarded',        label:'Onboarding completed', pillar:'U', group:'Delivery', unit:'#' },
+    { id:'implementedBy14',  label:'Implemented by day 14',pillar:'U', group:'Delivery', unit:'#',
+      help:'Of the students who reached day 14 this period, how many took a real action.' },
+    { id:'reachedDay14',     label:'…students who hit day 14',pillar:'U',group:'Delivery', unit:'#' },
+    { id:'firstClients',     label:'First paid client won',pillar:'U', group:'Results',  unit:'#' },
+    { id:'reached90',        label:'Students who hit day 90',pillar:'U',group:'Results', unit:'#' },
+    { id:'verified90',       label:'…with a verified result',pillar:'U',group:'Results', unit:'#',
+      help:'Day-90 economic result you could show a stranger. Verified, not claimed.' },
+    { id:'caseStudies',      label:'Case studies verified',pillar:'U', group:'Results',  unit:'#' },
+    { id:'dropouts',         label:'Drop-outs',            pillar:'U', group:'Results',  unit:'#' },
+    { id:'referralsFromCust',label:'Referrals from customers',pillar:'U',group:'Results',unit:'#' },
+    { id:'medianIncomeGain', label:'Median member income gain',pillar:'U',group:'Results',unit:'¥',
+      help:'MEDIAN, not average. One ¥6M outlier is not a product.' },
+    { id:'memberValueCreated',label:'Verified member earnings',pillar:'U',group:'Results',unit:'¥',
+      help:'Money members made / saved their clients, verified. The ultimate metric.' },
+
+    // ---------------- E — efficiency -------------------------------------
+    { id:'marketingSpend',   label:'Marketing spend',      pillar:'E', group:'Cost',     unit:'¥' },
+    { id:'salesCost',        label:'Sales cost',           pillar:'E', group:'Cost',     unit:'¥',
+      help:'Sales payroll + commissions. Part of CAC.' },
+    { id:'cogs',             label:'Delivery cost (COGS)', pillar:'E', group:'Cost',     unit:'¥',
+      help:'Coaches, leaders, venue, anything that scales with students.' },
+    { id:'otherOpex',        label:'Other operating cost', pillar:'E', group:'Cost',     unit:'¥',
+      help:'Rent, software, admin payroll, overhead.' },
+    { id:'headcount',        label:'Team headcount',       pillar:'E', group:'Capacity', unit:'#' },
+    { id:'leaders',          label:'Leaders / coaches',    pillar:'E', group:'Capacity', unit:'#' },
+    { id:'studentsPerLeader',label:'Max students per leader',pillar:'E',group:'Capacity',unit:'#' },
+    { id:'founderHours',     label:'Founder hours in delivery',pillar:'E',group:'Capacity',unit:'h',
+      help:'Hours the founder personally had to be in the machine. Founder dependence.' },
+    { id:'totalHours',       label:'Founder hours total',  pillar:'E', group:'Capacity', unit:'h' },
+  ];
+  const field = id => FIELDS.find(f => f.id === id);
+  const fieldGroups = pid => {
+    const out = [];
+    FIELDS.filter(f => f.pillar === pid).forEach(f => {
+      let g = out.find(x => x.name === f.group);
+      if (!g) out.push(g = { name:f.group, fields:[] });
+      g.fields.push(f);
+    });
+    return out;
+  };
+
+  /* ---- Derived metrics --------------------------------------------------- *
+     fn(p, m) : p = the period's raw inputs, m = metrics computed before it.
+     target   = the number that means "this is healthy".
+     floor    = the number that means "this is the constraint".
+     dir      = 'up' (higher is better) or 'down' (lower is better).
+     weight   = how much this metric counts toward its pillar score.
+     lever    = wired into the revenue model, so a gap here becomes a ¥ figure. */
+
+  const div = (a, b) => (b ? a / b : null);
+
+  const METRICS = [
+    /* ---------- V ---------- */
+    { id:'profileVisitRate', label:'Profile visit rate', pillar:'V', fmt:'pct', dir:'up', weight:1,
+      def:'Profile visits ÷ reach', target:0.03, floor:0.005,
+      fn:p => div(p.profileVisits, p.reach) },
+    { id:'ctaClickRate', label:'CTA click rate', pillar:'V', fmt:'pct', dir:'up', weight:1,
+      def:'CTA clicks ÷ views', target:0.02, floor:0.002,
+      fn:p => div(p.ctaClicks, p.views) },
+    { id:'leadRate', label:'Lead rate (views → leads)', pillar:'V', fmt:'pct', dir:'up', weight:3,
+      def:'Leads ÷ views. The rate at which attention becomes a contactable human.',
+      target:0.015, floor:0.002, lever:true,
+      fn:p => div(p.leads, p.views) },
+    { id:'revPerMilleViews', label:'Revenue per 1,000 views', pillar:'V', fmt:'yen', dir:'up', weight:2,
+      def:'Cash collected ÷ views × 1,000. Lets you compare a Reel to a Reel economically.',
+      target:3000, floor:200,
+      fn:p => div(p.cashCollected, p.views) * 1000 },
+    { id:'lineBlockRate', label:'LINE block rate', pillar:'V', fmt:'pct', dir:'down', weight:2,
+      def:'Blocks ÷ (target reach + blocks) for the period.', target:0.02, floor:0.08,
+      fn:p => div(p.lineBlocks, (p.lineTargetReach || 0) + (p.lineBlocks || 0)) },
+    { id:'lineNetGrowth', label:'LINE net growth', pillar:'V', fmt:'num', dir:'up', weight:1,
+      def:'New friends − blocks. Negative means the channel is dying.', target:200, floor:0,
+      fn:p => (p.lineFriendsNew || 0) - (p.lineBlocks || 0) },
+    { id:'revPerLineRecipient', label:'Revenue per LINE recipient', pillar:'V', fmt:'yen', dir:'up', weight:1,
+      def:'Cash collected ÷ LINE target reach.', target:2000, floor:100,
+      fn:p => div(p.cashCollected, p.lineTargetReach) },
+
+    /* ---------- A ---------- */
+    { id:'appRate', label:'Lead → application', pillar:'A', fmt:'pct', dir:'up', weight:2,
+      def:'Applications completed ÷ leads.', target:0.25, floor:0.05, lever:true,
+      fn:p => div(p.applications, p.leads) },
+    { id:'qualRate', label:'Application → qualified', pillar:'A', fmt:'pct', dir:'up', weight:1,
+      def:'Qualified applications ÷ applications. Low = the audience is wrong, not the sales team.',
+      target:0.6, floor:0.2, lever:true,
+      fn:p => div(p.applicationsQual, p.applications) },
+    { id:'bookRate', label:'Qualified → booked', pillar:'A', fmt:'pct', dir:'up', weight:2,
+      def:'Meetings booked ÷ qualified applications. Mostly a speed-of-contact problem.',
+      target:0.7, floor:0.3, lever:true,
+      fn:p => div(p.meetingsBooked, p.applicationsQual) },
+    { id:'showRate', label:'Show rate', pillar:'A', fmt:'pct', dir:'up', weight:2,
+      def:'Meetings attended ÷ meetings booked.', target:0.8, floor:0.5, lever:true,
+      fn:p => div(p.meetingsAttended, p.meetingsBooked) },
+    { id:'closeRate', label:'Meeting → close', pillar:'A', fmt:'pct', dir:'up', weight:3,
+      def:'New customers ÷ meetings attended.', target:0.3, floor:0.12, lever:true,
+      fn:p => div(p.sales, p.meetingsAttended) },
+    { id:'avgPrice', label:'Average contract value', pillar:'A', fmt:'yen', dir:'up', weight:1,
+      def:'Contract value signed ÷ new customers.', target:500000, floor:200000, lever:true,
+      fn:p => div(p.grossSigned, p.sales) },
+    { id:'collectionRate', label:'Cash collection rate', pillar:'A', fmt:'pct', dir:'up', weight:3,
+      def:'Cash collected ÷ contract value signed. Signed is not collected.',
+      target:0.85, floor:0.5, lever:true,
+      fn:p => div(p.cashCollected, p.grossSigned) },
+    { id:'refundRate', label:'Refund rate', pillar:'A', fmt:'pct', dir:'down', weight:2,
+      def:'Refunds ÷ cash collected.', target:0.02, floor:0.1,
+      fn:p => div(p.refunds, p.cashCollected) },
+    { id:'revPerLead', label:'Revenue per lead', pillar:'A', fmt:'yen', dir:'up', weight:2,
+      def:'Cash collected ÷ leads.', target:30000, floor:5000,
+      fn:p => div(p.cashCollected, p.leads) },
+    { id:'revPerMeeting', label:'Revenue per attended meeting', pillar:'A', fmt:'yen', dir:'up', weight:2,
+      def:'Cash collected ÷ meetings attended. The single best sales-team number.',
+      target:150000, floor:40000,
+      fn:p => div(p.cashCollected, p.meetingsAttended) },
+
+    /* ---------- L ---------- */
+    { id:'networkConv', label:'University → Network', pillar:'L', fmt:'pct', dir:'up', weight:3,
+      def:'Joined Network ÷ new customers.', target:0.5, floor:0.15, lever:true,
+      fn:p => div(p.networkJoined, p.sales) },
+    { id:'inviteAccept', label:'Invite → join', pillar:'L', fmt:'pct', dir:'up', weight:1,
+      def:'Joined ÷ invited.', target:0.6, floor:0.25,
+      fn:p => div(p.networkJoined, p.networkInvited) },
+    { id:'monthlyChurn', label:'Network monthly churn', pillar:'L', fmt:'pct', dir:'down', weight:3,
+      def:'Cancelled ÷ members at period start (normalised to a month).',
+      target:0.03, floor:0.12,
+      fn:(p,m,ctx) => { const c = div(p.networkChurned, p.networkStart); return c == null ? null : c / (ctx.monthsInPeriod || 1); } },
+    { id:'retentionMonths', label:'Expected months retained', pillar:'L', fmt:'mo', dir:'up', weight:2,
+      def:'1 ÷ monthly churn. How long a Network member is worth money.',
+      target:24, floor:6, lever:true,
+      fn:(p,m) => (m.monthlyChurn ? 1 / m.monthlyChurn : null) },
+    { id:'recurringRev', label:'Recurring revenue (MRR)', pillar:'L', fmt:'yen', dir:'up', weight:2,
+      def:'Members at period end × Network fee.', target:3000000, floor:500000,
+      fn:p => ((p.networkStart || 0) + (p.networkJoined || 0) - (p.networkChurned || 0)) * (p.networkFee || 0) },
+    { id:'expansionPerCust', label:'Expansion revenue per customer', pillar:'L', fmt:'yen', dir:'up', weight:2,
+      def:'(Expansion + event revenue) ÷ active students.', target:80000, floor:5000, lever:true,
+      fn:p => div((p.expansionRevenue || 0) + (p.eventRevenue || 0), p.studentsActive) },
+    { id:'nrr', label:'Net revenue retention', pillar:'L', fmt:'pct', dir:'up', weight:2,
+      def:'(Recurring + expansion − churned recurring) ÷ recurring at start.',
+      target:1.1, floor:0.8,
+      fn:(p,m) => { const base = (p.networkStart || 0) * (p.networkFee || 0);
+        if (!base) return null;
+        return (base + (p.expansionRevenue || 0) - (p.networkChurned || 0) * (p.networkFee || 0)) / base; } },
+    { id:'ltv', label:'Customer LTV', pillar:'L', fmt:'yen', dir:'up', weight:3,
+      def:'Front-end cash + Network conversion × fee × months retained + expansion per customer.',
+      target:1200000, floor:400000,
+      fn:(p,m) => {
+        const front = (m.avgPrice || 0) * (m.collectionRate == null ? 1 : m.collectionRate) * (1 - (m.refundRate || 0));
+        const rec   = (m.networkConv || 0) * (p.networkFee || 0) * (m.retentionMonths || 0);
+        return front + rec + (m.expansionPerCust || 0);
+      } },
+
+    /* ---------- U ---------- */
+    { id:'activationRate', label:'Onboarding completion', pillar:'U', fmt:'pct', dir:'up', weight:2,
+      def:'Onboarding completed ÷ new customers.', target:0.95, floor:0.6,
+      fn:p => div(p.onboarded, p.sales) },
+    { id:'day14Rate', label:'Day-14 implementation', pillar:'U', fmt:'pct', dir:'up', weight:3,
+      def:'Implemented by day 14 ÷ students who reached day 14. The earliest honest predictor of a result.',
+      target:0.8, floor:0.4,
+      fn:p => div(p.implementedBy14, p.reachedDay14) },
+    { id:'successRate', label:'90-day verified result rate', pillar:'U', fmt:'pct', dir:'up', weight:4,
+      def:'Verified day-90 results ÷ students who reached day 90. THE product metric.',
+      target:0.5, floor:0.15, lever:true,
+      fn:p => div(p.verified90, p.reached90) },
+    { id:'firstClientRate', label:'First-client rate', pillar:'U', fmt:'pct', dir:'up', weight:2,
+      def:'First paid clients won ÷ active students.', target:0.25, floor:0.05,
+      fn:p => div(p.firstClients, p.studentsActive) },
+    { id:'proofRate', label:'Case studies per result', pillar:'U', fmt:'pct', dir:'up', weight:2,
+      def:'Verified case studies ÷ verified results. Results you cannot show do not sell anything.',
+      target:0.6, floor:0.1,
+      fn:p => div(p.caseStudies, p.verified90) },
+    { id:'dropoutRate', label:'Drop-out rate', pillar:'U', fmt:'pct', dir:'down', weight:2,
+      def:'Drop-outs ÷ active students.', target:0.03, floor:0.15,
+      fn:p => div(p.dropouts, p.studentsActive) },
+    { id:'referralRate', label:'Referrals per customer', pillar:'U', fmt:'num', dir:'up', weight:3,
+      def:'Referrals from customers ÷ active students. The loop closing.',
+      target:0.4, floor:0.05, lever:true,
+      fn:p => div(p.referralsFromCust, p.studentsActive) },
+    { id:'referralShare', label:'Referred share of leads', pillar:'U', fmt:'pct', dir:'up', weight:1,
+      def:'Referred leads ÷ leads. Rises when the product works.', target:0.3, floor:0.05,
+      fn:p => div(p.leadsReferral, p.leads) },
+    { id:'valuePerMember', label:'Verified value created per member', pillar:'U', fmt:'yen', dir:'up', weight:2,
+      def:'Verified member earnings ÷ active students.', target:300000, floor:30000,
+      fn:p => div(p.memberValueCreated, p.studentsActive) },
+
+    /* ---------- E ---------- */
+    { id:'cac', label:'CAC', pillar:'E', fmt:'yen', dir:'down', weight:3,
+      def:'(Marketing + sales cost) ÷ new customers.', target:80000, floor:300000,
+      fn:p => div((p.marketingSpend || 0) + (p.salesCost || 0), p.sales) },
+    { id:'ltvCac', label:'LTV : CAC', pillar:'E', fmt:'x', dir:'up', weight:4,
+      def:'LTV ÷ CAC. Under 3 the machine is not really profitable.', target:4, floor:1.5,
+      fn:(p,m) => (m.cac ? m.ltv / m.cac : null) },
+    { id:'cacPayback', label:'CAC payback', pillar:'E', fmt:'mo', dir:'down', weight:2,
+      def:'CAC ÷ front-end cash per customer, in months of a customer\'s payments.',
+      target:1, floor:6,
+      fn:(p,m) => { const front = (m.avgPrice || 0) * (m.collectionRate == null ? 1 : m.collectionRate);
+        return front ? (m.cac || 0) / front : null; } },
+    { id:'grossMargin', label:'Gross margin', pillar:'E', fmt:'pct', dir:'up', weight:3,
+      def:'(Cash collected − refunds − delivery cost) ÷ (cash collected − refunds).',
+      target:0.7, floor:0.4,
+      fn:p => { const net = (p.cashCollected || 0) - (p.refunds || 0);
+        return net ? (net - (p.cogs || 0)) / net : null; } },
+    { id:'opProfit', label:'Operating profit', pillar:'E', fmt:'yen', dir:'up', weight:3,
+      def:'Net collected − delivery − marketing − sales − other operating cost.',
+      target:2000000, floor:0,
+      fn:p => (p.cashCollected || 0) - (p.refunds || 0) - (p.cogs || 0)
+              - (p.marketingSpend || 0) - (p.salesCost || 0) - (p.otherOpex || 0) },
+    { id:'opMargin', label:'Operating margin', pillar:'E', fmt:'pct', dir:'up', weight:3,
+      def:'Operating profit ÷ net collected.', target:0.25, floor:0,
+      fn:(p,m) => { const net = (p.cashCollected || 0) - (p.refunds || 0);
+        return net ? m.opProfit / net : null; } },
+    { id:'revPerHead', label:'Revenue per team member', pillar:'E', fmt:'yen', dir:'up', weight:1,
+      def:'Cash collected ÷ headcount.', target:1500000, floor:400000,
+      fn:p => div(p.cashCollected, p.headcount) },
+    { id:'capacityUse', label:'Delivery capacity used', pillar:'E', fmt:'pct', dir:'down', weight:2,
+      def:'Active students ÷ (leaders × max students per leader). Over 100% the product breaks quietly.',
+      target:0.75, floor:1.1,
+      fn:p => div(p.studentsActive, (p.leaders || 0) * (p.studentsPerLeader || 0)) },
+    { id:'founderDependence', label:'Founder dependence', pillar:'E', fmt:'pct', dir:'down', weight:2,
+      def:'Founder hours inside delivery ÷ founder hours total.', target:0.15, floor:0.6,
+      fn:p => div(p.founderHours, p.totalHours) },
+  ];
+  const metric = id => METRICS.find(m => m.id === id);
+  const metricsOf = pid => METRICS.filter(m => m.pillar === pid);
+
+  /* ---- The CEO screen: the 5–15 numbers that currently matter ------------ */
+  const CEO = [
+    { id:'cashCollected', raw:true, label:'Cash collected' },
+    { id:'opProfit',  label:'Operating profit' },
+    { id:'sales',     raw:true, label:'New customers' },
+    { id:'closeRate', label:'Meeting → close' },
+    { id:'cac',       label:'CAC' },
+    { id:'ltv',       label:'LTV' },
+    { id:'ltvCac',    label:'LTV : CAC' },
+    { id:'grossMargin', label:'Gross margin' },
+    { id:'successRate', label:'90-day result rate' },
+    { id:'networkConv', label:'Univ → Network' },
+    { id:'retentionMonths', label:'Months retained' },
+    { id:'referralRate', label:'Referrals / customer' },
+  ];
+
+  /* ---- Formatting -------------------------------------------------------- */
+  function fmt(v, kind) {
+    if (v == null || (typeof v === 'number' && !isFinite(v))) return '—';
+    switch (kind) {
+      case 'pct':  return (v * 100).toFixed(v < 0.1 ? 1 : 0) + '%';
+      case 'yen':  return yen(v);
+      case 'x':    return v.toFixed(1) + '×';
+      case 'mo':   return v.toFixed(1) + ' mo';
+      case 'h':    return Math.round(v) + ' h';
+      case 'num':  return Math.abs(v) >= 100 ? Math.round(v).toLocaleString() : (Math.round(v * 100) / 100).toString();
+      default:     return Math.round(v).toLocaleString();
+    }
+  }
+  function yen(v) {
+    const n = Math.round(v), a = Math.abs(n), s = n < 0 ? '-' : '';
+    if (a >= 100000000) return s + '¥' + (a / 100000000).toFixed(2) + '億';
+    if (a >= 10000)     return s + '¥' + (a / 10000).toFixed(a >= 1000000 ? 0 : 1) + '万';
+    return s + '¥' + a.toLocaleString();
+  }
+  function fmtField(v, unit) {
+    if (v == null || v === '') return '—';
+    return unit === '¥' ? yen(v) : Math.round(v).toLocaleString() + (unit === 'h' ? ' h' : '');
+  }
+
+  /* ---- The backend registry ---------------------------------------------- *
+     The 52 domains the system is designed to hold. Anything with fields:true
+     is captured today; the rest documents what the record must grow into so
+     the schema is decided ONCE rather than improvised later.                 */
+  const DOMAINS = [
+    { n:1,  name:'Customer / lead master record', pillar:'A', status:'partial',
+      fields:'id · name · contact · LINE · IG · age · location · occupation · income now · revenue now · skill · clients · desired income · desired result · cohort · product · salesperson · leader · source · campaign · first touch · last touch · referrer · every date from first touch to cancellation · status' },
+    { n:2,  name:'Attribution', pillar:'V', status:'partial',
+      fields:'channel · content ID · campaign · spend · first/last touch → leads, applications, meetings, customers, revenue, profit and LTV BY SOURCE' },
+    { n:3,  name:'Attention / distribution', pillar:'V', status:'live',
+      fields:'followers · impressions · reach · views · profile visits · watch time · completion · saves · shares · DMs · clicks → profile-visit rate, CTA rate, lead rate, revenue per 1,000 views' },
+    { n:4,  name:'Content database', pillar:'V', status:'planned',
+      fields:'content ID · creator · hook · format · purpose tag (attention / trust / proof / education / reframe / conversion / case study) · avatar · views → leads → sales → revenue per view' },
+    { n:5,  name:'LINE health', pillar:'V', status:'live',
+      fields:'friends · target reach · blocks · block rate · replies · clicks · revenue per recipient · revenue per broadcast · block-after-message by topic' },
+    { n:6,  name:'Lead qualification', pillar:'A', status:'partial',
+      fields:'income · ability to pay · urgency · problem severity · timeline · authority · skill · hours available · coachability → LEAD QUALITY SCORE /100 → meeting rate, close rate, success, LTV' },
+    { n:7,  name:'Application funnel', pillar:'A', status:'live',
+      fields:'started · completed · qualified · rejected · booked · response time · time to booking' },
+    { n:8,  name:'Sales pipeline', pillar:'A', status:'partial',
+      fields:'per call: date · rep · source · offer · price · quality score · attended · outcome · reason lost · objection · days to close → close rate by rep / source / offer / avatar / score' },
+    { n:9,  name:'Sales call intelligence', pillar:'A', status:'planned',
+      fields:'objections · questions · talk ratio · discovery depth · proof used · close attempt · phrases that precede a yes' },
+    { n:10, name:'Payments', pillar:'A', status:'partial',
+      fields:'invoiced · collected · outstanding · plan · instalment dates · failed · late · discount · refund · chargeback → cash collection rate, days to cash, default rate' },
+    { n:11, name:'Onboarding', pillar:'U', status:'live',
+      fields:'booked · attended · baseline done · goals set · leader assigned · first assignment · time to first action' },
+    { n:12, name:'Baseline (day 1 snapshot)', pillar:'U', status:'partial',
+      fields:'income · revenue · clients · audience · skill · portfolio · confidence · availability · runway · target · biggest constraint — without this you cannot prove transformation' },
+    { n:13, name:'Student activity', pillar:'U', status:'planned',
+      fields:'lessons · assignments · coaching · events · outreach · pitches — diagnostic only, activity is not outcome' },
+    { n:14, name:'Skill development', pillar:'U', status:'planned',
+      fields:'14 skill tracks × beginner → developing → competent → verified → certified, each with attached proof. No self-rating.' },
+    { n:15, name:'Money milestones', pillar:'U', status:'partial',
+      fields:'date of first ¥1 · ¥50K · ¥100K · ¥300K · ¥500K · ¥1M · ¥3M · ¥10M cumulative · revenue last 30/90 days · paying clients' },
+    { n:16, name:'Time to result', pillar:'U', status:'partial',
+      fields:'days to first implementation · first client · first ¥100K · first case study · certification (median, not average)' },
+    { n:17, name:'Customer success rate', pillar:'U', status:'live',
+      fields:'30-day implementation · 60-day project · 90-day verified economic result · partial · none · dropped' },
+    { n:18, name:'Failure reasons', pillar:'U', status:'partial',
+      fields:'18 tagged causes from "never did outreach" to "curriculum gap" — quantified, because this is where product improvements come from' },
+    { n:19, name:'Customer outcome (non-money)', pillar:'U', status:'planned',
+      fields:'jobs · promotions · clients · revenue lifted for others · hours saved · systems built · campaigns launched' },
+    { n:20, name:'Verified business value', pillar:'U', status:'partial',
+      fields:'per project: client · starting metric · target · intervention · ending metric · ¥ value · duration · verification · proof link' },
+    { n:21, name:'Case study database', pillar:'U', status:'partial',
+      fields:'member · avatar · starting point · diagnosis · action · result · timeframe · ¥ created · proof · permission · sales-use status — filterable by avatar for sales' },
+    { n:22, name:'Testimonial system', pillar:'U', status:'planned',
+      fields:'requested · received · quantified · verified · permission · published · performance. Strong = before → action → after → number → time' },
+    { n:23, name:'Certification', pillar:'U', status:'planned',
+      fields:'lessons · assessment · real project · client verification · case study · leader approval · level → certified operator income, placement, retention' },
+    { n:24, name:'Opportunity marketplace', pillar:'L', status:'planned',
+      fields:'opportunities × operators → matches · interviews · contracts · contract value → MEMBER EARNINGS GENERATED THROUGH THE NETWORK' },
+    { n:25, name:'Network retention', pillar:'L', status:'live',
+      fields:'invited · accepted · declined + reason · join date · months active · pause · cancel · reactivate → 30/90/180/365-day retention, monthly churn, revenue churn' },
+    { n:26, name:'Why people stay', pillar:'L', status:'planned',
+      fields:'tagged: clients · opportunities · community · accountability · mentors · status · workspace · access — this is what the Network actually sells' },
+    { n:27, name:'Why people leave', pillar:'L', status:'partial',
+      fields:'13 tagged cancellation reasons → churn by reason. Do not guess retention problems.' },
+    { n:28, name:'LTV', pillar:'L', status:'live',
+      fields:'front-end + recurring + upsell + events, segmented by source, rep, cohort, leader, certification and RESULT LEVEL' },
+    { n:29, name:'Expansion revenue', pillar:'L', status:'live',
+      fields:'Network · Business Builder · advanced · events · consulting → expansion rate, net revenue retention' },
+    { n:30, name:'Referrals', pillar:'U', status:'live',
+      fields:'referrer · referred · bought · revenue · reward · referrer result level → referral rate BY OUTCOME LEVEL' },
+    { n:31, name:'Community health', pillar:'L', status:'planned',
+      fields:'weekly / monthly active · posts · replies · introductions · collaborations · attendance — but the real metric is useful connections created' },
+    { n:32, name:'Connections', pillar:'L', status:'planned',
+      fields:'new person met · reason · collaboration · client · referral · job → economic connections per active member' },
+    { n:33, name:'Events', pillar:'L', status:'partial',
+      fields:'registrations · attendance · show rate · cost · satisfaction · connections · applications · sales → cost per attendee, revenue per event' },
+    { n:34, name:'Training club / physical space', pillar:'L', status:'planned',
+      fields:'visits · classes · retention · guests · referrals · revenue and cost per member · usage by high-LTV members → does the space actually lift retention?' },
+    { n:35, name:'Leader performance', pillar:'U', status:'partial',
+      fields:'students · attendance · implementation · success % · first-client % · certification % · response time · retention. Leader value = student outcome, not calls held.' },
+    { n:36, name:'Cohort performance', pillar:'U', status:'live',
+      fields:'cohort × leader × completion × success × income × certification × Network conversion × LTV × refund rate' },
+    { n:37, name:'Curriculum performance', pillar:'U', status:'planned',
+      fields:'per module: completion · time · rating · drop-out before/after · correlation with result. If a lesson does not predict success, why is it there?' },
+    { n:38, name:'Support quality', pillar:'U', status:'planned',
+      fields:'tickets · response time · resolution · category · repeated questions (these reveal broken curriculum) · escalations' },
+    { n:39, name:'Product quality', pillar:'U', status:'partial',
+      fields:'NPS · CSAT · completion · refunds · complaints · time to value — but economic outcome outranks all of them' },
+    { n:40, name:'Financial scoreboard', pillar:'E', status:'live',
+      fields:'gross · collected · refunds · net · COGS · gross profit · payroll · marketing · commissions · rent · software · overhead · operating profit · cash · AR · AP' },
+    { n:41, name:'Unit economics', pillar:'E', status:'live',
+      fields:'CAC · LTV · LTV:CAC · payback · gross profit per customer · revenue per lead / meeting / student / employee' },
+    { n:42, name:'Capacity', pillar:'E', status:'live',
+      fields:'students per leader · calls · support hours · room · gym · sales · onboarding → utilisation and what breaks at 2×, 5×, 10×' },
+    { n:43, name:'Team performance', pillar:'E', status:'partial',
+      fields:'per person: role · the ONE number they own · target · current · cost · revenue influenced' },
+    { n:44, name:'CEO dashboard', pillar:'E', status:'live',
+      fields:'growth · outcome · LTV · economics · current constraint — 12 numbers, everything else is drill-down' },
+    { n:45, name:'Alerts', pillar:'E', status:'live',
+      fields:'threshold and trend alerts that name the metric, the drop, the segment and the money at stake' },
+    { n:46, name:'Benchmarks', pillar:'E', status:'live',
+      fields:'current · previous · target · best ever · 30-day · 90-day average → green / yellow / red' },
+    { n:47, name:'Cohort analysis', pillar:'U', status:'live',
+      fields:'customers grouped by enrolment month, tracked to 30/90-day success, Network conversion, retention and LTV — monthly totals hide everything' },
+    { n:48, name:'Funnel cohort analysis', pillar:'V', status:'partial',
+      fields:'the same, grouped by acquisition source → content → customer quality → LTV' },
+    { n:49, name:'Predictive success score', pillar:'U', status:'planned',
+      fields:'attendance · assignments · outreach · baseline · leader · response time · early results → probability of success' },
+    { n:50, name:'Customer risk score', pillar:'U', status:'live',
+      fields:'missed onboarding · stopped attending · no outreach · no project · payment failed · no progress → intervene on day 14, not day 90' },
+    { n:51, name:'LTV risk score', pillar:'L', status:'live',
+      fields:'low attendance · no connections · no opportunities · no events · income down · missed payments → churn before it happens' },
+    { n:52, name:'Business value created', pillar:'U', status:'live',
+      fields:'member revenue generated · client revenue influenced · cost savings · salaries increased · contracts won · businesses started' },
+  ];
+
+  return { PILLARS, pillar, FIELDS, field, fieldGroups, METRICS, metric, metricsOf,
+           CEO, DOMAINS, fmt, fmtField, yen };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   store.js — Local persistence. Periods, people, interventions, benchmarks.
+   Everything stays in the browser (localStorage), private to the device,
+   exportable as JSON or CSV. No accounts, no server, works on a plane.
+   ========================================================================== */
+
+const Store = (() => {
+  const KEY = 'valueloop_os_v1';
+
+  const DEFAULT = {
+    company: { name:'KNCT', currency:'JPY', cadence:'month', fiscalStart:'2026-01' },
+    periods: {},          // id -> { id, type, startISO, endISO, label, inputs:{}, notes }
+    people:  {},          // id -> master record (section 1)
+    interventions: [],    // the PRESCRIBE → TRACK ledger
+    benchmarks: {},       // metricId -> { target, floor }  (overrides Schema defaults)
+    focus: [],            // metric ids the CEO has pinned to screen 1
+    settings: { demo:false },
+  };
+
+  let state = load();
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return structuredClone(DEFAULT);
+      const p = JSON.parse(raw);
+      return { ...structuredClone(DEFAULT), ...p,
+        company:  { ...DEFAULT.company,  ...(p.company  || {}) },
+        settings: { ...DEFAULT.settings, ...(p.settings || {}) } };
+    } catch (e) { console.warn('Store reset', e); return structuredClone(DEFAULT); }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { console.error('Save failed — storage full?', e); }
+  }
+
+  /* ---- Period identity --------------------------------------------------- */
+  const pad = n => String(n).padStart(2, '0');
+
+  function isoWeek(d) {                       // ISO-8601 week number
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return { year: t.getUTCFullYear(), week: Math.ceil(((t - y0) / 86400000 + 1) / 7) };
+  }
+  function weekBounds(year, week) {
+    const jan4 = new Date(Date.UTC(year, 0, 4));
+    const mon = new Date(jan4);
+    mon.setUTCDate(jan4.getUTCDate() - ((jan4.getUTCDay() || 7) - 1) + (week - 1) * 7);
+    const sun = new Date(mon); sun.setUTCDate(mon.getUTCDate() + 6);
+    return { startISO: mon.toISOString().slice(0, 10), endISO: sun.toISOString().slice(0, 10) };
+  }
+  function periodIdFor(dateISO, type) {
+    const d = new Date(dateISO + 'T12:00:00');
+    if (type === 'week') { const { year, week } = isoWeek(d); return `${year}-W${pad(week)}`; }
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+  }
+  function boundsFor(id) {
+    if (id.includes('W')) {
+      const [y, w] = id.split('-W');
+      return weekBounds(+y, +w);
+    }
+    const [y, m] = id.split('-').map(Number);
+    const end = new Date(Date.UTC(y, m, 0));
+    return { startISO: `${y}-${pad(m)}-01`, endISO: end.toISOString().slice(0, 10) };
+  }
+  function labelFor(id) {
+    if (id.includes('W')) { const [y, w] = id.split('-W'); return `Week ${+w} · ${y}`; }
+    const [y, m] = id.split('-');
+    return new Date(+y, +m - 1, 1).toLocaleString('en', { month:'long' }) + ' ' + y;
+  }
+  // A month is 1.0; a week is 7/30.44 of a month. Used to normalise churn.
+  const monthsIn = id => id.includes('W') ? 7 / 30.44 : 1;
+
+  const todayISO = () => new Date().toISOString().slice(0, 10);
+
+  /* ---- Periods ----------------------------------------------------------- */
+  function ensurePeriod(id) {
+    if (!state.periods[id]) {
+      const b = boundsFor(id);
+      state.periods[id] = { id, type: id.includes('W') ? 'week' : 'month',
+        startISO:b.startISO, endISO:b.endISO, label:labelFor(id), inputs:{}, notes:'' };
+      save();
+    }
+    return state.periods[id];
+  }
+  function setInput(id, fieldId, value) {
+    const p = ensurePeriod(id);
+    if (value === '' || value == null || (typeof value === 'number' && isNaN(value))) delete p.inputs[fieldId];
+    else p.inputs[fieldId] = Number(value);
+    save();
+  }
+  function setNotes(id, notes) { ensurePeriod(id).notes = notes; save(); }
+  function deletePeriod(id) { delete state.periods[id]; save(); }
+
+  const periodIds  = () => Object.keys(state.periods).sort();
+  const periods    = () => periodIds().map(id => state.periods[id]);
+  function currentId() {
+    const ids = periodIds();
+    const nowId = periodIdFor(todayISO(), state.company.cadence);
+    if (state.periods[nowId]) return nowId;
+    return ids.length ? ids[ids.length - 1] : nowId;
+  }
+  function previousId(id) {
+    const ids = periodIds(); const i = ids.indexOf(id);
+    return i > 0 ? ids[i - 1] : null;
+  }
+  function trailing(id, n) {                   // the n periods up to and including id
+    const ids = periodIds(); const i = ids.indexOf(id);
+    return (i < 0 ? ids.slice(-n) : ids.slice(Math.max(0, i - n + 1), i + 1)).map(x => state.periods[x]);
+  }
+
+  /* ---- People (section 1 — the spine) ------------------------------------ */
+  function blankPerson() {
+    return {
+      id: 'P' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      name:'', contact:'', source:'', campaign:'', cohort:'', salesperson:'', leader:'',
+      dateLead:'', dateCall:'', datePurchase:'',
+      price:0, collected:0, refunded:0,
+      baselineIncome:0, currentIncome:0,
+      status:'lead',            // lead · customer · active · graduated · churned · lost
+      outcome:'none',           // none · implemented · firstClient · result100k · result300k · result1m
+      dateFirstClient:'', dateFirstResult:'',
+      network:'no',             // no · invited · joined · churned
+      networkMonths:0, networkFee:0, expansion:0,
+      referrals:0, caseStudy:false, certified:false,
+      riskFlags:[],             // see Engine.riskScore
+      failReason:'', churnReason:'', notes:'',
+    };
+  }
+  function upsertPerson(rec) { state.people[rec.id] = { ...blankPerson(), ...rec }; save(); return state.people[rec.id]; }
+  function deletePerson(id) { delete state.people[id]; save(); }
+  const people = () => Object.values(state.people);
+
+  /* ---- Interventions (PRESCRIBE → TRACK) --------------------------------- */
+  function addIntervention(rx) {
+    state.interventions.push({
+      id: 'X' + Date.now().toString(36),
+      created: todayISO(),
+      periodId: rx.periodId, metricId: rx.metricId,
+      action: rx.action, owner: rx.owner || '', horizon: rx.horizon || '',
+      baseline: rx.baseline == null ? null : Number(rx.baseline),
+      target:   rx.target   == null ? null : Number(rx.target),
+      valueAtStake: rx.valueAtStake || 0,
+      status: 'running', verdict:'', reviewedPeriodId:'', delta:null,
+    });
+    save();
+  }
+  function updateIntervention(id, patch) {
+    const x = state.interventions.find(i => i.id === id);
+    if (x) { Object.assign(x, patch); save(); }
+  }
+  function deleteIntervention(id) {
+    state.interventions = state.interventions.filter(i => i.id !== id); save();
+  }
+
+  /* ---- Benchmarks & focus ------------------------------------------------ */
+  function benchmark(metricId) {
+    const m = Schema.metric(metricId) || {};
+    const o = state.benchmarks[metricId] || {};
+    return { target: o.target != null ? o.target : m.target,
+             floor:  o.floor  != null ? o.floor  : m.floor };
+  }
+  function setBenchmark(metricId, target, floor) {
+    state.benchmarks[metricId] = { target:Number(target), floor:Number(floor) }; save();
+  }
+  function resetBenchmark(metricId) { delete state.benchmarks[metricId]; save(); }
+  function toggleFocus(metricId) {
+    const i = state.focus.indexOf(metricId);
+    if (i >= 0) state.focus.splice(i, 1); else state.focus.push(metricId);
+    save();
+  }
+
+  /* ---- Company ----------------------------------------------------------- */
+  function setCompany(patch) { state.company = { ...state.company, ...patch }; save(); }
+
+  /* ---- Backup ------------------------------------------------------------ */
+  function exportJSON() { return JSON.stringify(state, null, 2); }
+  function importJSON(str) {
+    const p = JSON.parse(str);
+    state = { ...structuredClone(DEFAULT), ...p }; save();
+  }
+  function reset() { state = structuredClone(DEFAULT); save(); }
+
+  return {
+    get state() { return state; },
+    save, periodIdFor, boundsFor, labelFor, monthsIn, todayISO,
+    ensurePeriod, setInput, setNotes, deletePeriod, periods, periodIds,
+    currentId, previousId, trailing,
+    blankPerson, upsertPerson, deletePerson, people,
+    addIntervention, updateIntervention, deleteIntervention,
+    benchmark, setBenchmark, resetBenchmark, toggleFocus, setCompany,
+    exportJSON, importJSON, reset,
+  };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   engine.js — MEASURE → SCORE → FIND CONSTRAINT.
+
+   Three things happen here:
+     1. MEASURE  every derived metric for a period from the typed inputs
+     2. SCORE    each metric 0–100 against its benchmark, roll up to V/A/L/U/E
+     3. MODEL    the funnel end-to-end so a gap can be quoted in yen, not in
+                 percentage points — that is what turns a dashboard into a
+                 decision.
+   ========================================================================== */
+
+const Engine = (() => {
+
+  /* How the loop feeds itself. Stated openly because every projection below
+     depends on it, and an assumption you cannot see is a lie you cannot audit. */
+  const LOOP = {
+    referralElasticity: 1.0,   // referrals move 1:1 with the 90-day result rate
+    networkElasticity:  0.5,   // Network conversion moves at half the rate
+  };
+
+  const clamp01 = x => Math.max(0, Math.min(1, x));
+  const num = v => (typeof v === 'number' && isFinite(v)) ? v : null;
+  const median = a => { if (!a.length) return null; const s=[...a].sort((x,y)=>x-y), h=s.length>>1;
+    return s.length % 2 ? s[h] : (s[h-1]+s[h])/2; };
+  function pct(a, q) { if (!a.length) return null; const s=[...a].sort((x,y)=>x-y);
+    return s[Math.min(s.length-1, Math.floor(q*(s.length-1)))]; }
+
+  /* ---- 1. MEASURE -------------------------------------------------------- */
+  function metricsFor(periodId) {
+    const p = Store.state.periods[periodId];
+    const inputs = p ? p.inputs : {};
+    const ctx = { monthsInPeriod: Store.monthsIn(periodId), periodId };
+    const m = {};
+    Schema.METRICS.forEach(def => {
+      let v = null;
+      try { v = def.fn(inputs, m, ctx); } catch (e) { v = null; }
+      m[def.id] = num(v);
+    });
+    return { inputs, metrics: m, ctx };
+  }
+
+  /* ---- 2. SCORE ---------------------------------------------------------- */
+  function scoreOf(metricId, value) {
+    if (value == null) return null;
+    const b = Store.benchmark(metricId), d = Schema.metric(metricId);
+    if (!d || b.target == null || b.floor == null) return null;
+    const s = d.dir === 'down'
+      ? (b.floor - value) / (b.floor - b.target)
+      : (value - b.floor) / (b.target - b.floor);
+    return Math.round(clamp01(s) * 100);
+  }
+  const band = s => s == null ? 'none' : s >= 75 ? 'green' : s >= 45 ? 'amber' : 'red';
+
+  function assess(periodId) {
+    const { inputs, metrics } = metricsFor(periodId);
+    const scores = {};
+    Schema.METRICS.forEach(d => scores[d.id] = scoreOf(d.id, metrics[d.id]));
+
+    const pillars = Schema.PILLARS.map(pl => {
+      const rows = Schema.metricsOf(pl.id)
+        .map(d => ({ def:d, value:metrics[d.id], score:scores[d.id] }))
+        .filter(r => r.score != null);
+      const wSum = rows.reduce((a, r) => a + r.def.weight, 0);
+      const score = wSum ? Math.round(rows.reduce((a, r) => a + r.score * r.def.weight, 0) / wSum) : null;
+      return { ...pl, score, band: band(score), rows,
+               coverage: rows.length / Schema.metricsOf(pl.id).length };
+    });
+    const scored = pillars.filter(p => p.score != null);
+    const overall = scored.length ? Math.round(scored.reduce((a, p) => a + p.score, 0) / scored.length) : null;
+
+    return { periodId, inputs, metrics, scores, pillars, overall,
+             completeness: completeness(inputs) };
+  }
+
+  function completeness(inputs) {
+    const filled = Schema.FIELDS.filter(f => inputs[f.id] != null).length;
+    return { filled, total: Schema.FIELDS.length, pct: filled / Schema.FIELDS.length };
+  }
+
+  /* ---- 3. THE MODEL ------------------------------------------------------ *
+     Every lever in one equation, so moving any one of them produces a yen
+     number instead of an opinion.                                            */
+  const LEVERS = [
+    'leadRate','appRate','qualRate','bookRate','showRate','closeRate',
+    'avgPrice','collectionRate','networkConv','retentionMonths',
+    'expansionPerCust','successRate','referralRate',
+  ];
+
+  function baseline(periodId) {
+    const { inputs, metrics } = metricsFor(periodId);
+    // Fall back to the trailing average when a period is thin, so one blank
+    // field cannot make the model claim the business earns nothing.
+    const trail = Store.trailing(periodId, 4).map(p => metricsFor(p.id).metrics);
+    const avg = id => { const v = trail.map(t => t[id]).filter(x => x != null);
+      return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+    const pick = (id, dflt) => metrics[id] != null ? metrics[id] : (avg(id) != null ? avg(id) : dflt);
+
+    return {
+      views:           inputs.views || 0,
+      studentsActive:  inputs.studentsActive || 0,
+      networkFee:      inputs.networkFee || 0,
+      leadRate:        pick('leadRate', 0.01),
+      appRate:         pick('appRate', 0.2),
+      qualRate:        pick('qualRate', 0.5),
+      bookRate:        pick('bookRate', 0.5),
+      showRate:        pick('showRate', 0.7),
+      closeRate:       pick('closeRate', 0.2),
+      avgPrice:        pick('avgPrice', 0),
+      collectionRate:  pick('collectionRate', 1),
+      refundRate:      pick('refundRate', 0),
+      networkConv:     pick('networkConv', 0),
+      retentionMonths: pick('retentionMonths', 0),
+      expansionPerCust:pick('expansionPerCust', 0),
+      successRate:     pick('successRate', 0),
+      referralRate:    pick('referralRate', 0),
+      leadsActual:     inputs.leads != null ? inputs.leads : null,
+    };
+  }
+
+  function project(base, overrides) {
+    const v = { ...base, ...(overrides || {}) };
+    // The loop: results → proof → referrals → leads you did not pay for.
+    const successRatio = base.successRate ? v.successRate / base.successRate : 1;
+    const referralRate = v.referralRate * (1 + (successRatio - 1) * LOOP.referralElasticity);
+    const networkConv  = v.networkConv  * (1 + (successRatio - 1) * LOOP.networkElasticity);
+
+    const paidLeads     = v.views * v.leadRate;
+    const referralLeads = v.studentsActive * referralRate;
+    const leads         = paidLeads + referralLeads;
+    const apps      = leads * v.appRate;
+    const qualified = apps * v.qualRate;
+    const booked    = qualified * v.bookRate;
+    const attended  = booked * v.showRate;
+    const customers = attended * v.closeRate;
+
+    const frontCash = customers * v.avgPrice * v.collectionRate * (1 - v.refundRate);
+    const recurring = customers * networkConv * v.networkFee * v.retentionMonths;
+    const expansion = customers * v.expansionPerCust;
+
+    return { leads, paidLeads, referralLeads, apps, qualified, booked, attended, customers,
+             frontCash, recurring, expansion,
+             value: frontCash + recurring + expansion,
+             ltv: customers ? (frontCash + recurring + expansion) / customers : 0 };
+  }
+
+  /* What each lever is worth if it reaches its benchmark, everything else held. */
+  function leverImpact(periodId) {
+    const base = baseline(periodId);
+    const now  = project(base);
+    const out  = [];
+    LEVERS.forEach(id => {
+      const d = Schema.metric(id); if (!d) return;
+      const b = Store.benchmark(id);
+      const cur = base[id];
+      if (cur == null || b.target == null) return;
+      const better = d.dir === 'down' ? cur > b.target : cur < b.target;
+      if (!better) return;                       // already at or past benchmark
+      const at = project(base, { [id]: b.target });
+      const gain = at.value - now.value;
+      if (!(gain > 0)) return;
+      out.push({ metricId:id, label:d.label, pillar:d.pillar, current:cur, target:b.target,
+                 score:scoreOf(id, cur), gain, gainPct: now.value ? gain / now.value : null,
+                 fmt:d.fmt, def:d.def });
+    });
+    out.sort((a, b) => b.gain - a.gain);
+    return { base, now, levers: out };
+  }
+
+  /* ---- FIND CONSTRAINT --------------------------------------------------- */
+  function constraint(periodId) {
+    const a = assess(periodId);
+    const { levers, now } = leverImpact(periodId);
+    const weakPillar = a.pillars.filter(p => p.score != null).sort((x, y) => x.score - y.score)[0] || null;
+
+    // Money first: the biggest gap that is also genuinely below par.
+    const money = levers.find(l => l.score != null && l.score < 75) || levers[0] || null;
+
+    // Fallback when the model has nothing to chew on: worst scored metric.
+    let worst = null;
+    Schema.METRICS.forEach(d => {
+      const s = a.scores[d.id];
+      if (s == null) return;
+      if (!worst || s * d.weight < worst.score * worst.def.weight) worst = { def:d, score:s, value:a.metrics[d.id] };
+    });
+
+    const chosen = money
+      ? { metricId:money.metricId, label:money.label, pillar:money.pillar, score:money.score,
+          current:money.current, target:money.target, fmt:money.fmt, gain:money.gain, def:money.def }
+      : worst
+      ? { metricId:worst.def.id, label:worst.def.label, pillar:worst.def.pillar, score:worst.score,
+          current:worst.value, target:Store.benchmark(worst.def.id).target, fmt:worst.def.fmt,
+          gain:0, def:worst.def.def }
+      : null;
+
+    return { assessment:a, weakPillar, constraint:chosen, levers, projection:now };
+  }
+
+  /* ---- Benchmarks table -------------------------------------------------- */
+  function benchmarkRow(metricId, periodId) {
+    const d = Schema.metric(metricId), b = Store.benchmark(metricId);
+    const cur = metricsFor(periodId).metrics[metricId];
+    const prevId = Store.previousId(periodId);
+    const prev = prevId ? metricsFor(prevId).metrics[metricId] : null;
+    const hist = Store.periodIds().map(id => metricsFor(id).metrics[metricId]).filter(v => v != null);
+    const trail = n => { const v = Store.trailing(periodId, n).map(p => metricsFor(p.id).metrics[metricId]).filter(x => x != null);
+      return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null; };
+    const best = hist.length ? (d.dir === 'down' ? Math.min(...hist) : Math.max(...hist)) : null;
+    const score = scoreOf(metricId, cur);
+    const delta = (cur != null && prev != null && prev !== 0) ? (cur - prev) / Math.abs(prev) : null;
+    return { def:d, current:cur, previous:prev, delta, target:b.target, floor:b.floor,
+             best, avg3:trail(3), avg6:trail(6), score, band:band(score), history:hist };
+  }
+
+  /* ---- ALERTS ------------------------------------------------------------ */
+  function alerts(periodId) {
+    const a = assess(periodId), out = [];
+    const push = (level, title, body, metricId) => out.push({ level, title, body, metricId });
+
+    // Trend breaks — a fall matters more than a low absolute number.
+    Schema.METRICS.forEach(d => {
+      const r = benchmarkRow(d.id, periodId);
+      if (r.current == null || r.previous == null || r.delta == null) return;
+      const worse = d.dir === 'down' ? r.delta > 0 : r.delta < 0;
+      const mag = Math.abs(r.delta);
+      if (!worse || mag < 0.15) return;
+      const line = `${Schema.fmt(r.previous, d.fmt)} → ${Schema.fmt(r.current, d.fmt)} (${(r.delta*100).toFixed(0)}%)`;
+      if (mag >= 0.25 && r.score != null && r.score < 60) push('red', `${d.label} fell hard`, line, d.id);
+      else if (mag >= 0.15) push('amber', `${d.label} is sliding`, line, d.id);
+    });
+
+    // Hard economic gates.
+    const m = a.metrics;
+    if (m.ltvCac != null && m.ltvCac < 3)
+      push(m.ltvCac < 2 ? 'red' : 'amber', 'LTV:CAC below 3',
+           `${Schema.fmt(m.ltvCac,'x')} — you are buying customers at a price the product does not repay.`, 'ltvCac');
+    if (m.capacityUse != null && m.capacityUse > 1)
+      push('red', 'Delivery is over capacity',
+           `${Schema.fmt(m.capacityUse,'pct')} of leader capacity. Results fall before anyone reports it.`, 'capacityUse');
+    if (m.collectionRate != null && m.collectionRate < 0.7) {
+      const gap = (a.inputs.grossSigned || 0) - (a.inputs.cashCollected || 0);
+      push('red', 'Signed revenue is not becoming cash',
+           `${Schema.fmt(m.collectionRate,'pct')} collected — ${Schema.yen(gap)} signed but not banked.`, 'collectionRate');
+    }
+    if (m.day14Rate != null && m.day14Rate < 0.5)
+      push('amber', 'Day-14 implementation is low',
+           `${Schema.fmt(m.day14Rate,'pct')}. Students who have not acted by day 14 rarely produce a day-90 result.`, 'day14Rate');
+    if (m.opProfit != null && m.opProfit < 0)
+      push('red', 'Operating loss', `${Schema.yen(m.opProfit)} this period.`, 'opProfit');
+    if (m.lineBlockRate != null && m.lineBlockRate > 0.05)
+      push('amber', 'LINE block rate climbing', `${Schema.fmt(m.lineBlockRate,'pct')} of reachable friends left.`, 'lineBlockRate');
+    if (m.proofRate != null && m.proofRate < 0.3 && m.successRate != null && m.successRate > 0.2)
+      push('amber', 'Results are not becoming proof',
+           `${Schema.fmt(m.proofRate,'pct')} of verified results have a case study. Unshown proof sells nothing.`, 'proofRate');
+
+    // Data quality — the weakness that makes every other number arguable.
+    if (a.completeness.pct < 0.8)
+      push('info', 'The record is incomplete',
+           `${a.completeness.filled}/${a.completeness.total} fields entered. Missing lead-source and funnel fields make the rates below unreliable.`, null);
+
+    const rank = { red:0, amber:1, info:2 };
+    return out.sort((x, y) => rank[x.level] - rank[y.level]);
+  }
+
+  /* ---- PEOPLE ANALYTICS -------------------------------------------------- */
+  const OUTCOME_ORDER = ['none','implemented','firstClient','result100k','result300k','result1m'];
+  const OUTCOME_LABEL = { none:'No result', implemented:'Implemented', firstClient:'First client',
+                          result100k:'¥100K+', result300k:'¥300K+', result1m:'¥1M+' };
+
+  const ltvOf = p => (p.collected || 0) - (p.refunded || 0)
+    + (p.networkMonths || 0) * (p.networkFee || 0) + (p.expansion || 0);
+
+  const days = (a, b) => (a && b) ? Math.round((new Date(b) - new Date(a)) / 86400000) : null;
+
+  function groupBy(list, keyFn) {
+    const g = {};
+    list.forEach(p => { const k = keyFn(p) || '—'; (g[k] = g[k] || []).push(p); });
+    return g;
+  }
+  function segmentTable(keyFn) {
+    const customers = Store.people().filter(p => p.datePurchase);
+    const g = groupBy(customers, keyFn);
+    return Object.keys(g).map(k => {
+      const rows = g[k], ltvs = rows.map(ltvOf);
+      const succ = rows.filter(p => OUTCOME_ORDER.indexOf(p.outcome) >= 2).length;
+      return { key:k, n:rows.length,
+               ltvAvg: ltvs.reduce((a, b) => a + b, 0) / rows.length,
+               ltvMedian: median(ltvs),
+               successRate: succ / rows.length,
+               networkRate: rows.filter(p => p.network === 'joined').length / rows.length,
+               refundRate: rows.reduce((a, p) => a + (p.refunded || 0), 0) /
+                           Math.max(1, rows.reduce((a, p) => a + (p.collected || 0), 0)),
+               revenue: rows.reduce((a, p) => a + (p.collected || 0), 0) };
+    }).sort((a, b) => b.ltvMedian - a.ltvMedian);
+  }
+
+  /* Does the thesis hold — do customers who get results pay more over time? */
+  function ltvByResult() {
+    const customers = Store.people().filter(p => p.datePurchase);
+    return OUTCOME_ORDER.map(o => {
+      const rows = customers.filter(p => p.outcome === o);
+      if (!rows.length) return { key:OUTCOME_LABEL[o], outcome:o, n:0 };
+      const ltvs = rows.map(ltvOf);
+      return { key:OUTCOME_LABEL[o], outcome:o, n:rows.length,
+               ltvMedian: median(ltvs),
+               ltvAvg: ltvs.reduce((a, b) => a + b, 0) / rows.length,
+               networkRate: rows.filter(p => p.network === 'joined').length / rows.length,
+               referrals: rows.reduce((a, p) => a + (p.referrals || 0), 0) / rows.length };
+    });
+  }
+
+  function timeToResult() {
+    const c = Store.people().filter(p => p.datePurchase);
+    const set = f => c.map(f).filter(v => v != null && v >= 0);
+    const stat = a => a.length ? { n:a.length, p25:pct(a,.25), median:median(a), p75:pct(a,.75), best:Math.min(...a) } : null;
+    return {
+      firstClient: stat(set(p => days(p.datePurchase, p.dateFirstClient))),
+      firstResult: stat(set(p => days(p.datePurchase, p.dateFirstResult))),
+      leadToSale:  stat(set(p => days(p.dateLead, p.datePurchase))),
+    };
+  }
+
+  /* Section 50/51 — intervene on day 14, not day 90. */
+  function riskScore(p, todayISO) {
+    const today = todayISO || Store.todayISO();
+    const flags = [];
+    const since = days(p.datePurchase, today);
+    if (p.datePurchase) {
+      if (since > 14 && p.outcome === 'none') flags.push('No implementation past day 14');
+      if (since > 90 && OUTCOME_ORDER.indexOf(p.outcome) < 2) flags.push('Past day 90 with no economic result');
+      if ((p.collected || 0) < (p.price || 0) * 0.5 && since > 60) flags.push('Payments behind');
+    }
+    if (p.network === 'joined') {
+      if ((p.referrals || 0) === 0 && (p.networkMonths || 0) >= 3) flags.push('3+ months in Network, zero referrals');
+      if (OUTCOME_ORDER.indexOf(p.outcome) < 2) flags.push('Paying monthly without a result — churn risk');
+    }
+    if (p.status === 'active' && !p.leader) flags.push('No leader assigned');
+    (p.riskFlags || []).forEach(f => flags.push(f));
+    const score = Math.min(100, flags.length * 25);
+    return { flags, score, band: score >= 75 ? 'red' : score >= 40 ? 'amber' : 'green' };
+  }
+  function atRisk() {
+    return Store.people()
+      .map(p => ({ person:p, risk:riskScore(p) }))
+      .filter(r => r.risk.flags.length)
+      .sort((a, b) => b.risk.score - a.risk.score);
+  }
+
+  return { LOOP, LEVERS, OUTCOME_ORDER, OUTCOME_LABEL,
+           metricsFor, scoreOf, band, assess, completeness,
+           baseline, project, leverImpact, constraint, benchmarkRow, alerts,
+           ltvOf, segmentTable, ltvByResult, timeToResult, riskScore, atRisk,
+           median, pct };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   prescribe.js — PRESCRIBE.
+
+   A diagnosis nobody can act on is trivia. For every metric the engine can
+   name as the constraint, this file holds the two or three things that
+   actually move it, who owns it, and how long before you are allowed to
+   judge it. Starting one writes an intervention into the ledger, which is
+   the TRACK half of the loop.
+   ========================================================================== */
+
+const Rx = (() => {
+
+  const BOOK = {
+    /* ---------------- V ---------------- */
+    leadRate: [
+      { a:'Put one unmissable CTA in every piece of content — same offer, same words, every time.',
+        w:'Attention that never gets asked for anything converts at zero.', o:'Content', h:'2 weeks' },
+      { a:'Build one lead magnet that solves the single problem your best customers had in week one, and gate it behind LINE.',
+        w:'Turns passive viewers into contactable humans without a sales conversation.', o:'Content', h:'3 weeks' },
+      { a:'Tag every post with a content ID and start recording views → leads per post.',
+        w:'You cannot raise a rate you only measure in aggregate.', o:'Content', h:'1 week' },
+    ],
+    ctaClickRate: [
+      { a:'Move the CTA to the first 3 seconds and repeat it at the end.', w:'Most viewers never reach the end.', o:'Content', h:'2 weeks' },
+      { a:'Cut the number of different CTAs to one per account per month.', w:'Split attention converts worse than a boring single ask.', o:'Content', h:'1 month' },
+    ],
+    profileVisitRate: [
+      { a:'Rewrite the hook of the five highest-reach posts to name the avatar and the problem explicitly.',
+        w:'Reach without recognition does not produce a profile visit.', o:'Content', h:'2 weeks' },
+    ],
+    lineBlockRate: [
+      { a:'Cut broadcast frequency and segment: only send the offer to people who clicked something in the last 30 days.',
+        w:'Blocks are the audience telling you the message did not match why they joined.', o:'Content', h:'1 month' },
+      { a:'Log topic and CTA for every broadcast, then compare block-after-message by topic.',
+        w:'One recurring message type is usually doing most of the damage.', o:'Content', h:'1 month' },
+    ],
+    revPerMilleViews: [
+      { a:'Rank last quarter\'s content by revenue per 1,000 views and rebuild the top three formats.',
+        w:'View count is not the product; downstream revenue is.', o:'Content', h:'1 month' },
+    ],
+
+    /* ---------------- A ---------------- */
+    appRate: [
+      { a:'Shorten the application to the questions that actually predict a close, and nothing else.',
+        w:'Every extra field costs completions without improving qualification.', o:'Sales', h:'2 weeks' },
+      { a:'Send an automatic reminder to anyone who starts and does not finish, within 1 hour.',
+        w:'Intent decays in hours, not days.', o:'Sales', h:'1 week' },
+    ],
+    qualRate: [
+      { a:'Write the qualification bar down as a score out of 100 and apply it to every application.',
+        w:'A low qualified rate means the audience is wrong — that is a content problem, not a sales problem.', o:'Sales', h:'2 weeks' },
+      { a:'Compare qualified rate by acquisition source and cut spend on the worst source.',
+        w:'Cheap leads from the wrong page cost more than they save.', o:'Marketing', h:'1 month' },
+    ],
+    bookRate: [
+      { a:'Contact every qualified application within 15 minutes; measure time-to-first-contact.',
+        w:'Speed to lead is usually the whole gap between qualified and booked.', o:'Sales', h:'1 week' },
+      { a:'Let the applicant self-book from the confirmation screen instead of waiting for a reply.',
+        w:'Removes a full human round-trip from the funnel.', o:'Ops', h:'2 weeks' },
+    ],
+    showRate: [
+      { a:'Confirm 24h and 2h before, by LINE, with the person\'s own stated goal in the message.',
+        w:'No-shows are mostly forgetting, not rejection.', o:'Sales', h:'2 weeks' },
+      { a:'Book meetings inside 72 hours of the application.', w:'Show rate falls with every day of delay.', o:'Sales', h:'2 weeks' },
+    ],
+    closeRate: [
+      { a:'Record every call and tag the reason lost. Review the top objection weekly.',
+        w:'Sales training built on data beats sales training built on memory.', o:'Sales', h:'1 month' },
+      { a:'Give reps three filterable case studies matching the prospect\'s avatar.',
+        w:'Proof closes the gap between wanting the outcome and believing it.', o:'Sales', h:'3 weeks' },
+      { a:'Split close rate by qualification score and stop taking calls below the bar.',
+        w:'Protects rep hours and raises the rate without changing anything else.', o:'Sales', h:'1 month' },
+    ],
+    collectionRate: [
+      { a:'Take payment on the call. Card first, instalments only as an exception with the first payment taken live.',
+        w:'Signed is not collected. Cash that arrives later often does not arrive.', o:'Sales', h:'2 weeks' },
+      { a:'Automate failed-payment retries and a same-day human follow-up.',
+        w:'Most instalment default is mechanical, not intentional.', o:'Ops', h:'1 month' },
+    ],
+    refundRate: [
+      { a:'Compare refunds by salesperson and by objection handled. Retrain the outlier.',
+        w:'Refunds are usually sold in, not delivered in.', o:'Sales', h:'1 month' },
+      { a:'Make the first 14 days deliver one visible win.', w:'Buyer\'s remorse dies the moment the product works once.', o:'Delivery', h:'1 month' },
+    ],
+    avgPrice: [
+      { a:'Stop discounting; replace the discount with a payment plan at full price.',
+        w:'Discounting lowers price and lowers commitment at the same time.', o:'Sales', h:'1 month' },
+      { a:'Build one higher-tier offer for the applicants who already have a business.',
+        w:'Same funnel, higher ceiling.', o:'CEO', h:'2 months' },
+    ],
+    revPerMeeting: [
+      { a:'Cut the lowest-scoring third of meetings and give those hours to follow-up on the top third.',
+        w:'Revenue per attended call is the honest measure of sales-team capacity.', o:'Sales', h:'1 month' },
+    ],
+
+    /* ---------------- L ---------------- */
+    networkConv: [
+      { a:'Make the Network invitation part of graduation, not an email afterwards.',
+        w:'The moment of proof is the moment of conversion.', o:'Delivery', h:'1 month' },
+      { a:'Show the invitee what members earned through the Network last quarter.',
+        w:'Recurring fees are bought with expected return, not community language.', o:'CEO', h:'1 month' },
+    ],
+    retentionMonths: [
+      { a:'Tag every cancellation with a reason and publish churn-by-reason monthly.',
+        w:'Retention problems get guessed at far more often than they get measured.', o:'Ops', h:'1 month' },
+      { a:'Give every member one concrete thing per month: an opportunity, an introduction, or a booked collaboration.',
+        w:'Members leave when nothing has happened to them recently.', o:'Delivery', h:'2 months' },
+      { a:'Call every member whose attendance and engagement hit zero for 30 days.',
+        w:'Churn is visible weeks before it is paid for.', o:'Delivery', h:'1 month' },
+    ],
+    monthlyChurn: [
+      { a:'Run the LTV risk list weekly and intervene on anyone with two or more flags.',
+        w:'Cheaper to save a member than to acquire one.', o:'Delivery', h:'1 month' },
+    ],
+    expansionPerCust: [
+      { a:'Define one paid next step for a member who hits their first ¥300K.',
+        w:'Expansion revenue is sold to success, not to everyone.', o:'CEO', h:'2 months' },
+      { a:'Put events on a fixed calendar so members can plan to spend.', w:'Irregular offers produce irregular revenue.', o:'Ops', h:'2 months' },
+    ],
+    nrr: [
+      { a:'Track recurring, expansion and churned recurring separately every month.',
+        w:'Net revenue retention above 100% means growth without new customers.', o:'CEO', h:'1 month' },
+    ],
+    ltv: [
+      { a:'Segment LTV by acquisition source and reallocate spend to the highest-LTV source, not the cheapest lead.',
+        w:'Cheap leads that never renew are the most expensive thing you can buy.', o:'CEO', h:'1 month' },
+    ],
+
+    /* ---------------- U ---------------- */
+    successRate: [
+      { a:'Define the 90-day verified result in one sentence, and verify it with evidence, not self-report.',
+        w:'An undefined outcome cannot be improved and cannot be sold.', o:'CEO', h:'2 weeks' },
+      { a:'Tag every unsuccessful student with a failure reason and count them.',
+        w:'If a third fail for the same reason, the next product change is obvious.', o:'Delivery', h:'1 month' },
+      { a:'Move the first real implementation into week one of the program.',
+        w:'Time-to-first-action predicts the day-90 result better than anything else you track.', o:'Delivery', h:'1 month' },
+    ],
+    day14Rate: [
+      { a:'Make day 14 a gate: no student passes it without one completed real action.',
+        w:'Students with no implementation by day 14 rarely produce a result at day 90.', o:'Delivery', h:'1 month' },
+      { a:'Assign the leader on day 0 and require contact within 48 hours.',
+        w:'Unassigned students drift, and drift is irreversible by week three.', o:'Delivery', h:'2 weeks' },
+    ],
+    activationRate: [
+      { a:'Book onboarding during the sales call itself.', w:'Every day between payment and onboarding costs completion.', o:'Sales', h:'2 weeks' },
+      { a:'Capture the day-1 baseline in onboarding — income, clients, audience, constraint.',
+        w:'Without a baseline you can never prove the transformation you sell.', o:'Delivery', h:'1 month' },
+    ],
+    firstClientRate: [
+      { a:'Require a fixed number of outreach attempts per week and count them.',
+        w:'The most common failure reason is that outreach never happened.', o:'Delivery', h:'1 month' },
+      { a:'Put unclaimed client work from the opportunity board in front of students who have none.',
+        w:'A first client removes the belief problem permanently.', o:'Delivery', h:'2 months' },
+    ],
+    proofRate: [
+      { a:'Make a structured case study part of graduation: before → action → after → number → time.',
+        w:'A result you cannot show does not compound into acquisition.', o:'Delivery', h:'1 month' },
+      { a:'Ask for the testimonial at the moment of the win, not at the end of the program.',
+        w:'Recall decays and so does enthusiasm.', o:'Delivery', h:'2 weeks' },
+    ],
+    referralRate: [
+      { a:'Ask every member who hits a verified result for two introductions, by name, that week.',
+        w:'Referrals follow results — but only if somebody asks.', o:'Delivery', h:'1 month' },
+      { a:'Track referral rate by outcome level to prove where referrals actually come from.',
+        w:'It tells you whether to spend on ads or on delivery.', o:'CEO', h:'2 months' },
+    ],
+    dropoutRate: [
+      { a:'Run the customer risk list weekly and contact anyone with two or more flags.',
+        w:'Day-14 intervention costs an hour; a day-90 failure costs the customer.', o:'Delivery', h:'1 month' },
+    ],
+
+    /* ---------------- E ---------------- */
+    cac: [
+      { a:'Kill the worst-performing source by revenue per lead, not by cost per lead.',
+        w:'CAC falls fastest by removing spend that never converts.', o:'Marketing', h:'1 month' },
+      { a:'Raise the referred share of leads — referrals arrive at a CAC of nearly zero.',
+        w:'The cheapest acquisition channel is a customer who got a result.', o:'CEO', h:'2 months' },
+    ],
+    ltvCac: [
+      { a:'Fix the denominator first: cut unprofitable spend before trying to raise LTV.',
+        w:'LTV moves in quarters; CAC moves in weeks.', o:'CEO', h:'1 month' },
+    ],
+    grossMargin: [
+      { a:'Raise students per leader toward the tested ceiling before hiring another leader.',
+        w:'Margin leaks through under-loaded delivery capacity.', o:'Ops', h:'2 months' },
+    ],
+    opProfit: [
+      { a:'List every operating cost against the number it is supposed to move; cut anything that owns no number.',
+        w:'Costs without an owned metric never get questioned.', o:'CEO', h:'1 month' },
+    ],
+    capacityUse: [
+      { a:'Cap monthly intake at tested delivery capacity and hold the rest in a waitlist.',
+        w:'Selling past capacity converts future results — and referrals — into refunds.', o:'CEO', h:'immediate' },
+      { a:'Write down what breaks at 2×, 5× and 10× before the next campaign.',
+        w:'Growth breaks fulfilment first and reports it last.', o:'Ops', h:'1 month' },
+    ],
+    founderDependence: [
+      { a:'Take the founder out of one recurring delivery slot per month and document it as a system.',
+        w:'Founder hours are the hardest capacity ceiling in the company.', o:'CEO', h:'3 months' },
+    ],
+    cacPayback: [
+      { a:'Collect more of the contract up front — payback is a cash-timing problem before it is a pricing one.',
+        w:'A long payback is a growth speed limit even when the unit economics work.', o:'CEO', h:'1 month' },
+    ],
+  };
+
+  const GENERIC = [
+    { a:'Write the definition of this metric down and make one person own it.',
+      w:'Metrics without an owner and a definition drift until they mean nothing.', o:'CEO', h:'1 week' },
+    { a:'Start recording this metric by segment (source, salesperson, cohort) instead of in aggregate.',
+      w:'Aggregates hide the segment that is actually broken.', o:'Ops', h:'1 month' },
+  ];
+
+  const forMetric = id => (BOOK[id] || GENERIC).map(r => ({ ...r, metricId:id }));
+
+  /* ---- TRACK: judge an intervention on the evidence, not on effort ------- */
+  function review(x, periodId) {
+    const d = Schema.metric(x.metricId);
+    const now = Engine.metricsFor(periodId).metrics[x.metricId];
+    if (now == null || x.baseline == null) return { verdict:'unknown', now, delta:null };
+    const raw = now - x.baseline;
+    const good = d.dir === 'down' ? -raw : raw;
+    const rel = x.baseline ? good / Math.abs(x.baseline) : null;
+    const verdict = rel == null ? 'unknown' : rel >= 0.1 ? 'worked' : rel <= -0.1 ? 'worse' : 'no-effect';
+    return { verdict, now, delta:raw, rel };
+  }
+
+  const VERDICT_LABEL = { worked:'Worked', 'no-effect':'No effect', worse:'Made it worse', unknown:'Not enough data' };
+
+  return { BOOK, forMetric, review, VERDICT_LABEL };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   seed.js — SYNTHETIC demo data.
+
+   Not KNCT's numbers. Invented, deterministic, and clearly labelled, so the
+   screens can be judged before a single real number has been collected.
+   Loading it wipes local data; "Clear demo" puts you back to empty.
+   ========================================================================== */
+
+const Seed = (() => {
+  // deterministic PRNG — same demo every time, so screenshots stay comparable
+  let s = 20260601;
+  const rnd  = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+  const between = (a, b) => a + rnd() * (b - a);
+  const iRand = (a, b) => Math.round(between(a, b));
+  const pick = a => a[Math.floor(rnd() * a.length)];
+
+  const MONTHS = ['2026-02','2026-03','2026-04','2026-05','2026-06','2026-07'];
+  const SOURCES = ['YJK Instagram','KNCT University IG','KNCT Consulting','LINE','Referral','Run club','Event','Paid ads'];
+  const REPS = ['Yuya','Bianca','Sho'];
+  const LEADERS = ['Bianca','Kenta','Mika'];
+
+  function load() {
+    Store.reset();
+    Store.setCompany({ name:'KNCT (demo)', cadence:'month' });
+
+    MONTHS.forEach((id, i) => {
+      const g = 1 + i * 0.12;                       // the business is growing
+      const views = Math.round(between(260000, 340000) * g);
+      const leads = Math.round(views * between(0.004, 0.008) * (1 + i * 0.05));
+      const apps  = Math.round(leads * between(0.14, 0.22));
+      const qual  = Math.round(apps * between(0.45, 0.62));
+      const booked= Math.round(qual * between(0.5, 0.72));
+      const att   = Math.round(booked * between(0.66, 0.84));
+      const sales = Math.round(att * between(0.17, 0.27));
+      const price = iRand(420000, 520000);
+      const signed= sales * price;
+      const netStart = 40 + i * 6;
+      const reached90 = iRand(28, 46);
+      const verified  = Math.round(reached90 * between(0.16, 0.34));
+      const d = {
+        views, reach:Math.round(views * 0.42), profileVisits:Math.round(views * between(0.012,0.02)),
+        ctaClicks:Math.round(views * between(0.01,0.018)), followersNet:iRand(900, 2600),
+        lineMessagesSent:iRand(5, 10), lineFriendsNew:iRand(500, 1100),
+        lineTargetReach:5200 + i * 420, lineBlocks:iRand(150, 320),
+        leads, leadsReferral:Math.round(leads * between(0.05, 0.14)),
+        applications:apps, applicationsQual:qual, meetingsBooked:booked, meetingsAttended:att,
+        sales, grossSigned:signed,
+        cashCollected:Math.round(signed * between(0.45, 0.72)) + iRand(600000, 1400000),
+        refunds:iRand(0, 320000),
+        networkStart:netStart, networkInvited:Math.round(sales * between(0.6, 0.95)),
+        networkJoined:Math.round(sales * between(0.25, 0.5)), networkChurned:iRand(3, 8),
+        networkFee:33000, expansionRevenue:iRand(400000, 1300000), eventRevenue:iRand(0, 700000),
+        studentsActive:90 + i * 9, onboarded:Math.round(sales * between(0.75, 0.98)),
+        reachedDay14:iRand(24, 44), implementedBy14:0,
+        firstClients:iRand(8, 19), reached90, verified90:verified,
+        caseStudies:Math.round(verified * between(0.15, 0.5)), dropouts:iRand(3, 9),
+        referralsFromCust:iRand(6, 20), medianIncomeGain:iRand(60000, 190000),
+        memberValueCreated:iRand(8000000, 22000000),
+        marketingSpend:iRand(700000, 1400000), salesCost:iRand(700000, 1100000),
+        cogs:iRand(1200000, 1900000), otherOpex:iRand(1100000, 1600000),
+        headcount:6 + Math.floor(i / 2), leaders:3 + Math.floor(i / 3), studentsPerLeader:25,
+        founderHours:iRand(70, 120), totalHours:iRand(190, 240),
+      };
+      d.implementedBy14 = Math.round(d.reachedDay14 * between(0.4, 0.72));
+      Object.keys(d).forEach(k => Store.setInput(id, k, d[k]));
+    });
+    Store.setNotes(MONTHS[MONTHS.length - 1],
+      'Demo month. Capacity is tight and collection is lagging — exactly the shape the diagnosis screen is built to catch.');
+
+    // ---- People: outcome and LTV deliberately correlated, so the thesis
+    //      "results → retention → referrals → LTV" is visible or falsifiable.
+    for (let i = 0; i < 64; i++) {
+      const cohort = pick(MONTHS.slice(0, 5));
+      const outcome = pick(['none','none','none','implemented','implemented','firstClient','firstClient','result100k','result300k','result1m']);
+      const tier = Engine.OUTCOME_ORDER.indexOf(outcome);
+      const price = iRand(420000, 540000);
+      const collected = Math.round(price * between(tier >= 3 ? 0.85 : 0.5, 1));
+      const joined = rnd() < 0.15 + tier * 0.14;
+      const p = Store.blankPerson();
+      const purchase = cohort + '-' + String(iRand(2, 26)).padStart(2, '0');
+      Object.assign(p, {
+        name:'Member ' + (i + 1), source:pick(SOURCES), cohort,
+        salesperson:pick(REPS), leader:pick(LEADERS),
+        dateLead:cohort + '-01', dateCall:cohort + '-0' + iRand(2, 8), datePurchase:purchase,
+        price, collected, refunded: rnd() < 0.06 ? Math.round(collected * 0.5) : 0,
+        baselineIncome:iRand(180000, 320000),
+        currentIncome:iRand(180000, 320000) + tier * iRand(30000, 120000),
+        status: tier >= 2 ? 'active' : (rnd() < 0.15 ? 'churned' : 'active'),
+        outcome,
+        dateFirstClient: tier >= 2 ? addDays(purchase, iRand(18, 95)) : '',
+        dateFirstResult: tier >= 3 ? addDays(purchase, iRand(45, 140)) : '',
+        network: joined ? 'joined' : (rnd() < 0.5 ? 'invited' : 'no'),
+        networkMonths: joined ? iRand(1, 9) + tier : 0, networkFee: joined ? 33000 : 0,
+        expansion: tier >= 3 && rnd() < 0.5 ? iRand(150000, 700000) : 0,
+        referrals: Math.max(0, Math.round(between(-0.4, 0.6) + tier * 0.45)),
+        caseStudy: tier >= 3 && rnd() < 0.5, certified: tier >= 3 && rnd() < 0.4,
+        failReason: tier < 2 ? pick(['never did outreach','no time / job conflict','unclear offer','fear of outreach','weak accountability','financial stress']) : '',
+        churnReason:'',
+      });
+      Store.upsertPerson(p);
+    }
+    Store.state.settings.demo = true;
+    Store.save();
+  }
+
+  function addDays(iso, n) {
+    const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  return { load, MONTHS };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   ui.js — five screens plus the data layer underneath them.
+
+   Screen 1 COMPANY    the 12 numbers, the loop, the constraint
+   Screen 2 ACQUIRE    attention → lead → meeting → sale → cash
+   Screen 3 SUCCESS    activation → implementation → result → proof
+   Screen 4 RETAIN     Network, churn, expansion, LTV by segment
+   Screen 5 DIAGNOSE   what to fix next, in yen, with a prescription
+   Screen 6 DATA       the manual layer: type the period in, keep the record
+   ========================================================================== */
+
+const UI = (() => {
+  const $  = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const view = () => $('#view');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+  let periodId = null;
+  const pid = () => periodId || (periodId = Store.currentId());
+  function setPeriod(id) { periodId = id; }
+
+  /* ---- small components -------------------------------------------------- */
+  const F = Schema.fmt, Y = Schema.yen;
+
+  function ring(score, label) {
+    const r = 74, c = 2 * Math.PI * r, s = score == null ? 0 : score;
+    const col = s >= 75 ? 'var(--green)' : s >= 45 ? 'var(--amber)' : 'var(--red)';
+    return `<div class="ring-wrap"><div class="ring">
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r="${r}" stroke="var(--card2)" stroke-width="12" fill="none"/>
+        <circle cx="90" cy="90" r="${r}" stroke="${col}" stroke-width="12" fill="none"
+          stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - s / 100)}"/>
+      </svg>
+      <div class="score"><div class="num">${score == null ? '—' : score}</div>
+        <div class="lbl">${esc(label)}</div></div>
+    </div></div>`;
+  }
+
+  function pillarBars(pillars, opts) {
+    return `<div class="pillars">` + pillars.map(p => {
+      const s = p.score == null ? 0 : p.score;
+      return `<div class="pillar ${opts && opts.click ? 'clickable' : ''}" data-pillar="${p.id}">
+        <div class="pl-head"><b style="color:${p.color}">${p.id}</b>
+          <span>${esc(p.name)}</span><em>${p.score == null ? '—' : p.score}</em></div>
+        <div class="bar"><i style="width:${s}%;background:${p.color}"></i></div>
+        <div class="pl-q">${esc(p.q)}</div>
+      </div>`;
+    }).join('') + `</div>`;
+  }
+
+  function kpi(label, value, sub, tone) {
+    return `<div class="kpi ${tone || ''}"><div class="k-lbl">${esc(label)}</div>
+      <div class="k-val">${value}</div>${sub ? `<div class="k-sub">${sub}</div>` : ''}</div>`;
+  }
+
+  function deltaChip(delta, dir) {
+    if (delta == null || !isFinite(delta)) return '';
+    const good = dir === 'down' ? delta < 0 : delta > 0;
+    const cls = Math.abs(delta) < 0.02 ? 'flat' : good ? 'up' : 'down';
+    const arrow = delta > 0 ? '▲' : '▼';
+    return `<span class="chip ${cls}">${arrow} ${Math.abs(delta * 100).toFixed(0)}%</span>`;
+  }
+
+  function metricRow(metricId, id) {
+    const r = Engine.benchmarkRow(metricId, id || pid());
+    const d = r.def;
+    return `<div class="mrow" data-metric="${d.id}">
+      <div class="m-main">
+        <div class="m-lbl">${esc(d.label)}</div>
+        <div class="m-sub">target ${F(r.target, d.fmt)}${r.previous != null ? ' · prev ' + F(r.previous, d.fmt) : ''}</div>
+      </div>
+      <div class="m-val">
+        <div class="v ${r.band}">${F(r.current, d.fmt)}</div>
+        <div class="m-sub">${deltaChip(r.delta, d.dir)}</div>
+      </div>
+      <div class="m-score ${r.band}">${r.score == null ? '—' : r.score}</div>
+    </div>`;
+  }
+
+  function metricList(ids, id) {
+    return `<div class="mlist">${ids.map(m => metricRow(m, id)).join('')}</div>`;
+  }
+
+  function table(cols, rows) {
+    return `<div class="tblwrap"><table class="tbl">
+      <thead><tr>${cols.map(c => `<th${c.num ? ' class="num"' : ''}>${esc(c.h)}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr>${r.map((c, i) =>
+        `<td${cols[i] && cols[i].num ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  function periodBar() {
+    const ids = Store.periodIds();
+    const cur = pid();
+    if (!ids.length) return '';
+    return `<div class="periodbar">
+      <button class="pbtn" data-act="prevP">‹</button>
+      <select id="periodSel">${ids.map(i =>
+        `<option value="${i}"${i === cur ? ' selected' : ''}>${esc(Store.labelFor(i))}</option>`).join('')}</select>
+      <button class="pbtn" data-act="nextP">›</button>
+    </div>`;
+  }
+
+  function empty(msg, cta) {
+    return `<div class="card empty"><p>${msg}</p>${cta || ''}</div>`;
+  }
+
+  function noData() {
+    return empty(
+      `Nothing measured yet. The system scores nothing until a period exists — that is the point.`,
+      `<div class="row"><button class="btn" data-act="newPeriod">Start a period</button>
+       <button class="btn ghost" data-act="demo">Load demo data</button></div>`);
+  }
+
+  /* ---- SCREEN 1 — COMPANY ------------------------------------------------ */
+  function renderCompany() {
+    if (!Store.periodIds().length) return paint(noData());
+    const id = pid();
+    const c = Engine.constraint(id);
+    const a = c.assessment;
+    const al = Engine.alerts(id);
+    const focus = Store.state.focus;
+
+    const ceo = Schema.CEO.map(row => {
+      if (row.raw) {
+        const f = Schema.field(row.id);
+        const v = a.inputs[row.id];
+        const prevId = Store.previousId(id);
+        const pv = prevId ? (Store.state.periods[prevId].inputs[row.id]) : null;
+        const dl = (v != null && pv) ? (v - pv) / Math.abs(pv) : null;
+        return kpi(row.label, Schema.fmtField(v, f.unit), deltaChip(dl, 'up'));
+      }
+      const r = Engine.benchmarkRow(row.id, id);
+      return kpi(row.label, `<span class="${r.band}">${F(r.current, r.def.fmt)}</span>`,
+                 deltaChip(r.delta, r.def.dir));
+    }).join('');
+
+    const cons = c.constraint ? `
+      <div class="constraint">
+        <div class="c-tag">CURRENT CONSTRAINT</div>
+        <div class="c-name">${esc(c.constraint.label)}</div>
+        <div class="c-line">${F(c.constraint.current, c.constraint.fmt)}
+          <span class="arrow">→</span> ${F(c.constraint.target, c.constraint.fmt)} target</div>
+        ${c.constraint.gain > 0 ? `<div class="c-money">Closing it is worth <b>${Y(c.constraint.gain)}</b> of value per ${id.includes('W') ? 'week' : 'month'}</div>` : ''}
+        <button class="btn" data-act="go" data-tab="diagnose">Open diagnosis</button>
+      </div>` : '';
+
+    paint(`
+      ${periodBar()}
+      <div class="card tight">
+        ${ring(a.overall, 'VALUE LOOP')}
+        <div class="loopline">MEASURE → SCORE → FIND CONSTRAINT → PRESCRIBE → TRACK → REPEAT</div>
+        ${pillarBars(a.pillars, { click:true })}
+      </div>
+      ${cons}
+      <div class="section-title">The numbers that matter now</div>
+      <div class="kpis">${ceo}</div>
+      ${focus.length ? `<div class="section-title">Pinned</div>${metricList(focus, id)}` : ''}
+      <div class="section-title">Alerts</div>
+      ${al.length ? `<div class="alerts">${al.slice(0, 8).map(x => `
+        <div class="alert ${x.level}"><div class="a-t">${esc(x.title)}</div>
+        <div class="a-b">${esc(x.body)}</div></div>`).join('')}</div>`
+        : `<div class="card tight muted">Nothing screaming. Check the diagnosis screen anyway — quiet is not the same as optimal.</div>`}
+      <div class="card tight">
+        <h3>Record completeness</h3>
+        <div class="bar"><i style="width:${Math.round(a.completeness.pct * 100)}%;background:var(--accent)"></i></div>
+        <p class="sub">${a.completeness.filled} of ${a.completeness.total} fields entered for ${esc(Store.labelFor(id))}.
+        Every blank field is a rate the system has to guess at.</p>
+        <button class="btn ghost" data-act="go" data-tab="data">Fill the period in</button>
+      </div>
+    `);
+  }
+
+  /* ---- funnel drawing ---------------------------------------------------- */
+  function funnel(stages) {
+    const top = stages[0].value || 1;
+    return `<div class="funnel">` + stages.map((s, i) => {
+      const prev = i ? stages[i - 1].value : null;
+      const conv = (prev && s.value != null) ? s.value / prev : null;
+      const w = Math.max(14, Math.round(((s.value || 0) / top) ** 0.42 * 100));
+      return `${i ? `<div class="f-conv">${conv == null ? '—' : (conv * 100).toFixed(conv < 0.1 ? 1 : 0) + '%'}
+        <span>${esc(s.convLabel || '')}</span></div>` : ''}
+        <div class="f-stage"><div class="f-bar" style="width:${w}%"></div>
+          <div class="f-txt"><b>${esc(s.label)}</b><em>${s.value == null ? '—' : Math.round(s.value).toLocaleString()}</em></div>
+        </div>`;
+    }).join('') + `</div>`;
+  }
+
+  /* ---- SCREEN 2 — ACQUIRE ------------------------------------------------ */
+  function renderAcquire() {
+    if (!Store.periodIds().length) return paint(noData());
+    const id = pid(), a = Engine.assess(id), p = a.inputs;
+
+    const src = Engine.segmentTable(x => x.source).filter(r => r.key !== '—');
+    const srcTable = src.length ? table(
+      [{ h:'Source' }, { h:'Cust', num:true }, { h:'Revenue', num:true },
+       { h:'Median LTV', num:true }, { h:'90-day result', num:true }],
+      src.map(r => [esc(r.key), r.n, Y(r.revenue), Y(r.ltvMedian), F(r.successRate, 'pct')]))
+      : empty('No customer records with a source yet. Until every customer carries a first-touch source, every number on this screen is an estimate.');
+
+    paint(`
+      ${periodBar()}
+      <div class="card tight">
+        <h3>Attention → cash</h3>
+        <p class="sub">${esc(Store.labelFor(id))}. Each gap is a place money leaks.</p>
+        ${funnel([
+          { label:'Views', value:p.views },
+          { label:'Leads', value:p.leads, convLabel:'lead rate' },
+          { label:'Applications', value:p.applications, convLabel:'apply' },
+          { label:'Qualified', value:p.applicationsQual, convLabel:'qualify' },
+          { label:'Booked', value:p.meetingsBooked, convLabel:'book' },
+          { label:'Attended', value:p.meetingsAttended, convLabel:'show' },
+          { label:'Customers', value:p.sales, convLabel:'close' },
+        ])}
+        <div class="kpis two">
+          ${kpi('Contract value signed', Schema.fmtField(p.grossSigned, '¥'))}
+          ${kpi('Cash collected', Schema.fmtField(p.cashCollected, '¥'),
+                a.metrics.collectionRate != null ? F(a.metrics.collectionRate, 'pct') + ' of signed' : '')}
+        </div>
+      </div>
+
+      <div class="section-title">V · Visibility</div>
+      ${metricList(['leadRate','ctaClickRate','profileVisitRate','revPerMilleViews','lineBlockRate','lineNetGrowth','revPerLineRecipient'], id)}
+
+      <div class="section-title">A · Acquisition</div>
+      ${metricList(['appRate','qualRate','bookRate','showRate','closeRate','avgPrice','collectionRate','refundRate','revPerLead','revPerMeeting'], id)}
+
+      <div class="section-title">Attribution — revenue and LTV by source</div>
+      ${srcTable}
+      <div class="card tight muted small">
+        Cheap leads are not the same as good customers. Judge a source by median LTV and
+        90-day result rate, never by cost per lead.
+      </div>
+    `);
+  }
+
+  /* ---- SCREEN 3 — SUCCESS ------------------------------------------------ */
+  function renderSuccess() {
+    if (!Store.periodIds().length) return paint(noData());
+    const id = pid(), a = Engine.assess(id), p = a.inputs;
+
+    const byResult = Engine.ltvByResult().filter(r => r.n);
+    const thesis = byResult.length >= 2 ? table(
+      [{ h:'Result level' }, { h:'n', num:true }, { h:'Median LTV', num:true },
+       { h:'Network', num:true }, { h:'Referrals', num:true }],
+      byResult.map(r => [esc(r.key), r.n, Y(r.ltvMedian), F(r.networkRate, 'pct'), r.referrals.toFixed(2)]))
+      : empty('Not enough customer records yet to test whether results drive lifetime value.');
+
+    const t = Engine.timeToResult();
+    const ttr = (label, s) => s ? kpi(label, s.median + ' d',
+      `p25 ${s.p25} · p75 ${s.p75} · best ${s.best} (n=${s.n})`) : kpi(label, '—', 'no dated records');
+
+    const fails = {};
+    Store.people().forEach(x => { if (x.failReason) fails[x.failReason] = (fails[x.failReason] || 0) + 1; });
+    const failRows = Object.entries(fails).sort((x, y) => y[1] - x[1]);
+    const failTotal = failRows.reduce((s, r) => s + r[1], 0);
+
+    const risk = Engine.atRisk().slice(0, 12);
+
+    paint(`
+      ${periodBar()}
+      <div class="card tight">
+        <h3>Customer → result</h3>
+        <p class="sub">Activity is not outcome. This is the outcome. Each block is its own
+        population observed in ${esc(Store.labelFor(id))} — they are not one cohort walking
+        down a single funnel, and pretending otherwise is how success rates get inflated.</p>
+
+        <div class="fgroup">Activation — this period's new customers</div>
+        ${funnel([
+          { label:'New customers', value:p.sales },
+          { label:'Onboarding completed', value:p.onboarded, convLabel:'activate' },
+        ])}
+
+        <div class="fgroup">Day 14 — students who reached it this period</div>
+        ${funnel([
+          { label:'Reached day 14', value:p.reachedDay14 },
+          { label:'Implemented something real', value:p.implementedBy14, convLabel:'act' },
+        ])}
+
+        <div class="fgroup">Day 90 — students who reached it this period</div>
+        ${funnel([
+          { label:'Reached day 90', value:p.reached90 },
+          { label:'Verified economic result', value:p.verified90, convLabel:'succeed' },
+          { label:'Case study written', value:p.caseStudies, convLabel:'provable' },
+        ])}
+
+        <div class="kpis two">
+          ${kpi('First paid clients won', Schema.fmtField(p.firstClients, '#'), 'this period, any cohort')}
+          ${kpi('Median member income gain', Schema.fmtField(p.medianIncomeGain, '¥'), 'median, not average')}
+        </div>
+        <div class="kpis two">
+          ${kpi('Verified member earnings', Schema.fmtField(p.memberValueCreated, '¥'), 'value created for members and their clients')}
+          ${kpi('Drop-outs', Schema.fmtField(p.dropouts, '#'), 'every one has a reason worth tagging')}
+        </div>
+      </div>
+
+      <div class="section-title">U · User outcome</div>
+      ${metricList(['activationRate','day14Rate','successRate','firstClientRate','proofRate','dropoutRate','referralRate','referralShare','valuePerMember'], id)}
+
+      <div class="section-title">Time to result</div>
+      <div class="kpis two">${ttr('Days → first client', t.firstClient)}${ttr('Days → first verified result', t.firstResult)}</div>
+
+      <div class="section-title">Does the result drive the money?</div>
+      ${thesis}
+      <div class="card tight muted small">
+        If median LTV does not rise with result level, the thesis that outcomes drive
+        retention is wrong and the growth plan has to change. This table is here to be
+        able to say so.
+      </div>
+
+      <div class="section-title">Why students fail</div>
+      ${failRows.length ? `<div class="card tight">${failRows.map(([k, n]) => `
+        <div class="fbar"><div class="f-l">${esc(k)}</div>
+          <div class="bar"><i style="width:${Math.round(n / failTotal * 100)}%;background:var(--red)"></i></div>
+          <div class="f-n">${n} · ${Math.round(n / failTotal * 100)}%</div></div>`).join('')}
+        <p class="sub">The largest bar is the next product change.</p></div>`
+        : empty('No failure reasons tagged yet. This becomes more valuable than the success data.')}
+
+      <div class="section-title">At risk now — intervene on day 14, not day 90</div>
+      ${risk.length ? `<div class="card tight risklist">${risk.map(r => `
+        <div class="rrow"><div><b>${esc(r.person.name || r.person.id)}</b>
+          <div class="sub">${r.risk.flags.map(esc).join(' · ')}</div></div>
+          <div class="m-score ${r.risk.band}">${r.risk.score}</div></div>`).join('')}</div>`
+        : empty('No risk flags — or no people in the record yet.')}
+    `);
+  }
+
+  /* ---- SCREEN 4 — RETAIN ------------------------------------------------- */
+  let segKey = 'cohort';
+  function renderRetain() {
+    if (!Store.periodIds().length) return paint(noData());
+    const id = pid(), a = Engine.assess(id), p = a.inputs;
+    const end = (p.networkStart || 0) + (p.networkJoined || 0) - (p.networkChurned || 0);
+
+    const keyFn = { cohort:x => x.cohort, source:x => x.source,
+                    salesperson:x => x.salesperson, leader:x => x.leader }[segKey];
+    const seg = Engine.segmentTable(keyFn).filter(r => r.key !== '—');
+    const segTable = seg.length ? table(
+      [{ h:segKey[0].toUpperCase() + segKey.slice(1) }, { h:'n', num:true }, { h:'Median LTV', num:true },
+       { h:'Result rate', num:true }, { h:'Network', num:true }, { h:'Refunds', num:true }],
+      seg.map(r => [esc(r.key), r.n, Y(r.ltvMedian), F(r.successRate, 'pct'),
+                    F(r.networkRate, 'pct'), F(r.refundRate, 'pct')]))
+      : empty('No customer records for this segment yet.');
+
+    paint(`
+      ${periodBar()}
+      <div class="card tight">
+        <h3>Network</h3>
+        <div class="netflow">
+          <div><em>${p.networkStart || 0}</em><span>start</span></div>
+          <div class="plus">+<em>${p.networkJoined || 0}</em><span>joined</span></div>
+          <div class="minus">−<em>${p.networkChurned || 0}</em><span>churned</span></div>
+          <div class="eq">=<em>${end}</em><span>end</span></div>
+        </div>
+        <div class="kpis two">
+          ${kpi('Recurring revenue', F(a.metrics.recurringRev, 'yen'), 'members × fee')}
+          ${kpi('Expected months retained', F(a.metrics.retentionMonths, 'mo'), '1 ÷ monthly churn')}
+        </div>
+      </div>
+
+      <div class="section-title">L · Lifetime value</div>
+      ${metricList(['networkConv','inviteAccept','monthlyChurn','retentionMonths','recurringRev','expansionPerCust','nrr','ltv'], id)}
+
+      <div class="section-title">LTV by segment</div>
+      <div class="segtabs">${['cohort','source','salesperson','leader'].map(k =>
+        `<button class="segtab ${k === segKey ? 'on' : ''}" data-act="seg" data-seg="${k}">${k}</button>`).join('')}</div>
+      ${segTable}
+      <div class="card tight muted small">
+        Cohorts are the only honest way to see whether a product change worked. Monthly
+        totals mix a good February into a bad July and tell you nothing.
+      </div>
+    `);
+  }
+
+  /* ---- SCREEN 5 — DIAGNOSE ----------------------------------------------- */
+  let openLever = null;
+  function renderDiagnose() {
+    if (!Store.periodIds().length) return paint(noData());
+    const id = pid();
+    const c = Engine.constraint(id);
+    const per = id.includes('W') ? 'week' : 'month';
+    const top = c.levers[0];
+
+    const verdict = c.constraint ? `
+      <div class="verdict">
+        <div class="v-tag">DIAGNOSIS · ${esc(Store.labelFor(id))}</div>
+        <div class="v-h">Your current bottleneck is
+          <b style="color:${Schema.pillar(c.constraint.pillar).color}">${esc(Schema.pillar(c.constraint.pillar).name)}</b>.</div>
+        <div class="v-p">Specifically: <b>${esc(c.constraint.label)}</b> at
+          ${F(c.constraint.current, c.constraint.fmt)} against a target of
+          ${F(c.constraint.target, c.constraint.fmt)}.</div>
+        ${top && top.gain > 0 ? `<div class="v-money">Moving it to target is modelled at
+          <b>${Y(top.gain)}</b> more value per ${per} — the largest single opportunity on the board.</div>` : ''}
+        <div class="v-def">${esc(c.constraint.def || '')}</div>
+      </div>` : '';
+
+    const maxGain = c.levers.length ? c.levers[0].gain : 1;
+    const levers = c.levers.length ? c.levers.map(l => {
+      const pl = Schema.pillar(l.pillar);
+      const open = openLever === l.metricId;
+      const rx = Rx.forMetric(l.metricId);
+      return `<div class="lever ${open ? 'open' : ''}" data-lever="${l.metricId}">
+        <div class="lv-head" data-act="toggleLever" data-metric="${l.metricId}">
+          <div class="lv-name"><span class="dot" style="background:${pl.color}"></span>${esc(l.label)}</div>
+          <div class="lv-money">${Y(l.gain)}</div>
+        </div>
+        <div class="bar"><i style="width:${Math.round(l.gain / maxGain * 100)}%;background:${pl.color}"></i></div>
+        <div class="lv-sub">${F(l.current, l.fmt)} <span class="arrow">→</span> ${F(l.target, l.fmt)}
+          · score ${l.score == null ? '—' : l.score}/100</div>
+        ${open ? `<div class="lv-body">
+          <p class="def">${esc(l.def || '')}</p>
+          <div class="rx-title">Prescriptions</div>
+          ${rx.map((r, i) => `<div class="rx">
+            <div class="rx-a">${esc(r.a)}</div>
+            <div class="rx-w">${esc(r.w)}</div>
+            <div class="rx-meta"><span>${esc(r.o)}</span><span>${esc(r.h)}</span>
+              <button class="btn tiny" data-act="startRx" data-metric="${l.metricId}" data-i="${i}">Start &amp; track</button></div>
+          </div>`).join('')}
+        </div>` : ''}
+      </div>`;
+    }).join('') : empty('Every modelled lever is already at or above benchmark for this period. Either raise the targets or go find a new constraint — the loop never ends.');
+
+    const runs = Store.state.interventions.slice().reverse();
+    const ledger = runs.length ? runs.map(x => {
+      const d = Schema.metric(x.metricId);
+      const rv = Rx.review(x, id);
+      const cls = x.status === 'closed' ? x.verdict : 'running';
+      return `<div class="ivn ${cls}">
+        <div class="iv-top"><b>${esc(d ? d.label : x.metricId)}</b>
+          <span class="pill ${cls}">${x.status === 'closed' ? Rx.VERDICT_LABEL[x.verdict] : 'running'}</span></div>
+        <div class="iv-a">${esc(x.action)}</div>
+        <div class="iv-m">started ${esc(x.created)} · baseline ${F(x.baseline, d ? d.fmt : 'num')}
+          → now ${F(rv.now, d ? d.fmt : 'num')}${x.valueAtStake ? ' · at stake ' + Y(x.valueAtStake) : ''}</div>
+        ${x.status !== 'closed' ? `<div class="row">
+          <button class="btn tiny" data-act="closeRx" data-id="${x.id}">Review &amp; close</button>
+          <button class="btn tiny ghost" data-act="dropRx" data-id="${x.id}">Delete</button></div>` : ''}
+      </div>`;
+    }).join('') : empty('Nothing being tracked. A prescription nobody wrote down was never really made.');
+
+    const comp = c.assessment.completeness;
+    const thin = comp.pct < 0.7 ? `<div class="alert info">
+      <div class="a-t">Provisional — the record is ${Math.round(comp.pct * 100)}% complete</div>
+      <div class="a-b">${comp.filled} of ${comp.total} fields entered. Where a rate is missing the
+      model falls back to your trailing average, then to a generic default, so this ranking is a
+      starting point rather than a finding. Fill the period in and read it again.</div></div>` : '';
+
+    paint(`
+      ${periodBar()}
+      ${verdict}
+      ${thin}
+      <div class="section-title">Where the money is — ranked</div>
+      <div class="card tight">${levers}</div>
+      <div class="card tight muted small">
+        <b>How this is calculated.</b> Every lever is put through one funnel equation:
+        views → leads (+ referrals) → applications → qualified → booked → attended →
+        customers → cash + recurring + expansion. One lever is moved to its benchmark,
+        everything else held still, and the difference in value is what you see.
+        Referrals scale with the 90-day result rate (×${Engine.LOOP.referralElasticity.toFixed(1)}) and
+        Network conversion at half that rate (×${Engine.LOOP.networkElasticity.toFixed(1)}) —
+        that coupling is an assumption, and the LTV-by-result table on the Success screen
+        is where you find out whether it is true for you.
+      </div>
+      <div class="section-title">Tracked interventions</div>
+      ${ledger}
+    `);
+  }
+
+  /* ---- SCREEN 6 — DATA --------------------------------------------------- */
+  let dataTab = 'period';
+  function renderData() {
+    const id = pid();
+    const tabs = ['period','people','benchmarks','system'].map(t =>
+      `<button class="segtab ${t === dataTab ? 'on' : ''}" data-act="dataTab" data-t="${t}">${t}</button>`).join('');
+    let body = '';
+    if (dataTab === 'period')      body = dataPeriod(id);
+    else if (dataTab === 'people') body = dataPeople();
+    else if (dataTab === 'benchmarks') body = dataBenchmarks(id);
+    else body = dataSystem();
+    paint(`<div class="segtabs wide">${tabs}</div>${body}`);
+  }
+
+  function dataPeriod(id) {
+    if (!Store.periodIds().length) return noData();
+    const p = Store.ensurePeriod(id);
+    const groups = Schema.PILLARS.map(pl => {
+      const gs = Schema.fieldGroups(pl.id);
+      return `<div class="section-title" style="color:${pl.color}">${pl.id} · ${esc(pl.name)}</div>` +
+        gs.map(g => `<div class="card tight">
+          <h3>${esc(g.name)}</h3>
+          ${g.fields.map(f => `<label class="fld">
+            <span class="f-l">${esc(f.label)}<em>${f.unit}</em></span>
+            <input type="number" step="any" inputmode="decimal" data-field="${f.id}"
+              value="${p.inputs[f.id] != null ? p.inputs[f.id] : ''}" placeholder="—" />
+            ${f.help ? `<span class="f-h">${esc(f.help)}</span>` : ''}
+          </label>`).join('')}
+        </div>`).join('');
+    }).join('');
+
+    const comp = Engine.completeness(p.inputs);
+    return `${periodBar()}
+      <div class="card tight">
+        <h3>${esc(Store.labelFor(id))}</h3>
+        <p class="sub">${esc(p.startISO)} → ${esc(p.endISO)} · ${comp.filled}/${comp.total} fields</p>
+        <div class="row"><button class="btn" data-act="newPeriod">New period</button>
+          <button class="btn ghost" data-act="delPeriod">Delete this period</button></div>
+      </div>
+      ${groups}
+      <div class="card tight"><h3>Notes</h3>
+        <textarea id="periodNotes" rows="4" placeholder="What changed this period? Campaigns, hires, price changes, anything that will explain a number later.">${esc(p.notes)}</textarea>
+      </div>`;
+  }
+
+  function dataPeople() {
+    const ppl = Store.people();
+    const rows = ppl.slice().sort((a, b) => (b.datePurchase || '').localeCompare(a.datePurchase || ''));
+    return `<div class="card tight">
+        <h3>Customer master record</h3>
+        <p class="sub">${ppl.length} records. This is the spine: one row per human, every date, every source, every outcome.</p>
+        <button class="btn" data-act="newPerson">Add person</button>
+      </div>
+      ${rows.length ? `<div class="card tight plist">${rows.map(p => `
+        <div class="prow" data-act="editPerson" data-id="${p.id}">
+          <div><b>${esc(p.name || p.id)}</b>
+            <div class="sub">${esc(p.source || 'no source')} · ${esc(p.cohort || 'no cohort')} ·
+              ${esc(Engine.OUTCOME_LABEL[p.outcome] || p.outcome)}${p.network === 'joined' ? ' · Network' : ''}</div></div>
+          <div class="p-ltv">${Y(Engine.ltvOf(p))}</div>
+        </div>`).join('')}</div>` : empty('No people yet. Add one, or load the demo data to see the shape.')}`;
+  }
+
+  function dataBenchmarks(id) {
+    return `<div class="card tight">
+        <h3>Benchmarks</h3>
+        <p class="sub">Target = healthy. Floor = this is the constraint. Everything on every
+        screen is scored between these two numbers, so they are the most opinionated thing
+        in the system. Change them as you learn what is actually achievable here.</p>
+      </div>` +
+      Schema.PILLARS.map(pl => `<div class="section-title" style="color:${pl.color}">${pl.id} · ${esc(pl.name)}</div>
+        <div class="card tight">${Schema.metricsOf(pl.id).map(d => {
+          const b = Store.benchmark(d.id);
+          const pctish = d.fmt === 'pct';
+          const val = v => v == null ? '' : (pctish ? +(v * 100).toFixed(2) : v);
+          return `<div class="bmrow">
+            <div class="bm-l">${esc(d.label)}<span class="f-h">${esc(d.def)}</span></div>
+            <div class="bm-in">
+              <label>target<input type="number" step="any" data-bm="${d.id}" data-k="target" value="${val(b.target)}"></label>
+              <label>floor<input type="number" step="any" data-bm="${d.id}" data-k="floor" value="${val(b.floor)}"></label>
+              <span class="unit">${pctish ? '%' : d.fmt === 'yen' ? '¥' : d.fmt === 'x' ? '×' : d.fmt === 'mo' ? 'mo' : ''}</span>
+            </div></div>`;
+        }).join('')}</div>`).join('');
+  }
+
+  function dataSystem() {
+    const st = { live:'live', partial:'partial', planned:'planned' };
+    const counts = { live:0, partial:0, planned:0 };
+    Schema.DOMAINS.forEach(d => counts[d.status]++);
+    return `<div class="card tight">
+        <h3>Backup</h3>
+        <p class="sub">Everything is stored on this device only. Export before you clear your browser.</p>
+        <div class="row">
+          <button class="btn" data-act="exportJSON">Export JSON</button>
+          <button class="btn ghost" data-act="exportCSV">Periods CSV</button>
+          <button class="btn ghost" data-act="exportPeopleCSV">People CSV</button>
+        </div>
+        <div class="row"><button class="btn ghost" data-act="importJSON">Import JSON</button></div>
+      </div>
+      <div class="card tight">
+        <h3>Company</h3>
+        <label class="fld"><span class="f-l">Name</span>
+          <input type="text" data-co="name" value="${esc(Store.state.company.name)}"></label>
+        <label class="fld"><span class="f-l">Cadence</span>
+          <select data-co="cadence">
+            <option value="month"${Store.state.company.cadence === 'month' ? ' selected' : ''}>Monthly</option>
+            <option value="week"${Store.state.company.cadence === 'week' ? ' selected' : ''}>Weekly</option>
+          </select></label>
+        <p class="sub">Weekly forces the habit; monthly is enough for outcome metrics. Churn is
+        normalised to a month either way.</p>
+      </div>
+      <div class="card tight">
+        <h3>Demo data</h3>
+        <p class="sub">Synthetic, invented numbers — not anyone's real business. Loading it replaces everything on this device.</p>
+        <div class="row"><button class="btn ghost" data-act="demo">Load demo</button>
+          <button class="btn ghost" data-act="wipe">Erase everything</button></div>
+      </div>
+      <div class="card tight">
+        <h3>The record it is designed to hold</h3>
+        <p class="sub">${counts.live} domains live · ${counts.partial} partly captured · ${counts.planned} designed but not yet collected.
+        Collect everything in the back end; show the CEO only what currently matters.</p>
+      </div>
+      ${Schema.DOMAINS.map(d => `<div class="dom ${d.status}">
+        <div class="d-top"><span class="d-n">${d.n}</span><b>${esc(d.name)}</b>
+          <span class="pill ${d.status}">${st[d.status]}</span></div>
+        <div class="d-f">${esc(d.fields)}</div>
+      </div>`).join('')}`;
+  }
+
+  /* ---- person editor ----------------------------------------------------- */
+  const PF = [
+    ['name','Name','text'], ['contact','Contact (email / LINE)','text'],
+    ['source','Acquisition source','text'], ['campaign','Campaign','text'],
+    ['cohort','Cohort','text'], ['salesperson','Salesperson','text'], ['leader','Leader','text'],
+    ['dateLead','Date became lead','date'], ['dateCall','Date of sales call','date'],
+    ['datePurchase','Date purchased','date'],
+    ['price','Contract price','number'], ['collected','Cash collected','number'],
+    ['refunded','Refunded','number'],
+    ['baselineIncome','Baseline monthly income','number'], ['currentIncome','Current monthly income','number'],
+    ['status','Status','select:lead,customer,active,graduated,churned,lost'],
+    ['outcome','Outcome level','select:none,implemented,firstClient,result100k,result300k,result1m'],
+    ['dateFirstClient','Date of first paid client','date'], ['dateFirstResult','Date of first verified result','date'],
+    ['network','Network','select:no,invited,joined,churned'],
+    ['networkMonths','Months in Network','number'], ['networkFee','Network fee / mo','number'],
+    ['expansion','Expansion revenue','number'], ['referrals','Referrals given','number'],
+    ['failReason','Failure reason (if no result)','text'], ['churnReason','Cancellation reason','text'],
+    ['notes','Notes','text'],
+  ];
+  function editPerson(rec) {
+    const p = rec || Store.blankPerson();
+    const fld = ([k, label, type]) => {
+      if (type.startsWith('select:')) {
+        const opts = type.slice(7).split(',');
+        return `<label class="fld"><span class="f-l">${esc(label)}</span><select data-p="${k}">${
+          opts.map(o => `<option value="${o}"${p[k] === o ? ' selected' : ''}>${esc(Engine.OUTCOME_LABEL[o] || o)}</option>`).join('')}</select></label>`;
+      }
+      return `<label class="fld"><span class="f-l">${esc(label)}</span>
+        <input type="${type}" data-p="${k}" value="${esc(p[k] == null ? '' : p[k])}"></label>`;
+    };
+    const risk = Engine.riskScore(p);
+    modal(`<h3>${rec ? 'Edit' : 'New'} record</h3>
+      ${risk.flags.length ? `<div class="alert ${risk.band === 'red' ? 'red' : 'amber'}">
+        <div class="a-t">Risk ${risk.score}/100</div><div class="a-b">${risk.flags.map(esc).join(' · ')}</div></div>` : ''}
+      <div class="pform">${PF.map(fld).join('')}</div>
+      <div class="row">
+        <button class="btn" data-act="savePerson" data-id="${p.id}">Save</button>
+        <button class="btn ghost" data-act="closeModal">Cancel</button>
+        ${rec ? `<button class="btn ghost danger" data-act="delPerson" data-id="${p.id}">Delete</button>` : ''}
+      </div>`);
+  }
+
+  /* ---- CSV --------------------------------------------------------------- */
+  function periodsCSV() {
+    const fields = Schema.FIELDS.map(f => f.id);
+    const mets = Schema.METRICS.map(m => m.id);
+    const head = ['period', 'label', 'start', 'end', ...fields, ...mets.map(m => 'm_' + m), 'notes'];
+    const rows = Store.periods().map(p => {
+      const m = Engine.metricsFor(p.id).metrics;
+      return [p.id, p.label, p.startISO, p.endISO,
+        ...fields.map(f => p.inputs[f] != null ? p.inputs[f] : ''),
+        ...mets.map(k => m[k] != null ? +m[k].toFixed(6) : ''),
+        (p.notes || '').replace(/[\r\n]+/g, ' ')];
+    });
+    return [head, ...rows].map(r => r.map(csvCell).join(',')).join('\n');
+  }
+  function peopleCSV() {
+    const keys = Object.keys(Store.blankPerson());
+    const head = [...keys, 'ltv', 'riskScore'];
+    const rows = Store.people().map(p => [...keys.map(k => Array.isArray(p[k]) ? p[k].join('|') : p[k]),
+      Engine.ltvOf(p), Engine.riskScore(p).score]);
+    return [head, ...rows].map(r => r.map(csvCell).join(',')).join('\n');
+  }
+  const csvCell = v => {
+    const s = v == null ? '' : String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  function download(name, text, type) {
+    const blob = new Blob([text], { type: type || 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  /* ---- modal ------------------------------------------------------------- */
+  function modal(html) {
+    $('#modalRoot').innerHTML = `<div class="modal-bg" data-act="closeModal"></div>
+      <div class="modal">${html}</div>`;
+    bind();
+  }
+  function closeModal() { $('#modalRoot').innerHTML = ''; }
+
+  function sparkline(vals, dir) {
+    if (vals.length < 2) return '';
+    const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+    const pts = vals.map((v, i) => `${(i / (vals.length - 1) * 100).toFixed(1)},${(28 - (v - min) / span * 26).toFixed(1)}`);
+    return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none">
+      <polyline points="${pts.join(' ')}" fill="none" stroke="var(--accent)" stroke-width="1.6"/></svg>`;
+  }
+
+  function metricDetail(metricId) {
+    const id = pid(), r = Engine.benchmarkRow(metricId, id), d = r.def;
+    const pl = Schema.pillar(d.pillar);
+    const rx = Rx.forMetric(metricId);
+    const pinned = Store.state.focus.includes(metricId);
+    modal(`
+      <div class="md-head"><span class="dot" style="background:${pl.color}"></span>
+        <b>${esc(d.label)}</b><span class="pill ${r.band}">${r.score == null ? '—' : r.score}/100</span></div>
+      <p class="def">${esc(d.def)}</p>
+      <div class="mdgrid">
+        ${kpi('Now', F(r.current, d.fmt))}
+        ${kpi('Previous', F(r.previous, d.fmt), deltaChip(r.delta, d.dir))}
+        ${kpi('Target', F(r.target, d.fmt))}
+        ${kpi('Floor', F(r.floor, d.fmt))}
+        ${kpi('Best ever', F(r.best, d.fmt))}
+        ${kpi('Avg last 3', F(r.avg3, d.fmt))}
+      </div>
+      ${sparkline(r.history, d.dir)}
+      <div class="rx-title">If this is the constraint</div>
+      ${rx.map((x, i) => `<div class="rx"><div class="rx-a">${esc(x.a)}</div>
+        <div class="rx-w">${esc(x.w)}</div>
+        <div class="rx-meta"><span>${esc(x.o)}</span><span>${esc(x.h)}</span>
+        <button class="btn tiny" data-act="startRx" data-metric="${metricId}" data-i="${i}">Start &amp; track</button></div></div>`).join('')}
+      <div class="row">
+        <button class="btn ghost" data-act="pin" data-metric="${metricId}">${pinned ? 'Unpin from CEO screen' : 'Pin to CEO screen'}</button>
+        <button class="btn ghost" data-act="closeModal">Close</button>
+      </div>`);
+  }
+
+  /* ---- paint + bind ------------------------------------------------------ */
+  function paint(html) { view().innerHTML = html; bind(); }
+
+  function nextPeriodId() {
+    const ids = Store.periodIds();
+    const cadence = Store.state.company.cadence;
+    if (!ids.length) return Store.periodIdFor(Store.todayISO(), cadence);
+    const last = ids[ids.length - 1];
+    const b = Store.boundsFor(last);
+    const d = new Date(b.endISO + 'T12:00:00'); d.setDate(d.getDate() + 1);
+    return Store.periodIdFor(d.toISOString().slice(0, 10), cadence);
+  }
+
+  function bind() {
+    $$('[data-act]').forEach(el => { el.onclick = e => { e.stopPropagation(); act(el); }; });
+    const sel = $('#periodSel');
+    if (sel) sel.onchange = () => { setPeriod(sel.value); App.render(); };
+    $$('[data-field]').forEach(el => el.onchange = () => {
+      Store.setInput(pid(), el.getAttribute('data-field'), el.value === '' ? '' : Number(el.value));
+      App.updateHeader();
+    });
+    $$('[data-bm]').forEach(el => el.onchange = () => {
+      const mid = el.getAttribute('data-bm'), d = Schema.metric(mid), b = Store.benchmark(mid);
+      const raw = el.value === '' ? null : Number(el.value);
+      const v = raw == null ? null : (d.fmt === 'pct' ? raw / 100 : raw);
+      const t = el.getAttribute('data-k') === 'target' ? v : b.target;
+      const f = el.getAttribute('data-k') === 'floor'  ? v : b.floor;
+      Store.setBenchmark(mid, t, f);
+    });
+    $$('[data-co]').forEach(el => el.onchange = () => {
+      Store.setCompany({ [el.getAttribute('data-co')]: el.value }); App.updateHeader();
+    });
+    const nt = $('#periodNotes');
+    if (nt) nt.onchange = () => Store.setNotes(pid(), nt.value);
+    $$('.mrow').forEach(el => el.onclick = () => metricDetail(el.getAttribute('data-metric')));
+  }
+
+  function act(el) {
+    const a = el.getAttribute('data-act');
+    const id = pid();
+    switch (a) {
+      case 'go': App.go(el.getAttribute('data-tab')); break;
+      case 'prevP': case 'nextP': {
+        const ids = Store.periodIds(), i = ids.indexOf(id);
+        const j = a === 'prevP' ? i - 1 : i + 1;
+        if (j >= 0 && j < ids.length) { setPeriod(ids[j]); App.render(); }
+        break;
+      }
+      case 'newPeriod': {
+        const guess = nextPeriodId();
+        modal(`<h3>New period</h3>
+          <p class="sub">Any date inside the period you want to open. Cadence is
+            <b>${Store.state.company.cadence}ly</b>; change it under Data → system.</p>
+          <label class="fld"><span class="f-l">Date</span>
+            <input type="date" id="newPeriodDate" value="${Store.boundsFor(guess).startISO}"></label>
+          <div class="row"><button class="btn" data-act="createPeriod">Create</button>
+            <button class="btn ghost" data-act="closeModal">Cancel</button></div>`);
+        break;
+      }
+      case 'createPeriod': {
+        const d = $('#newPeriodDate').value || Store.todayISO();
+        const nid = Store.periodIdFor(d, Store.state.company.cadence);
+        Store.ensurePeriod(nid); setPeriod(nid); closeModal(); dataTab = 'period'; App.go('data');
+        break;
+      }
+      case 'delPeriod':
+        if (confirm('Delete ' + Store.labelFor(id) + '? The numbers go with it.')) {
+          Store.deletePeriod(id); setPeriod(Store.currentId()); App.render();
+        }
+        break;
+      case 'seg': segKey = el.getAttribute('data-seg'); App.render(); break;
+      case 'dataTab': dataTab = el.getAttribute('data-t'); App.render(); break;
+      case 'toggleLever': {
+        const m = el.getAttribute('data-metric');
+        openLever = openLever === m ? null : m; App.render(); break;
+      }
+      case 'startRx': {
+        const mid = el.getAttribute('data-metric');
+        const r = Rx.forMetric(mid)[Number(el.getAttribute('data-i'))];
+        const cur = Engine.metricsFor(id).metrics[mid];
+        const lev = Engine.leverImpact(id).levers.find(l => l.metricId === mid);
+        Store.addIntervention({ periodId:id, metricId:mid, action:r.a, owner:r.o, horizon:r.h,
+          baseline:cur, target:Store.benchmark(mid).target, valueAtStake: lev ? lev.gain : 0 });
+        closeModal(); App.go('diagnose');
+        break;
+      }
+      case 'closeRx': {
+        const x = Store.state.interventions.find(i => i.id === el.getAttribute('data-id'));
+        const rv = Rx.review(x, id);
+        Store.updateIntervention(x.id, { status:'closed', verdict:rv.verdict,
+          reviewedPeriodId:id, delta:rv.delta });
+        App.render(); break;
+      }
+      case 'dropRx': Store.deleteIntervention(el.getAttribute('data-id')); App.render(); break;
+      case 'pin': Store.toggleFocus(el.getAttribute('data-metric')); closeModal(); App.render(); break;
+      case 'newPerson': editPerson(null); break;
+      case 'editPerson': editPerson(Store.state.people[el.getAttribute('data-id')]); break;
+      case 'savePerson': {
+        const pid_ = el.getAttribute('data-id');
+        const rec = Store.state.people[pid_] || { ...Store.blankPerson(), id:pid_ };
+        $$('[data-p]').forEach(inp => {
+          const k = inp.getAttribute('data-p');
+          rec[k] = inp.type === 'number' ? (inp.value === '' ? 0 : Number(inp.value)) : inp.value;
+        });
+        Store.upsertPerson(rec); closeModal(); App.render(); break;
+      }
+      case 'delPerson':
+        if (confirm('Delete this record?')) { Store.deletePerson(el.getAttribute('data-id')); closeModal(); App.render(); }
+        break;
+      case 'closeModal': closeModal(); break;
+      case 'demo':
+        if (confirm('Load synthetic demo data? This replaces everything stored on this device.')) {
+          Seed.load(); setPeriod(Store.currentId()); closeModal(); App.go('company');
+        }
+        break;
+      case 'wipe':
+        if (confirm('Erase every period, person and intervention on this device?')) {
+          Store.reset(); setPeriod(Store.currentId()); App.render();
+        }
+        break;
+      case 'exportJSON': download('valueloop-' + Store.todayISO() + '.json', Store.exportJSON(), 'application/json'); break;
+      case 'exportCSV': download('valueloop-periods-' + Store.todayISO() + '.csv', periodsCSV(), 'text/csv'); break;
+      case 'exportPeopleCSV': download('valueloop-people-' + Store.todayISO() + '.csv', peopleCSV(), 'text/csv'); break;
+      case 'importJSON': {
+        const inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = '.json,application/json';
+        inp.onchange = () => {
+          const f = inp.files[0]; if (!f) return;
+          const rd = new FileReader();
+          rd.onload = () => { try { Store.importJSON(rd.result); setPeriod(Store.currentId()); App.render(); }
+            catch (e) { alert('That file did not parse: ' + e.message); } };
+          rd.readAsText(f);
+        };
+        inp.click(); break;
+      }
+    }
+  }
+
+  return { setPeriod, pid, renderCompany, renderAcquire, renderSuccess, renderRetain,
+           renderDiagnose, renderData, periodsCSV, peopleCSV, metricDetail };
+})();
+
+</script>
+  <script>
+/* ============================================================================
+   app.js — Bootstrap, routing, service worker.
+   ========================================================================== */
+
+const App = (() => {
+  const $  = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+
+  const RENDER = {
+    company:  UI.renderCompany,
+    acquire:  UI.renderAcquire,
+    success:  UI.renderSuccess,
+    retain:   UI.renderRetain,
+    diagnose: UI.renderDiagnose,
+    data:     UI.renderData,
+  };
+  let tab = 'company';
+
+  function go(t) {
+    if (!RENDER[t]) t = 'company';
+    tab = t;
+    $$('.tab').forEach(el => el.classList.toggle('active', el.getAttribute('data-tab') === t));
+    window.scrollTo(0, 0);
+    render();
+  }
+  function render() { RENDER[tab](); updateHeader(); }
+
+  function updateHeader() {
+    const co = Store.state.company;
+    $('#coName').textContent = co.name || 'Company';
+    const ids = Store.periodIds();
+    const pill = $('#scorePill');
+    if (!ids.length) { pill.textContent = 'no data'; pill.className = 'phase-pill'; return; }
+    const a = Engine.assess(UI.pid());
+    pill.textContent = (a.overall == null ? '—' : a.overall) + ' · ' + Store.labelFor(UI.pid());
+    pill.className = 'phase-pill ' + Engine.band(a.overall);
+  }
+
+  function init() {
+    UI.setPeriod(Store.currentId());
+    $$('.tab').forEach(el => el.onclick = () => go(el.getAttribute('data-tab')));
+    $('#scorePill').onclick = () => go('data');
+    go('company');
+    if ('serviceWorker' in navigator) Promise.reject().catch(() => {});
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+  return { go, render, updateHeader };
+})();
+
+</script>
+</body>
+</html>
