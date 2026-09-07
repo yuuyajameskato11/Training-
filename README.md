@@ -89,9 +89,57 @@ js/notionsync.js        optional Notion sync (CSV export + Worker auto-push)
 notion-worker.js        deployable Cloudflare Worker proxy for Notion auto-push
 js/ui.js                rendering + interaction for all tabs
 js/app.js               bootstrap, routing, service-worker
+liftcards.html          KNCT lift cards — maxes-driven view of the Summer '13 cards
+css/liftcards.css       bone-on-black card styling (+ a print sheet for the rack)
+js/liftcards.js         percentage engine, unit switching, set check-off
+js/liftcards-data.js    generated: every week, day, block and prescription
+tools/                  workbook extractor + workbook builder (see Lift cards)
+programs/               rebuilt .xlsx cards, one MAXES sheet driving every week
 sw.js                   offline cache
 manifest.webmanifest    installable-app metadata
 icons/                  app icons (+ dependency-free generator script)
+```
+
+## Lift cards
+
+The coach's **Summer '13 lift cards** — Advanced (9 weeks), Team Phase 2
+(6 weeks) and Dev II (4 weeks) — live at **`liftcards.html`**, linked from the
+**You** tab. Every weight in those workbooks was already a percentage of a
+training max, so the page keeps the percentages and throws away the numbers:
+
+- Type your **clean, squat, bench, jerk, snatch and bodyweight** at the top and
+  all 1,559 prescriptions across 73 days re-write themselves — warm-up ramps,
+  back-off sets, RFE squats, the lot.
+- Each set shows what it's a percentage **of**, so you can see the intensity
+  curve, not just the load.
+- **lb / kg** toggle converts your maxes and rounds to the nearest 5 lb or
+  2.5 kg, exactly the way the source workbooks round.
+- Single-leg work marked *squat+bw* is a percentage of your **system weight**
+  with bodyweight taken back off, so the number shown is what goes on the bar.
+- Tap a set to cross it off. Everything is `localStorage`, on your device only.
+- **Print** gives a clean two-column card on white paper.
+
+### The workbooks
+
+`programs/` holds rebuilt `.xlsx` versions of the same three cards. The
+originals repeat the maxes on every tab; these put six numbers plus a rounding
+increment on one **MAXES** sheet, name them, and point every formula on every
+week at those names:
+
+```
+=ROUND(squat*0.65/roundto,0)*roundto
+```
+
+Change `squat` once and the whole program re-prescribes. Set `roundto` to 2.5
+and type your maxes in kilos and the card is in kilos.
+
+Both are regenerated from the source workbooks (which aren't committed — they're
+the coach's material):
+
+```bash
+python3 tools/extract_lift_cards.py <Adv>.xlsx <Team>.xlsx <Dev>.xlsx -o js/liftcards-data.js
+python3 tools/build_lift_workbooks.py          # -> programs/*.xlsx
+python3 build_standalone.py                    # refresh the single-file builds
 ```
 
 ## First-run setup

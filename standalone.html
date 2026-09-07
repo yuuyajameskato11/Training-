@@ -2285,6 +2285,11 @@ const UI = (() => {
       <div class="field"><label>A-race date</label><input type="date" id="p-gdate" value="${p.goalDateISO || ''}"></div>
     </div>`;
 
+    html += `<div class="section-title">Lift cards</div><div class="card">
+      <div class="sub" style="margin:0 0 10px">The coach's Summer '13 cards — advanced, team and dev — driven off your own maxes.</div>
+      <a class="btn ghost" href="liftcards-standalone.html" style="text-decoration:none">Open lift cards →</a>
+    </div>`;
+
     html += `<div class="section-title">Current marks</div><div class="card">`;
     DATA.GOALS.forEach(g => { const v = Store.state.bests[g.id] ?? g.current ?? '';
       html += `<div class="field" style="margin:8px 0"><label>${esc(g.name)} <span class="muted">(NS ${g.northStar != null ? fmtGoal(g, g.northStar) : '—'})</span></label>

@@ -1,0 +1,188 @@
+/* ============================================================================
+   KNCT — Lift Cards.  Bone on black, hairlines, tabular numerals, nothing else.
+   ========================================================================== */
+:root{
+  --ink:#0b0b0a; --ink-2:#121211; --ink-3:#191917;
+  --bone:#e9e5cf;
+  --dim:rgba(233,229,207,.60);
+  --faint:rgba(233,229,207,.34);
+  --line:rgba(233,229,207,.13);
+  --line-2:rgba(233,229,207,.26);
+  --pad:clamp(16px,4vw,40px);
+  --shell:1240px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ink); color:var(--bone);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.45; -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums; font-feature-settings:'tnum' 1;
+}
+.shell{max-width:var(--shell);margin:0 auto;padding-inline:var(--pad)}
+.eyebrow{
+  font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--faint);font-weight:600;
+}
+
+/* ── Masthead ──────────────────────────────────────────────────────────── */
+header.top{
+  position:sticky;top:0;z-index:40;
+  background:rgba(11,11,10,.86);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--line);
+}
+.top-in{display:flex;align-items:center;gap:18px;height:64px}
+.mark{width:104px;color:var(--bone);flex:none;display:block}
+.mark svg{display:block;width:100%;height:auto}
+.top-meta{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1}
+.top-meta b{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+.top-meta span{font-size:.75rem;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;gap:8px;flex:none}
+
+/* ── Buttons & controls ────────────────────────────────────────────────── */
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.btn{
+  border:1px solid var(--line-2);border-radius:2px;padding:7px 14px;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  color:var(--dim);transition:color .15s,border-color .15s,background .15s;white-space:nowrap;
+}
+.btn:hover{color:var(--bone);border-color:var(--bone)}
+.btn.on{background:var(--bone);border-color:var(--bone);color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:2px;overflow:hidden}
+.seg button{
+  padding:7px 13px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:600;color:var(--dim);border-right:1px solid var(--line-2);
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
+
+/* ── Maxes ────────────────────────────────────────────────────────────── */
+.maxes{border-bottom:1px solid var(--line);background:var(--ink-2)}
+.maxes-in{padding-block:26px 28px}
+.maxes-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.maxes-head p{margin:6px 0 0;color:var(--faint);font-size:.78rem;max-width:52ch}
+.maxes-grid{
+  display:grid;gap:1px;margin-top:22px;
+  grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
+  background:var(--line);border:1px solid var(--line);
+}
+.max-cell{background:var(--ink);padding:14px 16px 12px;position:relative}
+.max-cell label{display:flex;align-items:baseline;gap:5px;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.max-cell input{
+  width:100%;margin-top:6px;background:none;border:0;padding:0;
+  color:var(--bone);font:inherit;font-size:1.6rem;font-weight:600;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+}
+.max-cell input:focus{outline:0}
+.max-cell:focus-within{background:var(--ink-3)}
+.max-cell:focus-within::after{content:"";position:absolute;inset:auto 0 0 0;height:2px;background:var(--bone)}
+.max-cell .unit{font-size:.58rem;letter-spacing:.14em;color:var(--line-2);text-transform:uppercase}
+
+/* ── Program / week navigation ────────────────────────────────────────── */
+.nav{border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:30;
+  background:rgba(11,11,10,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.nav-in{display:flex;flex-direction:column;align-items:stretch;gap:2px;padding-block:9px}
+.rail-programs{border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:5px}
+.rail-programs button{color:var(--dim)}
+.rail{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.rail::-webkit-scrollbar{display:none}
+.rail button{
+  flex:none;padding:7px 12px;border-radius:2px;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  color:var(--faint);transition:color .15s,background .15s;
+}
+.rail button:hover{color:var(--bone)}
+.rail button[aria-current="true"]{color:var(--ink);background:var(--bone)}
+
+/* ── Week header ──────────────────────────────────────────────────────── */
+.week-head{padding:44px 0 8px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.week-head h1{
+  margin:8px 0 0;font-size:clamp(2.1rem,6vw,3.4rem);font-weight:600;
+  letter-spacing:-.035em;line-height:.95;
+}
+.week-head .count{color:var(--faint);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+
+/* ── Day cards ────────────────────────────────────────────────────────── */
+.days{
+  display:grid;gap:1px;margin:26px 0 0;background:var(--line);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+}
+.day{background:var(--ink);padding:26px var(--gutter,26px) 34px;min-width:0}
+.day > h2{
+  margin:0 0 20px;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
+  font-weight:600;color:var(--bone);display:flex;align-items:center;gap:10px;
+}
+.day > h2::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.block{margin:0 0 22px}
+.block:last-child{margin-bottom:0}
+.block h3{
+  margin:0;font-size:.86rem;font-weight:600;letter-spacing:.01em;line-height:1.3;
+}
+.block .cues{margin:3px 0 0;font-size:.73rem;color:var(--faint);line-height:1.5}
+.block.heading{margin:26px 0 14px}
+.block.heading h3{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+
+/* Sets */
+.sets{margin:9px 0 0;border-top:1px solid var(--line)}
+.set{
+  display:grid;grid-template-columns:1.4rem 1fr auto;align-items:baseline;gap:12px;
+  padding:7px 0 6px;border-bottom:1px solid var(--line);
+  cursor:pointer;transition:opacity .15s;
+}
+.set:hover .n{color:var(--dim)}
+.set .n{font-size:.66rem;color:var(--faint);font-variant-numeric:tabular-nums}
+.set .load{font-size:1.16rem;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+.set .load .u{font-size:.68rem;font-weight:500;color:var(--faint);margin-left:3px;letter-spacing:.06em}
+.set .load.cue{font-size:.86rem;font-weight:500;color:var(--dim);letter-spacing:.04em;text-transform:uppercase}
+.set .load.empty{color:var(--faint);font-weight:400}
+.set .pct{display:block;font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);margin-top:1px}
+.set .reps{font-size:.8rem;color:var(--dim);font-weight:500;white-space:nowrap}
+.set.done{opacity:.32}
+.set.done .load{text-decoration:line-through;text-decoration-thickness:1px}
+.set.done .n::before{content:"■ ";}
+.load.flash{animation:flash .5s ease}
+@keyframes flash{0%{color:#fff}100%{color:var(--bone)}}
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+footer{padding-block:44px 60px;color:var(--faint);font-size:.75rem;line-height:1.7}
+footer a{color:var(--dim)}
+footer .rule{height:1px;background:var(--line);margin-bottom:24px}
+
+.empty-state{padding:80px 0;color:var(--faint);text-align:center}
+
+/* ── Narrow ───────────────────────────────────────────────────────────── */
+@media (max-width:640px){
+  .top-in{height:58px;gap:12px}
+  .mark{width:84px}
+  .top-meta span{display:none}
+  .nav{top:58px}
+  .maxes-head p{font-size:.75rem}
+  .week-head{padding-top:34px}
+  .day{padding:24px 0 30px}
+  .days{grid-template-columns:1fr;background:none}
+  .day + .day{border-top:1px solid var(--line)}
+}
+
+/* ── Print: a real card you can tape to the rack ─────────────────────── */
+@media print{
+  :root{
+    --ink:#fff;--ink-2:#fff;--ink-3:#fff;
+    --bone:#000;--dim:#444;--faint:#666;--line:#d8d5c8;--line-2:#bbb;
+  }
+  html{font-size:11px}
+  body{background:#fff;color:#000}
+  header.top,.nav,.top-actions,.maxes-head .seg,.maxes-head .btn{display:none!important}
+  .maxes{border:0;background:none}
+  .maxes-in{padding:0 0 10px}
+  .maxes-grid{grid-template-columns:repeat(6,1fr);margin-top:8px}
+  .max-cell{padding:5px 7px}
+  .max-cell input{font-size:1rem}
+  .week-head{padding:14px 0 4px}
+  .week-head h1{font-size:1.6rem}
+  .days{grid-template-columns:1fr 1fr;gap:0;background:none}
+  .day{padding:12px 16px;border-left:1px solid #d8d5c8;break-inside:avoid}
+  .set{page-break-inside:avoid}
+  footer{display:none}
+}
